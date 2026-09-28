@@ -664,7 +664,7 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
           targetAngleProgressRef.current += deltaProgress;
           currentAngleProgressRef.current = targetAngleProgressRef.current;
         }
-      } else if (!isUserScrubbingRef.current) {
+      } else {
         // 2. Smooth preset angle navigation (critically damped exponential lerp)
         if (isActive && isNavigatingPresetRef.current) {
           const diff = targetAngleProgressRef.current - currentAngleProgressRef.current;

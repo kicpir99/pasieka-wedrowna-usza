@@ -1,5 +1,6 @@
 import React from 'react';
 import { getAssetUrl } from '../utils/assets';
+import { isMobileDeviceScreen } from '../utils/framePreloader';
 
 interface HoneyRibbonProps {
   varietyId?: string;
@@ -96,6 +97,10 @@ interface VarietyRibbonAsset {
   back: string;
   caustics?: string;
   reflection?: string;
+  mobileFront?: string;
+  mobileBack?: string;
+  mobileCaustics?: string;
+  mobileReflection?: string;
 }
 
 /**
@@ -227,6 +232,10 @@ export const UNIVERSAL_RIBBON_ASSET: VarietyRibbonAsset = {
   back: 'assets/wstega-ogolna-back.webp',
   caustics: 'assets/wstega-ogolna-caustics.webp',
   reflection: 'assets/wstega-ogolna-floor-reflect.webp',
+  mobileFront: 'assets/wstega-ogolna-front-mobile.webp',
+  mobileBack: 'assets/wstega-ogolna-back-mobile.webp',
+  mobileCaustics: 'assets/wstega-ogolna-caustics-mobile.webp',
+  mobileReflection: 'assets/wstega-ogolna-floor-reflect-mobile.webp',
 };
 
 // Flaga testowa: po włączeniu (true) każdy miód w karuzeli używa jednej ogólnej wstęgi miodowej
@@ -253,7 +262,13 @@ export const HoneyLiquidRibbon: React.FC<HoneyRibbonProps> = ({
     return null;
   }
 
-  const imageSrc = getAssetUrl(isFrontLayer ? ribbonConfig.front : ribbonConfig.back);
+  const isMobile = isMobileDeviceScreen();
+  const frontAsset = (isMobile && ribbonConfig.mobileFront) ? ribbonConfig.mobileFront : ribbonConfig.front;
+  const backAsset = (isMobile && ribbonConfig.mobileBack) ? ribbonConfig.mobileBack : ribbonConfig.back;
+  const causticsAsset = (isMobile && ribbonConfig.mobileCaustics) ? ribbonConfig.mobileCaustics : ribbonConfig.caustics;
+  const reflectionAsset = (isMobile && ribbonConfig.mobileReflection) ? ribbonConfig.mobileReflection : ribbonConfig.reflection;
+
+  const imageSrc = getAssetUrl(isFrontLayer ? frontAsset : backAsset);
 
   return (
     <div
@@ -262,11 +277,11 @@ export const HoneyLiquidRibbon: React.FC<HoneyRibbonProps> = ({
         zIndex: isFrontLayer ? 30 : 5,
       }}
     >
-      <div className="relative flex items-center justify-center overflow-visible">
+      <div className="relative flex items-center justify-center animate-honey-breathe overflow-visible">
         {/* 1. FOTOREALISTYCZNA ORGANICZNA KAUSTYKA MIODU NA PODŁOŻU (załamanie światła w szkle i płynie) */}
-        {!isFrontLayer && ribbonConfig.caustics && (
+        {!isFrontLayer && causticsAsset && (
           <img
-            src={getAssetUrl(ribbonConfig.caustics)}
+            src={getAssetUrl(causticsAsset)}
             alt=""
             aria-hidden="true"
             loading="eager"
@@ -281,9 +296,9 @@ export const HoneyLiquidRibbon: React.FC<HoneyRibbonProps> = ({
         )}
 
         {/* 2. LUSTRZANE ODBICIE PRZEDNIEJ WSTĘGI W CIEMNEJ TAFLI PODŁOŻA (na poziomie stołu, pod wstęgą) */}
-        {!isFrontLayer && ribbonConfig.reflection && (
+        {!isFrontLayer && reflectionAsset && (
           <img
-            src={getAssetUrl(ribbonConfig.reflection)}
+            src={getAssetUrl(reflectionAsset)}
             alt=""
             aria-hidden="true"
             loading="eager"

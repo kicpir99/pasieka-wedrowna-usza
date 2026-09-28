@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   loadFramesFromSpriteSheet, 
-  BUNDLED_VARIETY_SPRITES 
+  BUNDLED_VARIETY_SPRITES,
+  isMobileDeviceScreen
 } from '../utils/framePreloader';
 import { getAssetUrl } from '../utils/assets';
 
@@ -108,9 +109,10 @@ export const PagePreloader: React.FC<PagePreloaderProps> = ({ onComplete }) => {
     });
 
     // 2. Błyskawiczne ładowanie wstęgi miodowej (wstęga ogólna używana na stronie głównej)
+    const isMobile = isMobileDeviceScreen();
     const ribbonUrls = [
-      getAssetUrl('assets/wstega-ogolna-front.webp'),
-      getAssetUrl('assets/wstega-ogolna-back.webp'),
+      getAssetUrl(isMobile ? 'assets/wstega-ogolna-front-mobile.webp' : 'assets/wstega-ogolna-front.webp'),
+      getAssetUrl(isMobile ? 'assets/wstega-ogolna-back-mobile.webp' : 'assets/wstega-ogolna-back.webp'),
     ];
     Promise.all(ribbonUrls.map(url => new Promise(res => {
       const img = new Image();
