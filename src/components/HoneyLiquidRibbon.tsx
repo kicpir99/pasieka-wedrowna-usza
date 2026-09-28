@@ -291,6 +291,8 @@ export const HoneyLiquidRibbon: React.FC<HoneyRibbonProps> = ({
               style={{
                 mixBlendMode: 'screen',
                 filter: 'contrast(1.1) brightness(1.05)',
+                transform: 'translateZ(0)',
+                backfaceVisibility: 'hidden',
               }}
             />
           </div>
@@ -309,6 +311,8 @@ export const HoneyLiquidRibbon: React.FC<HoneyRibbonProps> = ({
               style={{
                 opacity: 0.70,
                 filter: 'blur(0.5px)',
+                transform: 'translateZ(0)',
+                backfaceVisibility: 'hidden',
               }}
             />
           </div>
@@ -326,7 +330,7 @@ export const HoneyLiquidRibbon: React.FC<HoneyRibbonProps> = ({
           />
         )}
 
-        {/* 4. WARSTWA GŁÓWNA WSTĘGI MIODOWEJ (FRONT LUB BACK) - Subtelne unoszenie i opadanie w fazie głównej */}
+        {/* 4. WARSTWA GŁÓWNA WSTĘGI MIODOWEJ (FRONT LUB BACK) - Płynne unoszenie i opadanie w fazie głównej */}
         <div className="relative flex items-center justify-center animate-honey-breathe pointer-events-none">
           <img
             src={imageSrc}
@@ -334,6 +338,10 @@ export const HoneyLiquidRibbon: React.FC<HoneyRibbonProps> = ({
             loading="eager"
             decoding="async"
             className="w-[410px] sm:w-[630px] md:w-[930px] lg:w-[1030px] xl:w-[1070px] max-w-none h-auto object-contain pointer-events-none select-none"
+            style={{
+              transform: 'translateZ(0)',
+              backfaceVisibility: 'hidden',
+            }}
           />
         </div>
       </div>
