@@ -225,13 +225,13 @@ const VARIETY_CUSTOM_RIBBONS: Record<string, VarietyRibbonAsset> = {
 
 /**
  * Jednolity wygląd wstęgi miodowej (wstęga ogólna) do testów dla wszystkich miodów na karuzeli.
- * Zawiera zoptymalizowane warstwy: przód, tył (z wygojonym łączeniem), odbicie w posadzce oraz kaustykę.
+ * Zoptymalizowane warstwy 1385px (idealna ostrość dla kontenera 1070px bez obciążania GPU i bez migotania moiré).
  */
 export const UNIVERSAL_RIBBON_ASSET: VarietyRibbonAsset = {
-  front: 'assets/wstega-ogolna-front.webp',
-  back: 'assets/wstega-ogolna-back.webp',
-  caustics: 'assets/wstega-ogolna-caustics.webp',
-  reflection: 'assets/wstega-ogolna-floor-reflect.webp',
+  front: 'assets/wstega-ogolna-front-mobile.webp',
+  back: 'assets/wstega-ogolna-back-mobile.webp',
+  caustics: 'assets/wstega-ogolna-caustics-mobile.webp',
+  reflection: 'assets/wstega-ogolna-floor-reflect-mobile.webp',
   mobileFront: 'assets/wstega-ogolna-front-mobile.webp',
   mobileBack: 'assets/wstega-ogolna-back-mobile.webp',
   mobileCaustics: 'assets/wstega-ogolna-caustics-mobile.webp',
@@ -268,12 +268,14 @@ export const HoneyLiquidRibbon: React.FC<HoneyRibbonProps> = React.memo(({
       const angle = (time * 2 * Math.PI) / 4.6; // Naturalny, zbalansowany cykl oddechu (4.6s) eliminujący przestoje w skrajnych punktach
       const sinVal = Math.sin(angle); // Ciągła harmoniczna fala sinusoidalna [-1, +1]
 
-      // Wstęga miodowa: zredukowana o 50% (bardzo subtelna, dyskretna amplituda 4.2px, skok góra-dół zaledwie 8.4px)
-      const ribbonY = sinVal * -4.2;
+      // Zróżnicowana, responsywna amplituda:
+      // Na telefonie ekran jest mały, więc 1.8px (skok 3.6px) daje idealnie subtelny oddech.
+      // Na komputerze amplituda 2.1px (skok 4.2px) jest zredukowana o 50% i w 100% płynna.
+      const isMobile = window.innerWidth < 768;
+      const baseAmplitude = isMobile ? 1.8 : 2.1;
+      const ribbonY = sinVal * -baseAmplitude;
 
       // Odbicie w lustrze podłoża: ŚCIŚLE ZSYNCHRONIZOWANA ODWROĆNA FAZA LUSTRZANA!
-      // Gdy wstęga opada (+4.2px ku blatowi), odbicie podnosi się (-3.1px ku powierzchni stołu)
-      // Gdy wstęga unosi się (-4.2px w górę), odbicie oddala się w dół (+3.1px w głąb tafli)
       const reflectionY = -ribbonY * 0.73;
 
       if (ribbonRef.current) {
@@ -286,7 +288,7 @@ export const HoneyLiquidRibbon: React.FC<HoneyRibbonProps> = React.memo(({
 
       if (causticsRef.current) {
         // Blask kaustyki na podłożu delikatnie moduluje w rytm zbliżania się wstęgi
-        const causticsOpacity = 0.88 - sinVal * 0.04;
+        const causticsOpacity = 0.88 - sinVal * 0.03;
         causticsRef.current.style.opacity = causticsOpacity.toFixed(3);
       }
 
@@ -322,6 +324,8 @@ export const HoneyLiquidRibbon: React.FC<HoneyRibbonProps> = React.memo(({
       className={`pointer-events-none absolute left-[calc(50%-18px)] sm:left-[calc(50%-28px)] md:left-[calc(50%-42px)] top-[calc(50%+24px)] sm:top-[calc(50%+32px)] md:top-[calc(50%+38px)] -translate-x-1/2 -translate-y-1/2 flex items-center justify-center select-none overflow-visible ${className}`}
       style={{
         zIndex: isFrontLayer ? 30 : 5,
+        transformStyle: 'preserve-3d',
+        perspective: '1000px',
       }}
     >
       <div className="relative flex items-center justify-center overflow-visible">
@@ -353,8 +357,12 @@ export const HoneyLiquidRibbon: React.FC<HoneyRibbonProps> = React.memo(({
         {!isFrontLayer && reflectionAsset && (
           <div 
             ref={reflectionRef}
-            className="absolute inset-0 flex items-center justify-center pointer-events-none will-change-transform"
-            style={{ transform: 'translate3d(0, 0, 0)' }}
+            className="absolute inset-0 flex items-center justify-center pointer-events-none"
+            style={{ 
+              transform: 'translate3d(0, 0, 0)',
+              willChange: 'transform',
+              outline: '1px solid transparent',
+            }}
           >
             <img
               src={getAssetUrl(reflectionAsset)}
@@ -388,8 +396,12 @@ export const HoneyLiquidRibbon: React.FC<HoneyRibbonProps> = React.memo(({
         {/* 4. WARSTWA GŁÓWNA WSTĘGI MIODOWEJ (FRONT LUB BACK) - Aksamitny, zsynchronizowany ruch subpikselowy */}
         <div 
           ref={ribbonRef}
-          className="relative flex items-center justify-center pointer-events-none will-change-transform"
-          style={{ transform: 'translate3d(0, 0, 0)' }}
+          className="relative flex items-center justify-center pointer-events-none"
+          style={{ 
+            transform: 'translate3d(0, 0, 0)',
+            willChange: 'transform',
+            outline: '1px solid transparent',
+          }}
         >
           <img
             src={imageSrc}
