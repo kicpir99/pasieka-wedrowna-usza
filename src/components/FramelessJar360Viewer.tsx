@@ -1347,7 +1347,7 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -15 }}
                     transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                    className="absolute z-50 top-0 sm:-top-6 lg:-top-8 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-3.5 md:left-3 lg:left-[52px] xl:left-[48px] w-[92%] max-w-[290px] sm:w-[280px] pointer-events-none"
+                    className="absolute z-50 -top-7 sm:-top-6 lg:-top-8 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-3.5 md:left-3 lg:left-[52px] xl:left-[48px] w-[92%] max-w-[290px] sm:w-[280px] pointer-events-none"
                   >
                     <div className="relative flex flex-col items-center sm:items-start text-center sm:text-left py-1">
                       {/* Subtelna winieta w tle dla idealnej czytelności bez twardych krawędzi */}
@@ -1381,7 +1381,7 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: 15 }}
                     transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                    className="absolute z-50 top-0 sm:top-auto sm:-bottom-5 lg:-bottom-7 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-auto right-auto sm:right-3.5 md:right-3 lg:right-[52px] xl:right-[48px] w-[92%] max-w-[290px] sm:w-[280px] pointer-events-none flex flex-col items-center sm:items-end text-center sm:text-right"
+                    className="absolute z-50 -top-7 sm:top-auto sm:-bottom-5 lg:-bottom-7 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-auto right-auto sm:right-3.5 md:right-3 lg:right-[52px] xl:right-[48px] w-[92%] max-w-[290px] sm:w-[280px] pointer-events-none flex flex-col items-center sm:items-end text-center sm:text-right"
                   >
                     <div className="relative flex flex-col items-center sm:items-end text-center sm:text-right py-1">
                       {/* Subtelna winieta w tle dla idealnej czytelności bez twardych krawędzi */}
@@ -1415,7 +1415,7 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                    className="absolute z-50 top-0 sm:-top-6 lg:-top-8 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-auto right-auto sm:right-3.5 md:right-3 lg:right-[52px] xl:right-[48px] w-[92%] max-w-[290px] sm:w-[280px] pointer-events-none flex flex-col items-center sm:items-end text-center sm:text-right"
+                    className="absolute z-50 -top-7 sm:-top-6 lg:-top-8 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-auto right-auto sm:right-3.5 md:right-3 lg:right-[52px] xl:right-[48px] w-[92%] max-w-[290px] sm:w-[280px] pointer-events-none flex flex-col items-center sm:items-end text-center sm:text-right"
                   >
                     <div className="relative flex flex-col items-center sm:items-end text-center sm:text-right py-1">
                       {/* Subtelna winieta w tle dla idealnej czytelności bez twardych krawędzi */}
