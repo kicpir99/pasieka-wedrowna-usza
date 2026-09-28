@@ -110,19 +110,19 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
     return false;
   });
 
-  // Sticky Add To Cart visibility state & IntersectionObserver
-  const purchaseBoxRef = useRef<HTMLDivElement>(null);
+  // Sticky Add To Cart visibility state & IntersectionObserver targeting the primary button
+  const mainBuyButtonRef = useRef<HTMLButtonElement>(null);
   const [isStickyBarVisible, setIsStickyBarVisible] = useState(false);
 
   useEffect(() => {
-    const target = purchaseBoxRef.current;
+    const target = mainBuyButtonRef.current;
     if (!target) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        // Pasek pojawia się tylko wtedy, gdy główny boks zakupu minie górną krawędź ekranu (zniknie w górę)
-        const isPastPurchaseBox = !entry.isIntersecting && entry.boundingClientRect.top < 0;
-        setIsStickyBarVisible(isPastPurchaseBox);
+        // Pasek pojawia się natychmiast w ułamku sekundy, gdy tylko dolna krawędź przycisku opuści ekran
+        const isPastButton = !entry.isIntersecting && entry.boundingClientRect.bottom < 0;
+        setIsStickyBarVisible(isPastButton);
       },
       {
         threshold: 0,
@@ -1372,7 +1372,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
             </div>
 
             {/* Purchase Card: Gramature Selector, Price, Add to Cart */}
-            <div ref={purchaseBoxRef} className="bg-white rounded-3xl p-5 sm:p-6 border border-[#D9821E]/30 shadow-md space-y-5">
+            <div className="bg-white rounded-3xl p-5 sm:p-6 border border-[#D9821E]/30 shadow-md space-y-5">
               
               {/* Kompaktowa Metryka Partii & Żywych Enzymów / Specyfikacja produktu */}
               {prodType === 'bee-colony' ? (
@@ -1826,6 +1826,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                 {/* Primary Action Buttons */}
                 <div className="space-y-2.5">
                   <button
+                    ref={mainBuyButtonRef}
                     onClick={handleAddToCart}
                     className="w-full py-3.5 sm:py-4 px-6 rounded-2xl font-bold text-base text-white bg-[#1B4332] hover:bg-[#143326] transition-all shadow-md flex items-center justify-center gap-2.5 cursor-pointer transform hover:-translate-y-0.5 active:translate-y-0"
                     id="btn-dodaj-koszyk-glowny"
