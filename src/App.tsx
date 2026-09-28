@@ -376,6 +376,8 @@ function App() {
               element={
                 <AccountPage 
                   displayResolution={displayResolution}
+                  onAddToCart={handleAddToCart}
+                  onOpenCart={() => setIsCartOpen(true)}
                 />
               } 
             />
@@ -384,6 +386,8 @@ function App() {
               element={
                 <AccountPage 
                   displayResolution={displayResolution}
+                  onAddToCart={handleAddToCart}
+                  onOpenCart={() => setIsCartOpen(true)}
                 />
               } 
             />

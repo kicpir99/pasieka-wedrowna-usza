@@ -23,15 +23,29 @@ import {
   Gift,
   Award,
   ChevronRight,
-  Plus
+  Plus,
+  Heart,
+  RotateCcw,
+  FileText,
+  Printer,
+  X,
+  Building2
 } from 'lucide-react';
-import { useAuth, UserAddress, SavedCard } from '../context/AuthContext';
+import { useAuth, UserAddress, SavedCard, InvoiceData, PastOrder } from '../context/AuthContext';
+import { HONEY_PRODUCTS } from '../data/honeyProducts';
+import { HoneyProduct } from '../types';
 
 interface AccountPageProps {
   displayResolution?: { width: number; height: number; deviceType: string; containerClass: string };
+  onAddToCart?: (product: HoneyProduct, weightGrams: number, pricePln: number) => void;
+  onOpenCart?: () => void;
 }
 
-export const AccountPage: React.FC<AccountPageProps> = ({ displayResolution }) => {
+export const AccountPage: React.FC<AccountPageProps> = ({ 
+  displayResolution,
+  onAddToCart,
+  onOpenCart
+}) => {
   const containerClass = displayResolution?.containerClass || 'max-w-7xl mx-auto';
   const navigate = useNavigate();
   const { 
@@ -45,11 +59,14 @@ export const AccountPage: React.FC<AccountPageProps> = ({ displayResolution }) =
     togglePauseSubscription,
     cancelSubscription,
     updateAddress,
-    updateCard
+    updateInvoiceData,
+    updateCard,
+    toggleFavorite,
+    isFavorite
   } = useAuth();
 
   // Tab states for logged-in view
-  const [activeTab, setActiveTab] = useState<'pulpit' | 'subskrypcje' | 'zamowienia' | 'adresy' | 'platnosci' | 'ustawienia'>('pulpit');
+  const [activeTab, setActiveTab] = useState<'pulpit' | 'subskrypcje' | 'zamowienia' | 'ulubione' | 'adresy' | 'platnosci'>('pulpit');
 
   // Auth form states (when not logged in)
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
@@ -79,6 +96,19 @@ export const AccountPage: React.FC<AccountPageProps> = ({ displayResolution }) =
   });
   const [saveAddressSuccess, setSaveAddressSuccess] = useState(false);
 
+  // Invoice VAT edit state (when logged in)
+  const [invoiceForm, setInvoiceForm] = useState<InvoiceData>(() => {
+    return user?.invoiceData || {
+      isCompany: false,
+      companyName: '',
+      nip: '',
+      street: '',
+      postalCode: '',
+      city: '',
+    };
+  });
+  const [saveInvoiceSuccess, setSaveInvoiceSuccess] = useState(false);
+
   // Card edit state (when logged in)
   const [isEditingCard, setIsEditingCard] = useState(false);
   const [cardForm, setCardForm] = useState<SavedCard>({
@@ -87,6 +117,10 @@ export const AccountPage: React.FC<AccountPageProps> = ({ displayResolution }) =
     expiry: '12/28',
   });
   const [saveCardSuccess, setSaveCardSuccess] = useState(false);
+
+  // Invoice PDF Preview Modal State
+  const [viewingInvoiceOrder, setViewingInvoiceOrder] = useState<PastOrder | null>(null);
+  const [reorderToast, setReorderToast] = useState<string | null>(null);
 
   // Handle Login
   const handleLoginSubmit = (e: React.FormEvent) => {
@@ -134,6 +168,14 @@ export const AccountPage: React.FC<AccountPageProps> = ({ displayResolution }) =
     setTimeout(() => setSaveAddressSuccess(false), 3000);
   };
 
+  // Handle Invoice Save
+  const handleInvoiceSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    updateInvoiceData(invoiceForm);
+    setSaveInvoiceSuccess(true);
+    setTimeout(() => setSaveInvoiceSuccess(false), 3000);
+  };
+
   // Handle Card Save
   const handleCardSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -143,8 +185,53 @@ export const AccountPage: React.FC<AccountPageProps> = ({ displayResolution }) =
     setTimeout(() => setSaveCardSuccess(false), 3000);
   };
 
+  // 1-Click Reorder Action
+  const handleReorder = (order: PastOrder) => {
+    if (!onAddToCart) return;
+
+    if (order.items && order.items.length > 0) {
+      order.items.forEach(item => {
+        const prod = HONEY_PRODUCTS.find(p => p.id === item.productId) || HONEY_PRODUCTS[0];
+        onAddToCart(prod, item.weightGrams, item.pricePln);
+      });
+    } else {
+      const prod = HONEY_PRODUCTS[0];
+      onAddToCart(prod, prod.sizes[0].weightGrams, prod.sizes[0].pricePln);
+    }
+
+    setReorderToast(`Dodano słoiki z zamówienia ${order.id} do koszyka!`);
+    setTimeout(() => setReorderToast(null), 3500);
+
+    if (onOpenCart) {
+      onOpenCart();
+    }
+  };
+
+  // Get favorite products
+  const favoriteProducts = (user?.favorites || [])
+    .map(favId => HONEY_PRODUCTS.find(p => p.id === favId))
+    .filter((p): p is HoneyProduct => p !== undefined);
+
   return (
     <main className="min-h-screen bg-[#FAF7F2] pb-24 text-[#24211D]">
+      {/* Toast Notification */}
+      {reorderToast && (
+        <div className="fixed top-24 right-6 z-50 bg-[#2D2821] text-[#FAF5ED] px-4 py-3 rounded-2xl shadow-2xl border border-[#483F33] flex items-center gap-3 animate-in fade-in slide-in-from-right-4 duration-300">
+          <div className="w-6 h-6 rounded-full bg-[#E5983A] text-[#2D2821] flex items-center justify-center text-xs font-bold shrink-0">
+            <Check className="w-3.5 h-3.5" />
+          </div>
+          <span className="text-xs font-medium">{reorderToast}</span>
+          {onOpenCart && (
+            <button
+              onClick={onOpenCart}
+              className="ml-2 text-xs font-bold text-[#E5983A] hover:underline cursor-pointer whitespace-nowrap"
+            >
+              Zobacz koszyk →
+            </button>
+          )}
+        </div>
+      )}
+
       {/* Breadcrumb Bar */}
       <div className="border-b border-[#E7DAC8] bg-[#F4EDE2]/70 py-3">
         <div className={`adaptive-container ${containerClass} px-4 sm:px-6 lg:px-8 text-xs text-[#7B6E5C] flex items-center gap-2`}>
@@ -176,7 +263,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({ displayResolution }) =
                   Witaj, {user.firstName}!
                 </h1>
                 <p className="mt-2 text-sm sm:text-base text-[#C7BDB0] leading-relaxed">
-                  Zarządzaj swoimi zamówieniami miodów, autouzupełnianiem spiżarni, zapisanym Paczkomatem InPost oraz danymi wysyłkowymi.
+                  Zarządzaj swoimi zamówieniami miodów, autouzupełnianiem spiżarni, zapisanym Paczkomatem InPost, danymi do faktury VAT oraz ulubionymi słoikami.
                 </p>
               </div>
             ) : (
@@ -185,7 +272,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({ displayResolution }) =
                   Moje Konto w Pasiece Usza
                 </h1>
                 <p className="mt-2 text-sm sm:text-base text-[#C7BDB0] leading-relaxed">
-                  Zaloguj się lub załóż konto, aby zyskać stały dostęp do historii zamówień, szybkiej wysyłki bez ponownego wpisywania adresu oraz autouzupełniania spiżarni ze stałym rabatem -10%.
+                  Zaloguj się lub załóż konto w 5 sekund, aby zyskać stały dostęp do historii zamówień, szybkiej wysyłki bez ponownego wpisywania adresu oraz autouzupełniania spiżarni ze stałym rabatem -10%.
                 </p>
               </div>
             )}
@@ -216,22 +303,22 @@ export const AccountPage: React.FC<AccountPageProps> = ({ displayResolution }) =
 
               <div className="bg-[#383126] p-3.5 sm:p-4 rounded-2xl border border-[#524637]">
                 <div className="text-[11px] font-medium text-[#C7BDB0] flex items-center gap-1.5">
-                  <Truck className="w-3.5 h-3.5 text-[#E5983A]" />
-                  <span>Domyślny Paczkomat</span>
+                  <Heart className="w-3.5 h-3.5 text-[#E5983A]" />
+                  <span>Ulubione Miody</span>
                 </div>
-                <div className="text-xs font-semibold text-[#FAF5ED] mt-1 truncate" title={user.address.parcelLocker || 'Brak'}>
-                  {user.address.parcelLocker ? user.address.parcelLocker.split('•')[0] : 'Nie wybrano'}
+                <div className="text-xl sm:text-2xl font-bold font-serif text-[#FAF5ED] mt-1">
+                  {user.favorites?.length || 0} w schowku
                 </div>
               </div>
 
               <div className="bg-[#383126] p-3.5 sm:p-4 rounded-2xl border border-[#524637] flex items-center justify-between">
                 <div>
                   <div className="text-[11px] font-medium text-[#C7BDB0] flex items-center gap-1.5">
-                    <Award className="w-3.5 h-3.5 text-[#E5983A]" />
-                    <span>Status Klubu</span>
+                    <Truck className="w-3.5 h-3.5 text-[#E5983A]" />
+                    <span>Domyślny Paczkomat</span>
                   </div>
-                  <div className="text-xs font-bold text-[#E5983A] mt-1">
-                    Przyjaciel Pasieki
+                  <div className="text-xs font-semibold text-[#FAF5ED] mt-1 truncate max-w-[130px]" title={user.address.parcelLocker || 'Brak'}>
+                    {user.address.parcelLocker ? user.address.parcelLocker.split('•')[0] : 'Nie wybrano'}
                   </div>
                 </div>
                 <button
@@ -497,7 +584,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({ displayResolution }) =
                   Klub Przyjaciół Pasieki Usza
                 </h2>
                 <p className="text-xs sm:text-sm text-[#6B5E4F] leading-relaxed mb-6">
-                  Rejestracja trwa zaledwie 30 sekund i daje Ci pełen komfort opieki pasiecznej, gwarancję świeżości oraz wygodę bez konieczności każdorazowego wpisywania danych.
+                  Rejestracja trwa zaledwie 5 sekund i daje Ci pełen komfort opieki pasiecznej, gwarancję świeżości oraz wygodę bez konieczności każdorazowego wpisywania danych.
                 </p>
 
                 {/* 5 Distinct Benefits */}
@@ -546,14 +633,14 @@ export const AccountPage: React.FC<AccountPageProps> = ({ displayResolution }) =
 
                   <div className="flex items-start gap-3.5 p-3.5 rounded-2xl bg-white border border-[#EFE3CF] shadow-2xs">
                     <div className="w-9 h-9 rounded-xl bg-[#8B5337] text-white flex items-center justify-center shrink-0 shadow-xs">
-                      <Gift className="w-4 h-4" />
+                      <RotateCcw className="w-4 h-4" />
                     </div>
                     <div>
                       <h3 className="font-bold text-xs sm:text-sm text-[#23201C]">
-                        4. Klubowe kody rabatowe i promocje
+                        4. Zamawianie ulubionych miodów 1 kliknięciem
                       </h3>
                       <p className="text-[11px] sm:text-xs text-[#716556] mt-0.5 leading-relaxed">
-                        Dostęp do unikalnych kodów zniżkowych, prezentów do zamówień oraz okazjonalnych miodobrań dostępnych tylko dla członków klubu.
+                        Powtarzaj swoje ulubione zamówienia bezpośrednio z historii zakupów za pomocą jednego przycisku, bez szukania produktów w sklepie.
                       </p>
                     </div>
                   </div>
@@ -639,13 +726,36 @@ export const AccountPage: React.FC<AccountPageProps> = ({ displayResolution }) =
               >
                 <div className="flex items-center gap-2.5">
                   <Package className="w-4 h-4" />
-                  <span>Zamówienia</span>
+                  <span>Zamówienia & Faktury</span>
                 </div>
                 <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                   activeTab === 'zamowienia' ? 'bg-[#E6C065] text-[#1B4332]' : 'bg-[#EFE3CF] text-[#7E4207]'
                 }`}>
                   {user.orders.length}
                 </span>
+              </button>
+
+              {/* Wishlist / Ulubione */}
+              <button
+                type="button"
+                onClick={() => setActiveTab('ulubione')}
+                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+                  activeTab === 'ulubione'
+                    ? 'bg-[#1B4332] text-white shadow-sm'
+                    : 'text-[#584D3E] hover:bg-[#F6EFE5] hover:text-[#23201C]'
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <Heart className="w-4 h-4" />
+                  <span>Ulubione Miody</span>
+                </div>
+                {(user.favorites?.length || 0) > 0 && (
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                    activeTab === 'ulubione' ? 'bg-[#E6C065] text-[#1B4332]' : 'bg-[#EFE3CF] text-[#7E4207]'
+                  }`}>
+                    {user.favorites.length}
+                  </span>
+                )}
               </button>
 
               <button
@@ -659,7 +769,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({ displayResolution }) =
               >
                 <div className="flex items-center gap-2.5">
                   <MapPin className="w-4 h-4" />
-                  <span>Adres & Paczkomat</span>
+                  <span>Adres & Faktura VAT</span>
                 </div>
               </button>
 
@@ -713,7 +823,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({ displayResolution }) =
                       </div>
                       <div>
                         <div className="text-xs font-bold text-[#8B5337] uppercase tracking-wider">
-                          Klub Pasieki Usza • Poziom Aktywny
+                          Klub Pasieki Usza • Status Aktywny
                         </div>
                         <h3 className="font-serif text-lg font-bold text-[#23201C]">
                           Stały rabat -10% na autouzupełnianie miodów
@@ -975,15 +1085,15 @@ export const AccountPage: React.FC<AccountPageProps> = ({ displayResolution }) =
                 </div>
               )}
 
-              {/* TAB 3: ZAMÓWIENIA */}
+              {/* TAB 3: ZAMÓWIENIA & FAKTURY */}
               {activeTab === 'zamowienia' && (
                 <div className="space-y-6">
                   <div className="border-b border-[#EFE3CF] pb-4">
                     <h2 className="font-serif text-2xl font-bold text-[#23201C]">
-                      Historia Zamówień
+                      Historia Zamówień & e-Faktury
                     </h2>
                     <p className="text-xs text-[#6B5E4F] mt-1">
-                      Wszystkie zamówienia złożone w Pasiece Usza z podglądem numeru przesyłki InPost.
+                      Wszystkie zamówienia z opcją <strong>ponownego zamówienia 1 kliknięciem</strong> oraz pobrania faktury VAT w formacie PDF.
                     </p>
                   </div>
 
@@ -992,28 +1102,56 @@ export const AccountPage: React.FC<AccountPageProps> = ({ displayResolution }) =
                       Nie masz jeszcze złożonych zamówień na tym koncie.
                     </div>
                   ) : (
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       {user.orders.map((ord) => (
-                        <div key={ord.id} className="p-4 sm:p-5 rounded-2xl bg-[#FAF8F5] border border-[#E7DDCE] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                          <div className="space-y-1">
-                            <div className="flex items-center gap-2">
-                              <span className="font-bold text-xs sm:text-sm text-[#23201C]">{ord.id}</span>
-                              <span className="text-[11px] text-[#8C7D6B]">• {ord.date}</span>
-                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-green-100 text-green-800">
+                        <div key={ord.id} className="p-4 sm:p-6 rounded-2xl bg-[#FAF8F5] border border-[#E7DDCE] shadow-xs space-y-4">
+                          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-[#EDE1D1] pb-3">
+                            <div className="flex items-center gap-2.5 flex-wrap">
+                              <span className="font-mono font-bold text-sm text-[#23201C]">{ord.id}</span>
+                              <span className="text-xs text-[#8C7D6B]">• {ord.date}</span>
+                              <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-green-100 text-green-800 border border-green-200">
                                 {ord.status}
                               </span>
                             </div>
-                            <p className="text-xs text-[#524637] font-medium">{ord.itemsSummary}</p>
-                            {ord.trackingNumber && (
-                              <p className="text-[11px] text-[#8B5337] flex items-center gap-1 font-semibold">
-                                <Truck className="w-3.5 h-3.5" />
-                                <span>InPost Paczkomat: <code>{ord.trackingNumber}</code></span>
-                              </p>
-                            )}
+                            <div className="text-right flex items-baseline gap-2">
+                              <span className="text-xs text-[#716556]">Razem:</span>
+                              <span className="font-serif text-lg font-bold text-[#23201C]">{ord.totalPln} zł</span>
+                            </div>
                           </div>
-                          <div className="text-right shrink-0">
-                            <div className="font-serif text-lg font-bold text-[#23201C]">{ord.totalPln} zł</div>
-                            <span className="text-[10px] text-green-700 font-bold">Opłacono online</span>
+
+                          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                            <div className="space-y-1.5 flex-1 min-w-0">
+                              <p className="text-xs text-[#3D3327] font-semibold">{ord.itemsSummary}</p>
+                              {ord.trackingNumber && (
+                                <p className="text-[11px] text-[#8B5337] flex items-center gap-1.5 font-medium">
+                                  <Truck className="w-3.5 h-3.5 text-[#1B4332]" />
+                                  <span>InPost Paczkomat: <code className="bg-[#EFE3CF] px-1.5 py-0.5 rounded font-mono text-[10px]">{ord.trackingNumber}</code></span>
+                                </p>
+                              )}
+                            </div>
+
+                            {/* Action Buttons: 1-Click Reorder & Invoice PDF */}
+                            <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
+                              <button
+                                type="button"
+                                onClick={() => handleReorder(ord)}
+                                className="flex-1 sm:flex-initial px-3.5 py-2 rounded-xl bg-[#1B4332] hover:bg-[#143326] text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer active:scale-95"
+                                title="Dodaj te same produkty do koszyka jednym kliknięciem"
+                              >
+                                <RotateCcw className="w-3.5 h-3.5 text-[#E6C065]" />
+                                <span>Zamów ponownie</span>
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => setViewingInvoiceOrder(ord)}
+                                className="px-3.5 py-2 rounded-xl bg-white hover:bg-[#F2E5D3] border border-[#DFCBB5] text-[#4A4033] text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-2xs cursor-pointer"
+                                title="Wyświetl i pobierz e-Fakturę PDF"
+                              >
+                                <FileText className="w-3.5 h-3.5 text-[#8B5337]" />
+                                <span>Faktura PDF</span>
+                              </button>
+                            </div>
                           </div>
                         </div>
                       ))}
@@ -1022,118 +1160,315 @@ export const AccountPage: React.FC<AccountPageProps> = ({ displayResolution }) =
                 </div>
               )}
 
-              {/* TAB 4: ADRESY & PACZKOMAT INPOST */}
-              {activeTab === 'adresy' && (
+              {/* TAB 4: ULUBIONE MIODY (WISHLIST) */}
+              {activeTab === 'ulubione' && (
                 <div className="space-y-6">
-                  <div className="border-b border-[#EFE3CF] pb-4">
-                    <h2 className="font-serif text-2xl font-bold text-[#23201C]">
-                      Adres Dostawy & Paczkomat InPost
-                    </h2>
-                    <p className="text-xs text-[#6B5E4F] mt-1">
-                      Dane zapisane w tym miejscu będą <strong>automatycznie podstawiane w koszyku</strong>, dzięki czemu złożysz kolejne zamówienie bez ponownego wpisywania!
-                    </p>
+                  <div className="border-b border-[#EFE3CF] pb-4 flex items-center justify-between">
+                    <div>
+                      <h2 className="font-serif text-2xl font-bold text-[#23201C] flex items-center gap-2.5">
+                        <Heart className="w-6 h-6 text-red-600 fill-red-600" />
+                        <span>Twój Schowek na Ulubione Miody</span>
+                      </h2>
+                      <p className="text-xs text-[#6B5E4F] mt-1">
+                        Zapisane produkty, do których możesz szybko wrócić lub zamówić za jednym kliknięciem.
+                      </p>
+                    </div>
+                    <span className="text-xs font-bold px-3 py-1 rounded-full bg-[#FAF0E1] border border-[#DFCBB5] text-[#8B5337]">
+                      {favoriteProducts.length} {favoriteProducts.length === 1 ? 'słoik' : 'słoiki'}
+                    </span>
                   </div>
 
-                  {saveAddressSuccess && (
-                    <div className="p-4 rounded-xl bg-green-50 border border-green-200 text-green-800 text-xs font-bold flex items-center gap-2 animate-in fade-in">
-                      <Check className="w-4 h-4 text-green-600" />
-                      <span>Dane adresowe i preferowany Paczkomat zostały pomyślnie zaktualizowane!</span>
+                  {favoriteProducts.length === 0 ? (
+                    <div className="text-center py-12 px-4 rounded-3xl bg-[#FAF8F5] border border-dashed border-[#DFCBB5] space-y-4">
+                      <div className="w-14 h-14 mx-auto rounded-2xl bg-[#FEE2E2] text-red-600 flex items-center justify-center text-2xl">
+                        ❤️
+                      </div>
+                      <div className="max-w-md mx-auto">
+                        <h3 className="font-serif text-lg font-bold text-[#23201C]">
+                          Twój schowek jest jeszcze pusty
+                        </h3>
+                        <p className="text-xs text-[#786B5A] mt-1 leading-relaxed">
+                          Przeglądaj sklep i dodawaj słoiki do ulubionych, klikając ikonę serduszka. Będziesz mieć do nich natychmiastowy dostęp przy kolejnych zakupach!
+                        </p>
+                      </div>
+                      <Link
+                        to="/sklep"
+                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#2D2821] text-white text-xs font-bold hover:bg-[#433B31]"
+                      >
+                        Przejdź do sklepu z miodami
+                      </Link>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {favoriteProducts.map((prod) => {
+                        const defaultSize = prod.sizes[0];
+                        return (
+                          <div key={prod.id} className="p-4 rounded-2xl bg-[#FAF8F5] border border-[#E7DDCE] flex gap-3.5 items-center justify-between">
+                            <div className="flex items-center gap-3 min-w-0">
+                              <img
+                                src={prod.imageUrl}
+                                alt={prod.name}
+                                className="w-16 h-16 rounded-xl object-cover bg-amber-50 border border-[#E7DAC8] shrink-0"
+                              />
+                              <div className="min-w-0">
+                                <h4 className="font-serif font-bold text-xs sm:text-sm text-[#23201C] truncate">
+                                  {prod.name}
+                                </h4>
+                                <p className="text-[11px] text-[#716556] truncate">{prod.tagline}</p>
+                                <div className="font-serif font-bold text-xs text-[#8B5337] mt-1">
+                                  od {defaultSize.pricePln} zł ({defaultSize.weightGrams}g)
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="flex flex-col gap-1.5 shrink-0">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  if (onAddToCart) {
+                                    onAddToCart(prod, defaultSize.weightGrams, defaultSize.pricePln);
+                                    if (onOpenCart) onOpenCart();
+                                  }
+                                }}
+                                className="px-3 py-1.5 rounded-lg bg-[#1B4332] text-white text-[11px] font-bold hover:bg-[#143326] transition-colors cursor-pointer"
+                              >
+                                Do koszyka
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => toggleFavorite(prod.id)}
+                                className="px-2 py-1 text-[10px] text-red-600 hover:underline cursor-pointer text-center"
+                              >
+                                Usuń
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   )}
-
-                  <form onSubmit={handleAddressSubmit} className="space-y-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-bold text-[#4A4033] mb-1">Imię</label>
-                        <input
-                          type="text"
-                          required
-                          value={addressForm.firstName}
-                          onChange={(e) => setAddressForm({ ...addressForm, firstName: e.target.value })}
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-[#D9CDBD] bg-[#FAF8F5] focus:bg-white text-xs text-[#23201C]"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-bold text-[#4A4033] mb-1">Nazwisko</label>
-                        <input
-                          type="text"
-                          required
-                          value={addressForm.lastName}
-                          onChange={(e) => setAddressForm({ ...addressForm, lastName: e.target.value })}
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-[#D9CDBD] bg-[#FAF8F5] focus:bg-white text-xs text-[#23201C]"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-bold text-[#4A4033] mb-1">Ulica i numer domu / lokalu</label>
-                      <input
-                        type="text"
-                        value={addressForm.street}
-                        onChange={(e) => setAddressForm({ ...addressForm, street: e.target.value })}
-                        placeholder="np. ul. Parkowa 14/8"
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-[#D9CDBD] bg-[#FAF8F5] focus:bg-white text-xs text-[#23201C]"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      <div>
-                        <label className="block text-xs font-bold text-[#4A4033] mb-1">Kod pocztowy</label>
-                        <input
-                          type="text"
-                          value={addressForm.postalCode}
-                          onChange={(e) => setAddressForm({ ...addressForm, postalCode: e.target.value })}
-                          placeholder="np. 50-120"
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-[#D9CDBD] bg-[#FAF8F5] focus:bg-white text-xs text-[#23201C]"
-                        />
-                      </div>
-                      <div className="sm:col-span-2">
-                        <label className="block text-xs font-bold text-[#4A4033] mb-1">Miejscowość</label>
-                        <input
-                          type="text"
-                          value={addressForm.city}
-                          onChange={(e) => setAddressForm({ ...addressForm, city: e.target.value })}
-                          placeholder="np. Wrocław"
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-[#D9CDBD] bg-[#FAF8F5] focus:bg-white text-xs text-[#23201C]"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-bold text-[#4A4033] mb-1">Telefon kontaktowy</label>
-                        <input
-                          type="tel"
-                          value={addressForm.phone}
-                          onChange={(e) => setAddressForm({ ...addressForm, phone: e.target.value })}
-                          placeholder="+48 600 000 000"
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-[#D9CDBD] bg-[#FAF8F5] focus:bg-white text-xs text-[#23201C]"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-bold text-[#4A4033] mb-1">Domyślny Paczkomat InPost</label>
-                        <input
-                          type="text"
-                          value={addressForm.parcelLocker}
-                          onChange={(e) => setAddressForm({ ...addressForm, parcelLocker: e.target.value })}
-                          placeholder="np. WRO05M • ul. Sienkiewicza 32, Wrocław"
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-[#D9CDBD] bg-[#FAF8F5] focus:bg-white text-xs text-[#23201C]"
-                        />
-                      </div>
-                    </div>
-
-                    <button
-                      type="submit"
-                      className="py-3 px-6 rounded-xl bg-[#2D2821] hover:bg-[#433B31] text-white font-bold text-xs sm:text-sm transition-all shadow-md active:scale-98 cursor-pointer flex items-center gap-2"
-                    >
-                      <Check className="w-4 h-4 text-[#E5983A]" />
-                      <span>Zapisz dane w profilu</span>
-                    </button>
-                  </form>
                 </div>
               )}
 
-              {/* TAB 5: KARTY & PCI-DSS */}
+              {/* TAB 5: ADRESY & FAKTURA VAT */}
+              {activeTab === 'adresy' && (
+                <div className="space-y-8">
+                  {/* Sekcja 1: Adres dostawy i Paczkomat */}
+                  <div className="space-y-4">
+                    <div className="border-b border-[#EFE3CF] pb-3">
+                      <h2 className="font-serif text-2xl font-bold text-[#23201C] flex items-center gap-2">
+                        <MapPin className="w-5 h-5 text-[#8B5337]" />
+                        <span>Adres Dostawy & Paczkomat InPost</span>
+                      </h2>
+                      <p className="text-xs text-[#6B5E4F] mt-1">
+                        Domyślny adres wysyłki i Paczkomat InPost, które <strong>automatycznie podstawiają się w koszyku</strong>.
+                      </p>
+                    </div>
+
+                    {saveAddressSuccess && (
+                      <div className="p-4 rounded-xl bg-green-50 border border-green-200 text-green-800 text-xs font-bold flex items-center gap-2 animate-in fade-in">
+                        <Check className="w-4 h-4 text-green-600" />
+                        <span>Dane dostawy zostały pomyślnie zaktualizowane!</span>
+                      </div>
+                    )}
+
+                    <form onSubmit={handleAddressSubmit} className="space-y-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-xs font-bold text-[#4A4033] mb-1">Imię odbiorcy</label>
+                          <input
+                            type="text"
+                            required
+                            value={addressForm.firstName}
+                            onChange={(e) => setAddressForm({ ...addressForm, firstName: e.target.value })}
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-[#D9CDBD] bg-[#FAF8F5] focus:bg-white text-xs text-[#23201C]"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-[#4A4033] mb-1">Nazwisko odbiorcy</label>
+                          <input
+                            type="text"
+                            required
+                            value={addressForm.lastName}
+                            onChange={(e) => setAddressForm({ ...addressForm, lastName: e.target.value })}
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-[#D9CDBD] bg-[#FAF8F5] focus:bg-white text-xs text-[#23201C]"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-[#4A4033] mb-1">Ulica i numer domu / lokalu</label>
+                        <input
+                          type="text"
+                          value={addressForm.street}
+                          onChange={(e) => setAddressForm({ ...addressForm, street: e.target.value })}
+                          placeholder="np. ul. Parkowa 14/8"
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-[#D9CDBD] bg-[#FAF8F5] focus:bg-white text-xs text-[#23201C]"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                          <label className="block text-xs font-bold text-[#4A4033] mb-1">Kod pocztowy</label>
+                          <input
+                            type="text"
+                            value={addressForm.postalCode}
+                            onChange={(e) => setAddressForm({ ...addressForm, postalCode: e.target.value })}
+                            placeholder="np. 50-120"
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-[#D9CDBD] bg-[#FAF8F5] focus:bg-white text-xs text-[#23201C]"
+                          />
+                        </div>
+                        <div className="sm:col-span-2">
+                          <label className="block text-xs font-bold text-[#4A4033] mb-1">Miejscowość</label>
+                          <input
+                            type="text"
+                            value={addressForm.city}
+                            onChange={(e) => setAddressForm({ ...addressForm, city: e.target.value })}
+                            placeholder="np. Wrocław"
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-[#D9CDBD] bg-[#FAF8F5] focus:bg-white text-xs text-[#23201C]"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-xs font-bold text-[#4A4033] mb-1">Telefon kontaktowy (dla InPost)</label>
+                          <input
+                            type="tel"
+                            value={addressForm.phone}
+                            onChange={(e) => setAddressForm({ ...addressForm, phone: e.target.value })}
+                            placeholder="+48 600 000 000"
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-[#D9CDBD] bg-[#FAF8F5] focus:bg-white text-xs text-[#23201C]"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-[#4A4033] mb-1">Domyślny Paczkomat InPost</label>
+                          <input
+                            type="text"
+                            value={addressForm.parcelLocker}
+                            onChange={(e) => setAddressForm({ ...addressForm, parcelLocker: e.target.value })}
+                            placeholder="np. WRO05M • ul. Sienkiewicza 32, Wrocław"
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-[#D9CDBD] bg-[#FAF8F5] focus:bg-white text-xs text-[#23201C]"
+                          />
+                        </div>
+                      </div>
+
+                      <button
+                        type="submit"
+                        className="py-2.5 px-5 rounded-xl bg-[#2D2821] hover:bg-[#433B31] text-white font-bold text-xs sm:text-sm transition-all shadow-md active:scale-98 cursor-pointer flex items-center gap-2"
+                      >
+                        <Check className="w-4 h-4 text-[#E5983A]" />
+                        <span>Zapisz dane dostawy</span>
+                      </button>
+                    </form>
+                  </div>
+
+                  {/* Sekcja 2: Dane do Faktury VAT (Firma / B2B) */}
+                  <div className="pt-6 border-t border-[#EFE3CF] space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-serif text-xl font-bold text-[#23201C] flex items-center gap-2">
+                          <Building2 className="w-5 h-5 text-[#8B5337]" />
+                          <span>Dane do Faktury VAT (Firma / B2B)</span>
+                        </h3>
+                        <p className="text-xs text-[#6B5E4F] mt-0.5">
+                          Uzupełnij, jeśli kupujesz miody na firmę lub potrzebujesz comiesięcznych faktur z NIP.
+                        </p>
+                      </div>
+
+                      <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-[#23201C]">
+                        <input
+                          type="checkbox"
+                          checked={invoiceForm.isCompany}
+                          onChange={(e) => setInvoiceForm({ ...invoiceForm, isCompany: e.target.checked })}
+                          className="rounded border-[#D9CDBD] text-[#D9821E] focus:ring-[#D9821E]"
+                        />
+                        <span>Kupuję na firmę</span>
+                      </label>
+                    </div>
+
+                    {saveInvoiceSuccess && (
+                      <div className="p-4 rounded-xl bg-green-50 border border-green-200 text-green-800 text-xs font-bold flex items-center gap-2 animate-in fade-in">
+                        <Check className="w-4 h-4 text-green-600" />
+                        <span>Dane do faktury VAT zostały pomyślnie zaktualizowane!</span>
+                      </div>
+                    )}
+
+                    {invoiceForm.isCompany && (
+                      <form onSubmit={handleInvoiceSubmit} className="space-y-4 p-5 rounded-2xl bg-[#FAF8F5] border border-[#E7DDCE] animate-in fade-in duration-200">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-xs font-bold text-[#4A4033] mb-1">Numer NIP firmy *</label>
+                            <input
+                              type="text"
+                              required
+                              value={invoiceForm.nip}
+                              onChange={(e) => setInvoiceForm({ ...invoiceForm, nip: e.target.value })}
+                              placeholder="np. 8971234567"
+                              className="w-full px-3.5 py-2.5 rounded-xl border border-[#D9CDBD] bg-white text-xs font-mono text-[#23201C]"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-bold text-[#4A4033] mb-1">Pełna nazwa firmy *</label>
+                            <input
+                              type="text"
+                              required
+                              value={invoiceForm.companyName}
+                              onChange={(e) => setInvoiceForm({ ...invoiceForm, companyName: e.target.value })}
+                              placeholder="np. Studio Projektowe Sp. z o.o."
+                              className="w-full px-3.5 py-2.5 rounded-xl border border-[#D9CDBD] bg-white text-xs text-[#23201C]"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-bold text-[#4A4033] mb-1">Ulica i numer siedziby</label>
+                          <input
+                            type="text"
+                            value={invoiceForm.street}
+                            onChange={(e) => setInvoiceForm({ ...invoiceForm, street: e.target.value })}
+                            placeholder="np. ul. Parkowa 14/8"
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-[#D9CDBD] bg-white text-xs text-[#23201C]"
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                          <div>
+                            <label className="block text-xs font-bold text-[#4A4033] mb-1">Kod pocztowy</label>
+                            <input
+                              type="text"
+                              value={invoiceForm.postalCode}
+                              onChange={(e) => setInvoiceForm({ ...invoiceForm, postalCode: e.target.value })}
+                              placeholder="np. 50-120"
+                              className="w-full px-3.5 py-2.5 rounded-xl border border-[#D9CDBD] bg-white text-xs text-[#23201C]"
+                            />
+                          </div>
+                          <div className="sm:col-span-2">
+                            <label className="block text-xs font-bold text-[#4A4033] mb-1">Miejscowość</label>
+                            <input
+                              type="text"
+                              value={invoiceForm.city}
+                              onChange={(e) => setInvoiceForm({ ...invoiceForm, city: e.target.value })}
+                              placeholder="np. Wrocław"
+                              className="w-full px-3.5 py-2.5 rounded-xl border border-[#D9CDBD] bg-white text-xs text-[#23201C]"
+                            />
+                          </div>
+                        </div>
+
+                        <button
+                          type="submit"
+                          className="py-2.5 px-5 rounded-xl bg-[#1B4332] hover:bg-[#143326] text-white font-bold text-xs sm:text-sm transition-all shadow-md active:scale-98 cursor-pointer flex items-center gap-2"
+                        >
+                          <Check className="w-4 h-4 text-[#E6C065]" />
+                          <span>Zapisz dane firmy do faktur</span>
+                        </button>
+                      </form>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 6: KARTY & PCI-DSS */}
               {activeTab === 'platnosci' && (
                 <div className="space-y-6">
                   <div className="border-b border-[#EFE3CF] pb-4">
@@ -1240,6 +1575,152 @@ export const AccountPage: React.FC<AccountPageProps> = ({ displayResolution }) =
           </div>
         )}
       </section>
+
+      {/* ========================================================
+          E-INVOICE PDF PREVIEW / PRINT MODAL
+          ======================================================== */}
+      {viewingInvoiceOrder && (
+        <div 
+          className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200"
+          onClick={() => setViewingInvoiceOrder(null)}
+        >
+          <div 
+            className="w-full max-w-2xl bg-white rounded-3xl border border-[#D9CDBD] shadow-2xl p-6 sm:p-8 space-y-6 relative overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Top Modal Controls */}
+            <div className="flex items-center justify-between pb-4 border-b border-[#EAE0D1]">
+              <div className="flex items-center gap-2">
+                <FileText className="w-5 h-5 text-[#8B5337]" />
+                <span className="font-serif font-bold text-base text-[#23201C]">
+                  Elektroniczna Faktura VAT • {viewingInvoiceOrder.invoiceNumber || viewingInvoiceOrder.id}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => window.print()}
+                  className="px-3 py-1.5 rounded-xl bg-[#FAF5ED] border border-[#DFCBB5] text-xs font-bold text-[#554A3B] hover:bg-[#F2E5D3] flex items-center gap-1.5 transition-colors cursor-pointer"
+                >
+                  <Printer className="w-3.5 h-3.5" />
+                  <span>Drukuj / Zapisz PDF</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewingInvoiceOrder(null)}
+                  className="p-1.5 rounded-full hover:bg-neutral-100 text-neutral-500 cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Printable Invoice Sheet */}
+            <div className="space-y-6 text-xs text-[#2B251D]">
+              <div className="flex justify-between items-start">
+                <div>
+                  <div className="font-serif font-extrabold text-xl text-[#23201C]">
+                    Pasieka Wędrowna „Usza”
+                  </div>
+                  <div className="text-[11px] text-[#786B5A] mt-0.5">
+                    Gospodarstwo Pasieczne Magdalena i Piotr Szymkowicz<br />
+                    Ciechów, Dolny Śląsk • NIP: 897-123-45-67
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="font-bold text-sm text-[#23201C]">FAKTURA VAT</div>
+                  <div className="font-mono text-xs font-semibold text-[#8B5337]">
+                    {viewingInvoiceOrder.invoiceNumber || `FV/${viewingInvoiceOrder.id}`}
+                  </div>
+                  <div className="text-[10px] text-[#8C7D6B] mt-0.5">
+                    Data wystawienia: {viewingInvoiceOrder.date}
+                  </div>
+                </div>
+              </div>
+
+              {/* Nabywca */}
+              <div className="p-4 rounded-xl bg-[#FAF8F5] border border-[#EBE1D3] grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-[#8C7D6B] block mb-1">Sprzedawca:</span>
+                  <p className="font-semibold">Pasieka Wędrowna Usza</p>
+                  <p>Magdalena i Piotr Szymkowicz</p>
+                  <p>ul. Lipowa 12, Ciechów</p>
+                  <p>NIP: 897-123-45-67</p>
+                </div>
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-[#8C7D6B] block mb-1">Nabywca:</span>
+                  {user?.invoiceData?.isCompany ? (
+                    <>
+                      <p className="font-bold">{user.invoiceData.companyName}</p>
+                      <p>NIP: {user.invoiceData.nip}</p>
+                      <p>{user.invoiceData.street}</p>
+                      <p>{user.invoiceData.postalCode} {user.invoiceData.city}</p>
+                    </>
+                  ) : (
+                    <>
+                      <p className="font-bold">{user?.firstName} {user?.lastName || user?.address.lastName}</p>
+                      <p>{user?.address.street || 'Osoba prywatna'}</p>
+                      <p>{user?.address.postalCode} {user?.address.city}</p>
+                      <p>Tel: {user?.address.phone || '-'}</p>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* Items Table */}
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="border-b border-[#DFCBB5] text-[11px] font-bold text-[#716556]">
+                    <th className="py-2">Pozycja / Towar</th>
+                    <th className="py-2 text-center">Ilość</th>
+                    <th className="py-2 text-right">Netto</th>
+                    <th className="py-2 text-right">VAT</th>
+                    <th className="py-2 text-right">Brutto</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#EFE5D8]">
+                  {viewingInvoiceOrder.items && viewingInvoiceOrder.items.length > 0 ? (
+                    viewingInvoiceOrder.items.map((item, idx) => {
+                      const gross = item.pricePln * item.quantity;
+                      const net = (gross / 1.05).toFixed(2);
+                      const vat = (gross - parseFloat(net)).toFixed(2);
+                      return (
+                        <tr key={idx} className="py-2">
+                          <td className="py-2.5 font-medium">{item.productName} ({item.weightGrams}g)</td>
+                          <td className="py-2.5 text-center">{item.quantity} szt.</td>
+                          <td className="py-2.5 text-right font-mono">{net} zł</td>
+                          <td className="py-2.5 text-right font-mono">5% ({vat} zł)</td>
+                          <td className="py-2.5 text-right font-bold font-mono">{gross.toFixed(2)} zł</td>
+                        </tr>
+                      );
+                    })
+                  ) : (
+                    <tr>
+                      <td className="py-2.5 font-medium">{viewingInvoiceOrder.itemsSummary}</td>
+                      <td className="py-2.5 text-center">1 kpl.</td>
+                      <td className="py-2.5 text-right font-mono">{(viewingInvoiceOrder.totalPln / 1.05).toFixed(2)} zł</td>
+                      <td className="py-2.5 text-right font-mono">5%</td>
+                      <td className="py-2.5 text-right font-bold font-mono">{viewingInvoiceOrder.totalPln.toFixed(2)} zł</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+
+              {/* Total & Summary */}
+              <div className="pt-3 border-t border-[#DFCBB5] flex justify-between items-center text-xs">
+                <div>
+                  <span className="text-[11px] text-[#716556] block">Status płatności:</span>
+                  <span className="font-bold text-green-700">Zapłacono online (Przelewy24 / BLIK)</span>
+                </div>
+                <div className="text-right">
+                  <span className="text-[11px] text-[#716556] block">Do zapłaty (Brutto):</span>
+                  <span className="font-serif text-xl font-extrabold text-[#23201C]">{viewingInvoiceOrder.totalPln.toFixed(2)} zł</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 };

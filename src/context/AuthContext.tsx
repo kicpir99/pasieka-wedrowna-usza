@@ -28,13 +28,32 @@ export interface SavedCard {
   expiry: string;
 }
 
+export interface PastOrderItem {
+  productId: string;
+  productName: string;
+  weightGrams: number;
+  pricePln: number;
+  quantity: number;
+}
+
 export interface PastOrder {
   id: string;
   date: string;
   itemsSummary: string;
+  items?: PastOrderItem[];
   totalPln: number;
   status: 'Doręczona' | 'W drodze' | 'Przygotowywana';
   trackingNumber?: string;
+  invoiceNumber?: string;
+}
+
+export interface InvoiceData {
+  isCompany: boolean;
+  companyName: string;
+  nip: string;
+  street: string;
+  postalCode: string;
+  city: string;
 }
 
 export interface UserProfile {
@@ -42,9 +61,11 @@ export interface UserProfile {
   firstName: string;
   lastName: string;
   address: UserAddress;
+  invoiceData?: InvoiceData;
   savedCard: SavedCard | null;
   subscriptions: SubscriptionItem[];
   orders: PastOrder[];
+  favorites: string[];
 }
 
 interface AuthContextType {
@@ -68,7 +89,10 @@ interface AuthContextType {
   togglePauseSubscription: (subId: string) => void;
   cancelSubscription: (subId: string) => void;
   updateAddress: (newAddress: UserAddress) => void;
+  updateInvoiceData: (newInvoiceData: InvoiceData) => void;
   updateCard: (newCard: SavedCard) => void;
+  toggleFavorite: (productId: string) => void;
+  isFavorite: (productId: string) => boolean;
 }
 
 const STORAGE_KEY = 'pasieka_user_account_v1';
@@ -86,11 +110,20 @@ const DEMO_USER: UserProfile = {
     phone: '+48 601 234 567',
     parcelLocker: 'WRO05M • ul. Sienkiewicza 32, Wrocław',
   },
+  invoiceData: {
+    isCompany: true,
+    companyName: 'Studio Projektowe Kowalska Sp. z o.o.',
+    nip: '8971234567',
+    street: 'ul. Parkowa 14/8',
+    postalCode: '50-120',
+    city: 'Wrocław',
+  },
   savedCard: {
     brand: 'Visa',
     last4: '4821',
     expiry: '08/28',
   },
+  favorites: ['miod-wrzosowy', 'miod-ze-spadzi-iglastej'],
   subscriptions: [
     {
       id: 'sub-lipa-1200',
@@ -120,17 +153,44 @@ const DEMO_USER: UserProfile = {
       id: 'USZ-26/1842',
       date: '12 sierpnia 2026',
       itemsSummary: 'Miód ze Spadzi Iglastej (1200g) + Miód Lipowy (400g)',
+      items: [
+        {
+          productId: 'miod-ze-spadzi-iglastej',
+          productName: 'Miód ze Spadzi Iglastej (RAW)',
+          weightGrams: 1200,
+          pricePln: 98,
+          quantity: 1,
+        },
+        {
+          productId: 'miod-lipowy',
+          productName: 'Miód Lipowy (RAW)',
+          weightGrams: 400,
+          pricePln: 35,
+          quantity: 1,
+        }
+      ],
       totalPln: 133,
       status: 'Doręczona',
       trackingNumber: '62849182371928472910',
+      invoiceNumber: 'FV/USZ/2026/08/1842',
     },
     {
       id: 'USZ-26/1420',
       date: '15 czerwca 2026',
       itemsSummary: 'Miód Akacjowy (1200g) • Autouzupełnianie',
+      items: [
+        {
+          productId: 'miod-akacjowy',
+          productName: 'Miód Akacjowy (RAW)',
+          weightGrams: 1200,
+          pricePln: 70.2,
+          quantity: 1,
+        }
+      ],
       totalPln: 70.2,
       status: 'Doręczona',
       trackingNumber: '62849182371928471184',
+      invoiceNumber: 'FV/USZ/2026/06/1420',
     }
   ]
 };
@@ -165,6 +225,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       ...DEMO_USER,
       email,
       firstName: email.split('@')[0],
+      favorites: DEMO_USER.favorites || [],
     };
     saveUser(newUser);
   };
@@ -196,6 +257,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       savedCard: null,
       subscriptions: [],
       orders: [],
+      favorites: [],
     };
     saveUser(newUser);
   };
@@ -244,8 +306,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     saveUser({
       ...user,
       address: newAddress,
-      firstName: newAddress.firstName,
-      lastName: newAddress.lastName,
+      firstName: newAddress.firstName || user.firstName,
+      lastName: newAddress.lastName || user.lastName,
+    });
+  };
+
+  const updateInvoiceData = (newInvoiceData: InvoiceData) => {
+    if (!user) return;
+    saveUser({
+      ...user,
+      invoiceData: newInvoiceData,
     });
   };
 
@@ -255,6 +325,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       ...user,
       savedCard: newCard,
     });
+  };
+
+  const toggleFavorite = (productId: string) => {
+    if (!user) return;
+    const currentFavs = user.favorites || [];
+    const isFav = currentFavs.includes(productId);
+    const updatedFavs = isFav
+      ? currentFavs.filter(id => id !== productId)
+      : [...currentFavs, productId];
+    saveUser({
+      ...user,
+      favorites: updatedFavs,
+    });
+  };
+
+  const isFavorite = (productId: string): boolean => {
+    return Boolean(user?.favorites?.includes(productId));
   };
 
   return (
@@ -270,7 +357,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         togglePauseSubscription,
         cancelSubscription,
         updateAddress,
+        updateInvoiceData,
         updateCard,
+        toggleFavorite,
+        isFavorite,
       }}
     >
       {children}
