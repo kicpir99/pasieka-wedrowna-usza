@@ -277,38 +277,41 @@ export const HoneyLiquidRibbon: React.FC<HoneyRibbonProps> = ({
         zIndex: isFrontLayer ? 30 : 5,
       }}
     >
-      <div className="relative flex items-center justify-center animate-honey-breathe overflow-visible">
-        {/* 1. FOTOREALISTYCZNA ORGANICZNA KAUSTYKA MIODU NA PODŁOŻU (załamanie światła w szkle i płynie) */}
+      <div className="relative flex items-center justify-center overflow-visible">
+        {/* 1. FOTOREALISTYCZNA ORGANICZNA KAUSTYKA MIODU NA PODŁOŻU (Stabilna na posadzce z delikatną mikro-pulsacją blasku) */}
         {!isFrontLayer && causticsAsset && (
-          <img
-            src={getAssetUrl(causticsAsset)}
-            alt=""
-            aria-hidden="true"
-            loading="eager"
-            decoding="async"
-            className="absolute inset-0 w-[410px] sm:w-[630px] md:w-[930px] lg:w-[1030px] xl:w-[1070px] max-w-none h-auto object-contain pointer-events-none select-none"
-            style={{
-              mixBlendMode: 'screen',
-              opacity: 0.90,
-              filter: 'contrast(1.1) brightness(1.05)',
-            }}
-          />
+          <div className="absolute inset-0 flex items-center justify-center animate-honey-caustics pointer-events-none">
+            <img
+              src={getAssetUrl(causticsAsset)}
+              alt=""
+              aria-hidden="true"
+              loading="eager"
+              decoding="async"
+              className="w-[410px] sm:w-[630px] md:w-[930px] lg:w-[1030px] xl:w-[1070px] max-w-none h-auto object-contain pointer-events-none select-none"
+              style={{
+                mixBlendMode: 'screen',
+                filter: 'contrast(1.1) brightness(1.05)',
+              }}
+            />
+          </div>
         )}
 
-        {/* 2. LUSTRZANE ODBICIE PRZEDNIEJ WSTĘGI W CIEMNEJ TAFLI PODŁOŻA (na poziomie stołu, pod wstęgą) */}
+        {/* 2. LUSTRZANE ODBICIE PRZEDNIEJ WSTĘGI W CIEMNEJ TAFLI PODŁOŻA (Odwrócona faza lustrzana: zbliża się ku górze, gdy wstęga opada ku dołowi!) */}
         {!isFrontLayer && reflectionAsset && (
-          <img
-            src={getAssetUrl(reflectionAsset)}
-            alt=""
-            aria-hidden="true"
-            loading="eager"
-            decoding="async"
-            className="absolute inset-0 w-[410px] sm:w-[630px] md:w-[930px] lg:w-[1030px] xl:w-[1070px] max-w-none h-auto object-contain pointer-events-none select-none"
-            style={{
-              opacity: 0.70,
-              filter: 'blur(0.5px)',
-            }}
-          />
+          <div className="absolute inset-0 flex items-center justify-center animate-honey-breathe-reflection pointer-events-none">
+            <img
+              src={getAssetUrl(reflectionAsset)}
+              alt=""
+              aria-hidden="true"
+              loading="eager"
+              decoding="async"
+              className="w-[410px] sm:w-[630px] md:w-[930px] lg:w-[1030px] xl:w-[1070px] max-w-none h-auto object-contain pointer-events-none select-none"
+              style={{
+                opacity: 0.70,
+                filter: 'blur(0.5px)',
+              }}
+            />
+          </div>
         )}
 
         {/* 3. CIEPŁA AMBIENTOWA ŁUNA PODŁOGOWA W KOLORZE DANEGO MIODU (Tylko pod głównym słoikiem) */}
@@ -323,17 +326,16 @@ export const HoneyLiquidRibbon: React.FC<HoneyRibbonProps> = ({
           />
         )}
 
-        {/* 4. WARSTWA GŁÓWNA WSTĘGI MIODOWEJ (FRONT LUB BACK) */}
-        <img
-          src={imageSrc}
-          alt={isFrontLayer ? "Miodowa wstęga - przód" : "Miodowa wstęga - tło"}
-          loading="eager"
-          decoding="async"
-          className="w-[410px] sm:w-[630px] md:w-[930px] lg:w-[1030px] xl:w-[1070px] max-w-none h-auto object-contain pointer-events-none select-none"
-          style={{
-            willChange: 'transform'
-          }}
-        />
+        {/* 4. WARSTWA GŁÓWNA WSTĘGI MIODOWEJ (FRONT LUB BACK) - Subtelne unoszenie i opadanie w fazie głównej */}
+        <div className="relative flex items-center justify-center animate-honey-breathe pointer-events-none">
+          <img
+            src={imageSrc}
+            alt={isFrontLayer ? "Miodowa wstęga - przód" : "Miodowa wstęga - tło"}
+            loading="eager"
+            decoding="async"
+            className="w-[410px] sm:w-[630px] md:w-[930px] lg:w-[1030px] xl:w-[1070px] max-w-none h-auto object-contain pointer-events-none select-none"
+          />
+        </div>
       </div>
     </div>
   );

@@ -44,15 +44,48 @@ h1, h2, h3, .font-display {
 
 @keyframes honeyBreathe {
   0%, 100% {
-    transform: translateY(0px) scale(1);
+    transform: translate3d(0, 0px, 0) scale(1);
   }
   50% {
-    transform: translateY(-6px) scale(1.008);
+    transform: translate3d(0, -3px, 0) scale(1.004);
+  }
+}
+
+/* Odbicie w lustrze podłoża: naturalna odwrócona faza (gdy obiekt unosi się w górę, odbicie oddala się w dół; gdy obiekt opada, odbicie zbliża się ku tafli) */
+@keyframes honeyBreatheReflection {
+  0%, 100% {
+    transform: translate3d(0, 0px, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(0, 2.4px, 0) scale(0.998);
+  }
+}
+
+/* Płynna mikro-pulsacja blasku kaustyki na podłożu w rytm zbliżania wstęgi */
+@keyframes honeyCausticsPulse {
+  0%, 100% {
+    opacity: 0.88;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.96;
+    transform: scale(1.006);
   }
 }
 
 .animate-honey-breathe {
-  animation: honeyBreathe 7s ease-in-out infinite;
+  animation: honeyBreathe 7.5s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-honey-breathe-reflection {
+  animation: honeyBreatheReflection 7.5s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-honey-caustics {
+  animation: honeyCausticsPulse 7.5s ease-in-out infinite;
+  will-change: transform, opacity;
 }
 
 /* Custom smooth modal scrolling & aesthetic scrollbar */
