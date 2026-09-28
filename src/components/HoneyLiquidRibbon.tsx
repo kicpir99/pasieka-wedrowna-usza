@@ -278,12 +278,19 @@ export const HoneyLiquidRibbon: React.FC<HoneyRibbonProps> = React.memo(({
       // Odbicie w lustrze podłoża: ŚCIŚLE ZSYNCHRONIZOWANA ODWROĆNA FAZA LUSTRZANA!
       const reflectionY = -ribbonY * 0.73;
 
+      // Kluczowe wymuszenie trybu subpikselowego w Chromium (D3D11 / Skia):
+      // Zwykłe translate3d(0, Y, 0) na monitorze 1x jest zaokrąglane przez silnik Skia do pełnych pikseli (stąd 5 skoków!).
+      // Dodanie mikroskopijnej rotacji 0.001deg oraz z=0.01px wyłącza CanSnapToIntegerGrid w silniku kompozytora,
+      // zmuszając kartę graficzną do ciągłego, analogowego renderowania subpikselowego (MSAA/float) na każdej klatce!
+      const ribbonTransform = `translate3d(0, ${ribbonY.toFixed(3)}px, 0.01px) rotate(0.001deg)`;
+      const reflectionTransform = `translate3d(0, ${reflectionY.toFixed(3)}px, 0.01px) rotate(0.001deg)`;
+
       if (ribbonRef.current) {
-        ribbonRef.current.style.transform = `translate3d(0, ${ribbonY.toFixed(3)}px, 0)`;
+        ribbonRef.current.style.transform = ribbonTransform;
       }
 
       if (reflectionRef.current) {
-        reflectionRef.current.style.transform = `translate3d(0, ${reflectionY.toFixed(3)}px, 0)`;
+        reflectionRef.current.style.transform = reflectionTransform;
       }
 
       if (causticsRef.current) {
@@ -324,8 +331,6 @@ export const HoneyLiquidRibbon: React.FC<HoneyRibbonProps> = React.memo(({
       className={`pointer-events-none absolute left-[calc(50%-18px)] sm:left-[calc(50%-28px)] md:left-[calc(50%-42px)] top-[calc(50%+24px)] sm:top-[calc(50%+32px)] md:top-[calc(50%+38px)] -translate-x-1/2 -translate-y-1/2 flex items-center justify-center select-none overflow-visible ${className}`}
       style={{
         zIndex: isFrontLayer ? 30 : 5,
-        transformStyle: 'preserve-3d',
-        perspective: '1000px',
       }}
     >
       <div className="relative flex items-center justify-center overflow-visible">
@@ -346,7 +351,6 @@ export const HoneyLiquidRibbon: React.FC<HoneyRibbonProps> = React.memo(({
               style={{
                 mixBlendMode: 'screen',
                 filter: 'contrast(1.1) brightness(1.05)',
-                transform: 'translateZ(0)',
                 backfaceVisibility: 'hidden',
               }}
             />
@@ -359,9 +363,11 @@ export const HoneyLiquidRibbon: React.FC<HoneyRibbonProps> = React.memo(({
             ref={reflectionRef}
             className="absolute inset-0 flex items-center justify-center pointer-events-none"
             style={{ 
-              transform: 'translate3d(0, 0, 0)',
+              transform: 'translate3d(0, 0, 0.01px) rotate(0.001deg)',
               willChange: 'transform',
               outline: '1px solid transparent',
+              backfaceVisibility: 'hidden',
+              WebkitBackfaceVisibility: 'hidden',
             }}
           >
             <img
@@ -374,7 +380,6 @@ export const HoneyLiquidRibbon: React.FC<HoneyRibbonProps> = React.memo(({
               style={{
                 opacity: 0.70,
                 filter: 'blur(0.5px)',
-                transform: 'translateZ(0)',
                 backfaceVisibility: 'hidden',
               }}
             />
@@ -393,14 +398,16 @@ export const HoneyLiquidRibbon: React.FC<HoneyRibbonProps> = React.memo(({
           />
         )}
 
-        {/* 4. WARSTWA GŁÓWNA WSTĘGI MIODOWEJ (FRONT LUB BACK) - Aksamitny, zsynchronizowany ruch subpikselowy */}
+        {/* 4. WARSTWA GŁÓWNA WSTĘGI MIODOWEJ (FRONT LUB BACK) - Wymuszona płynność subpikselowa GPU bez zaokrągleń do siatki */}
         <div 
           ref={ribbonRef}
           className="relative flex items-center justify-center pointer-events-none"
           style={{ 
-            transform: 'translate3d(0, 0, 0)',
+            transform: 'translate3d(0, 0, 0.01px) rotate(0.001deg)',
             willChange: 'transform',
             outline: '1px solid transparent',
+            backfaceVisibility: 'hidden',
+            WebkitBackfaceVisibility: 'hidden',
           }}
         >
           <img
@@ -410,7 +417,6 @@ export const HoneyLiquidRibbon: React.FC<HoneyRibbonProps> = React.memo(({
             decoding="async"
             className="w-[410px] sm:w-[630px] md:w-[930px] lg:w-[1030px] xl:w-[1070px] max-w-none h-auto object-contain pointer-events-none select-none"
             style={{
-              transform: 'translateZ(0)',
               backfaceVisibility: 'hidden',
             }}
           />
