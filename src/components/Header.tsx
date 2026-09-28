@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ShoppingBag, Sparkles, Menu, X, ChevronDown, ArrowRight } from 'lucide-react';
+import { ShoppingBag, Sparkles, Menu, X, ChevronDown, ArrowRight, User } from 'lucide-react';
 import { getAssetUrl } from '../utils/assets';
+import { useAuth } from '../context/AuthContext';
 
 interface HeaderProps {
   cartItemCount: number;
   cartSubtotal: number;
   onOpenCart: () => void;
   onOpenQuiz: () => void;
+  onOpenAccount: () => void;
   containerClass?: string;
 }
 
@@ -16,8 +18,10 @@ export const Header: React.FC<HeaderProps> = ({
   cartSubtotal,
   onOpenCart,
   onOpenQuiz,
+  onOpenAccount,
   containerClass,
 }) => {
+  const { isLoggedIn, user } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
   const [treasuresMenuOpen, setTreasuresMenuOpen] = useState(false);
@@ -418,6 +422,20 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
             )}
 
+            {/* Account / Moje Konto Button */}
+            <button
+              onClick={onOpenAccount}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[#DFCBB5] bg-[#FAF5ED] hover:bg-[#F2E5D3] text-[#484138] transition-all cursor-pointer shadow-2xs"
+              id="header-account-btn"
+              title="Moje Konto i Subskrypcje"
+              aria-label="Konto użytkownika"
+            >
+              <User className="w-4 h-4 text-[#8B5337]" />
+              <span className="hidden sm:inline text-xs font-semibold text-[#3D3428]">
+                {isLoggedIn ? (user?.firstName || 'Konto') : 'Konto'}
+              </span>
+            </button>
+
             <button
               onClick={onOpenCart}
               className="relative flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-[#2D2821] text-[#FAF5ED] hover:bg-[#3F382E] transition-all shadow-sm cursor-pointer"
@@ -515,9 +533,28 @@ export const Header: React.FC<HeaderProps> = ({
               type="button"
               onClick={() => {
                 setMobileMenuOpen(false);
+                onOpenAccount();
+              }}
+              className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold text-[#24211D] hover:bg-[#EDE5D8] transition-colors cursor-pointer text-left border border-[#E0D3C1] bg-[#FAF5ED]"
+            >
+              <div className="flex items-center gap-2.5">
+                <User className="w-4 h-4 text-[#8C4609]" />
+                <span>{isLoggedIn ? `Moje Konto (${user?.firstName})` : 'Moje Konto Pasieczne'}</span>
+              </div>
+              {isLoggedIn && user?.subscriptions && user.subscriptions.length > 0 && (
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#1B4332] text-white">
+                  {user.subscriptions.length} subskrypcje
+                </span>
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
                 onOpenQuiz();
               }}
-              className="w-full mt-3 flex items-center justify-center gap-2 px-4 py-3 text-xs font-bold rounded-xl bg-[#1B4332] text-white hover:bg-[#143326] transition-colors cursor-pointer shadow-sm"
+              className="w-full mt-2 flex items-center justify-center gap-2 px-4 py-3 text-xs font-bold rounded-xl bg-[#1B4332] text-white hover:bg-[#143326] transition-colors cursor-pointer shadow-sm"
             >
               <Sparkles className="w-4 h-4 text-[#E6C065]" />
               <span>Dobierz miód dla siebie (Quiz)</span>

@@ -17,6 +17,7 @@ import { HIVE_TREASURE_IDS } from './data/honeyProducts';
 const CartDrawer = React.lazy(() => import('./components/CartDrawer').then(m => ({ default: m.CartDrawer })));
 const ComparisonModal = React.lazy(() => import('./components/ComparisonModal').then(m => ({ default: m.ComparisonModal })));
 const HoneyFinderQuiz = React.lazy(() => import('./components/HoneyFinderQuiz').then(m => ({ default: m.HoneyFinderQuiz })));
+const CustomerAccountModal = React.lazy(() => import('./components/CustomerAccountModal').then(m => ({ default: m.CustomerAccountModal })));
 const ProductPage = React.lazy(() => import('./pages/ProductPage').then(m => ({ default: m.ProductPage })));
 
 // Primary landing page (static for instant FCP)
@@ -140,6 +141,7 @@ function App() {
   const [compareList, setCompareList] = useState<HoneyProduct[]>([]);
   const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
   const [isQuizOpen, setIsQuizOpen] = useState(false);
+  const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
   const [hasPreloadedHome, setHasPreloadedHome] = useState(false);
 
   useEffect(() => {
@@ -294,6 +296,7 @@ function App() {
           cartItemCount={cartItemCount}
           cartSubtotal={cartSubtotal}
           onOpenCart={() => setIsCartOpen(true)}
+          onOpenAccount={() => setIsAccountModalOpen(true)}
           onOpenQuiz={() => setIsQuizOpen(true)}
           containerClass={displayResolution.containerClass}
         />
@@ -428,6 +431,15 @@ function App() {
               onClearCart={handleClearCart}
               onAddToCart={handleAddToCart}
               onNavigateToCatalog={handleNavigateToCatalogFromCart}
+            />
+          </Suspense>
+        )}
+
+        {isAccountModalOpen && (
+          <Suspense fallback={null}>
+            <CustomerAccountModal
+              isOpen={isAccountModalOpen}
+              onClose={() => setIsAccountModalOpen(false)}
             />
           </Suspense>
         )}
