@@ -109,6 +109,30 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
     }
     return false;
   });
+
+  // Sticky Add To Cart visibility state & IntersectionObserver
+  const purchaseBoxRef = useRef<HTMLDivElement>(null);
+  const [isStickyBarVisible, setIsStickyBarVisible] = useState(false);
+
+  useEffect(() => {
+    const target = purchaseBoxRef.current;
+    if (!target) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // Pasek pojawia się tylko wtedy, gdy główny boks zakupu minie górną krawędź ekranu (zniknie w górę)
+        const isPastPurchaseBox = !entry.isIntersecting && entry.boundingClientRect.top < 0;
+        setIsStickyBarVisible(isPastPurchaseBox);
+      },
+      {
+        threshold: 0,
+        rootMargin: '0px',
+      }
+    );
+
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, []);
   
   // Knowledge card tabs horizontal scroll state & affordance
   const tabsContainerRef = useRef<HTMLDivElement>(null);
@@ -1132,7 +1156,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
   };
 
   return (
-    <div className="w-full bg-[#FAF6EE] min-h-screen pt-4 pb-28 lg:pb-16 animate-in fade-in duration-300">
+    <div className="w-full bg-[#FAF6EE] min-h-screen pt-4 pb-28 lg:pb-28 animate-in fade-in duration-300">
       
       {/* Top Breadcrumb & Quick Navigation Bar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-3 sm:mb-6">
@@ -1348,7 +1372,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
             </div>
 
             {/* Purchase Card: Gramature Selector, Price, Add to Cart */}
-            <div className="bg-white rounded-3xl p-5 sm:p-6 border border-[#D9821E]/30 shadow-md space-y-5">
+            <div ref={purchaseBoxRef} className="bg-white rounded-3xl p-5 sm:p-6 border border-[#D9821E]/30 shadow-md space-y-5">
               
               {/* Kompaktowa Metryka Partii & Żywych Enzymów / Specyfikacja produktu */}
               {prodType === 'bee-colony' ? (
@@ -2777,38 +2801,136 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
         </div>
       </section>
 
-      {/* MOBILE STICKY BOTTOM BUY BAR */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#D9821E]/25 p-3.5 shadow-lg lg:hidden flex items-center justify-between gap-3">
-        <div className="min-w-0">
-          <p className="text-xs font-bold text-[#241D17] truncate">{product.name}</p>
-          <p className="text-xs text-[#1B4332] font-extrabold flex items-center gap-1.5 flex-wrap">
-            <span>{((effectivePrice || 0) * quantity).toFixed(2)} zł</span>
-            <span className="text-[10px] font-normal text-[#7A6A5A]">({currentSize?.gram})</span>
-            {purchaseMode === 'subscription' && (
-              <span className="text-[10px] font-bold text-[#8C4609] bg-[#E5983A]/20 px-1.5 py-0.2 rounded-md">
-                co {subscriptionInterval} dni (-10%)
-              </span>
-            )}
-          </p>
-        </div>
+      {/* MODERN RESPONSIVE STICKY BOTTOM BUY BAR */}
+      <aside 
+        aria-label="Pasek szybkiego zakupu"
+        className={`fixed bottom-0 left-0 right-0 z-40 bg-[#FAF8F5]/95 backdrop-blur-md border-t border-[#DFCBB5] shadow-2xl transition-all duration-300 transform ${
+          isStickyBarVisible ? 'translate-y-0 opacity-100 pointer-events-auto' : 'translate-y-full opacity-0 pointer-events-none'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between gap-3 sm:gap-6">
+          
+          {/* LEWA STRONA: Miniatura, Nazwa produktu i Cena */}
+          <div className="flex items-center gap-2.5 sm:gap-3.5 min-w-0">
+            <img
+              src={product.imageUrl}
+              alt={product.name}
+              className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl object-cover border border-[#DFCBB5] bg-white shrink-0 shadow-2xs"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = product.imageUrl;
+              }}
+            />
+            <div className="min-w-0">
+              <h4 className="font-serif font-bold text-xs sm:text-sm text-[#23201C] truncate leading-tight">
+                {product.name}
+              </h4>
+              <div className="flex items-baseline gap-1.5 mt-0.5 flex-wrap">
+                <span className="font-sans font-black text-sm sm:text-base text-[#1B4332] tabular-nums">
+                  {((effectivePrice || 0) * quantity).toFixed(2)} zł
+                </span>
+                {quantity > 1 && (
+                  <span className="text-[10px] text-[#7A6A5A] hidden sm:inline">
+                    ({quantity} × {effectivePrice} zł)
+                  </span>
+                )}
+                {purchaseMode === 'subscription' && (
+                  <span className="text-[9.5px] font-bold text-[#8C4609] bg-[#E5983A]/20 px-1.5 py-0.5 rounded-md leading-none">
+                    -10% co {subscriptionInterval} dni
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
 
-        <button
-          onClick={handleAddToCart}
-          className="px-5 py-2.5 rounded-xl font-bold text-xs text-white bg-[#1B4332] hover:bg-[#143326] transition-colors shadow-xs flex items-center gap-1.5 shrink-0 cursor-pointer"
-        >
-          {addedAnimation ? (
-            <>
-              <Check className="w-4 h-4 text-[#E6C065]" />
-              <span>Dodano!</span>
-            </>
-          ) : (
-            <>
-              <ShoppingBag className="w-4 h-4" />
-              <span>Do koszyka</span>
-            </>
-          )}
-        </button>
-      </div>
+          {/* ŚRODEK & PRAWA STRONA: Wybór gramatury, Licznik ilości i Przycisk */}
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            {/* Przełącznik gramatur dla desktopu / tabletu */}
+            {product.sizesList.length > 1 && (
+              <div className="hidden md:flex items-center gap-1 bg-[#EFE7DC] p-1 rounded-xl border border-[#DFD3C2]">
+                {product.sizesList.map((size, idx) => {
+                  const isSelected = selectedSizeIdx === idx;
+                  return (
+                    <button
+                      key={size.gram + idx}
+                      type="button"
+                      onClick={() => setSelectedSizeIdx(idx)}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                        isSelected
+                          ? 'bg-[#1B4332] text-white shadow-2xs'
+                          : 'text-[#594D42] hover:text-[#1B4332] hover:bg-[#FAF8F5]'
+                      }`}
+                    >
+                      {size.gram}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Kompaktowy selektor gramatur na mobile */}
+            {product.sizesList.length > 1 && (
+              <div className="md:hidden flex items-center">
+                <select
+                  value={selectedSizeIdx}
+                  onChange={(e) => setSelectedSizeIdx(Number(e.target.value))}
+                  className="text-[11px] font-bold text-[#1B4332] bg-[#FAF5ED] border border-[#D9821E]/30 rounded-lg px-2 py-1.5 cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#1B4332]"
+                  aria-label="Wybierz gramaturę"
+                >
+                  {product.sizesList.map((size, idx) => (
+                    <option key={idx} value={idx}>
+                      {size.gram}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {/* Licznik sztuk */}
+            <div className="hidden sm:flex items-center border border-[#D9821E]/30 rounded-xl bg-white overflow-hidden shadow-2xs h-8 sm:h-9">
+              <button
+                type="button"
+                onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                className="w-7 h-full flex items-center justify-center font-bold text-[#594D42] hover:bg-[#FAF6EE] hover:text-[#1B4332] transition-colors cursor-pointer text-sm"
+                title="Zmniejsz ilość"
+              >
+                -
+              </button>
+              <span className="w-7 text-center font-bold text-xs text-[#241D17] tabular-nums">
+                {quantity}
+              </span>
+              <button
+                type="button"
+                onClick={() => setQuantity(quantity + 1)}
+                className="w-7 h-full flex items-center justify-center font-bold text-[#594D42] hover:bg-[#FAF6EE] hover:text-[#1B4332] transition-colors cursor-pointer text-sm"
+                title="Zwiększ ilość"
+              >
+                +
+              </button>
+            </div>
+
+            {/* Główny przycisk dodania do koszyka */}
+            <button
+              onClick={handleAddToCart}
+              className="py-2.5 px-4 sm:px-6 rounded-xl font-bold text-xs sm:text-sm text-white bg-[#1B4332] hover:bg-[#143326] transition-all shadow-md flex items-center gap-2 shrink-0 cursor-pointer active:scale-95"
+              id="btn-dodaj-koszyk-sticky"
+            >
+              {addedAnimation ? (
+                <>
+                  <Check className="w-4 h-4 text-[#E6C065]" />
+                  <span>Dodano!</span>
+                </>
+              ) : (
+                <>
+                  <ShoppingBag className="w-4 h-4 text-[#F3C06B]" />
+                  <span className="hidden xs:inline">Dodaj do koszyka</span>
+                  <span className="xs:hidden">Do koszyka</span>
+                </>
+              )}
+            </button>
+          </div>
+
+        </div>
+      </aside>
 
     </div>
   );
