@@ -64,16 +64,16 @@ export const HERO_VARIETIES: VarietyItem[] = [
   {
     id: 'lipowy',
     product: HONEY_PRODUCTS.find(p => p.id === 'miod-lipowy') || HONEY_PRODUCTS[0],
-    defaultVideoUrl: getAssetUrl('videos/lipowy.mp4'),
-    tagline: 'Królewski miód lipowy ze starych alei lipowych wokół Ciechowa. Niezastąpiony do wieczornego kubka gorącej herbaty z cytryną w chłodne dni.',
+    defaultVideoUrl: getAssetUrl('videos/lipowy-v2.webm'),
+    tagline: 'Królewski miód lipowy pozyskiwany z pachnącego kwiatu lipy drobnolistnej. Niezastąpiony do wieczornego kubka gorącej herbaty z cytryną w chłodne dni.',
     vintageYear: 'Zbiór Letni 2026',
-    terroirLocation: 'Aleje Lipowe • Ciechów',
+    terroirLocation: 'Pasieka Wędrowna Usza • Dolny Śląsk',
     pollenNote: 'Czysty nektar lipy drobnolistnej • Naturalnie łagodzi gardło',
     flavorTastingNotes: 'Głęboki, ciepły zapach kwiatu lipy, delikatnie żywiczny finisz i aksamitna słodycz.',
     teaPairingNote: 'Najlepszy z czarną herbatą i cytryną lub naparem z suszonej lipy.',
     ambientToneHex: '#E5983A',
     badge: 'Klasyk do Gorącej Herbaty',
-    cardCategorySubtitle: 'ALEJE LIPOWE • CIECHÓW',
+    cardCategorySubtitle: 'PASIEKA WĘDROWNA • DOLNY ŚLĄSK',
     cardMainTitle: 'Ciepło Domu & Herbata',
     cardBadgeIcon: 'coffee',
     cardFeatures: [
@@ -101,13 +101,13 @@ export const HERO_VARIETIES: VarietyItem[] = [
     defaultVideoUrl: getAssetUrl('videos/gryczany.mp4'),
     tagline: 'Ciemny, wyrazisty miód o zapachu palonego karmelu. Cudownie rozgrzewa i idealnie pasuje do pajdy wiejskiego chleba z masłem.',
     vintageYear: 'Zbiór Sierpniowy 2026',
-    terroirLocation: 'Pola Gryki • Dolny Śląsk',
+    terroirLocation: 'Pasieka Wędrowna Usza • Dolny Śląsk',
     pollenNote: 'Bogaty w naturalne żelazo i rutynę • Krzepiący i sycący',
     flavorTastingNotes: 'Intensywny aromat melasy i palonych ziaren, głęboki ciemnobrunatny kolor i mocny smak.',
     teaPairingNote: 'Idealny do mocnej herbaty z imbirem oraz jako dodatek do domowego piernika.',
-    ambientToneHex: '#9E5316',
+    ambientToneHex: '#E57A22',
     badge: 'Na Chłodne Wieczory',
-    cardCategorySubtitle: 'POLA GRYKI • DOLNY ŚLĄSK',
+    cardCategorySubtitle: 'PASIEKA WĘDROWNA • DOLNY ŚLĄSK',
     cardMainTitle: 'Moc Krzepy & Żelazo',
     cardBadgeIcon: 'heart',
     cardFeatures: [
@@ -132,15 +132,16 @@ export const HERO_VARIETIES: VarietyItem[] = [
   {
     id: 'akacja',
     product: HONEY_PRODUCTS.find(p => p.id === 'miod-akacjowy') || HONEY_PRODUCTS[3],
+    defaultVideoUrl: getAssetUrl('videos/akacja-v2.webm'),
     tagline: 'Złocisto-jasny, wyjątkowo łagodny nektar z białej akacji. Długo płynny, aksamitny – słodzi napoje bez zmiany ich naturalnego smaku.',
     vintageYear: 'Zbiór Czerwcowy 2026',
-    terroirLocation: 'Dolina Odry • Lasy Akacjowe',
+    terroirLocation: 'Pasieka Wędrowna Usza • Dolny Śląsk',
     pollenNote: 'Nektar z robinii akacjowej • Wyjątkowo łagodny dla żołądka',
     flavorTastingNotes: 'Niezwykle subtelny, z nutą wanilii i wiosennych kwiatów, aksamitnie gładki na języku.',
     teaPairingNote: 'Wspaniale słodzi herbatę rumiankową, miętę, melisę i zieloną herbatę.',
     ambientToneHex: '#DDA83B',
     badge: 'Delikatny i Łagodny',
-    cardCategorySubtitle: 'DOLINA ODRY • LASY AKACJOWE',
+    cardCategorySubtitle: 'PASIEKA WĘDROWNA • DOLNY ŚLĄSK',
     cardMainTitle: 'Aksamitny Nektar & Żołądek',
     cardBadgeIcon: 'feather',
     cardFeatures: [
@@ -165,15 +166,16 @@ export const HERO_VARIETIES: VarietyItem[] = [
   {
     id: 'rzepakowy',
     product: HONEY_PRODUCTS.find(p => p.id === 'miod-rzepakowy') || HONEY_PRODUCTS[6],
+    defaultVideoUrl: getAssetUrl('videos/rzepakowy-v2.webm'),
     tagline: 'Kremowobiały, puszysty krem z pierwszych majowych kwiatów. Rozpływa się w ustach, dając uczucie ciepła i domowego spokoju.',
     vintageYear: 'Zbiór Majowy 2026',
-    terroirLocation: 'Pola Rzepakowe • Ciechów',
+    terroirLocation: 'Pasieka Wędrowna Usza • Dolny Śląsk',
     pollenNote: 'Pierwsze wiosenne miodobranie • Błyskawiczny zastrzyk energii',
     flavorTastingNotes: 'Puszysty, perłowy krem o łagodnym, ciepłym smaku świeżego mleka i miodu.',
     teaPairingNote: 'Niezastąpiony do porannej herbaty i chrupiącej ciepłej bułki z masłem.',
     ambientToneHex: '#D4AA55',
     badge: 'Pierwszy Zbiór Wiosenny',
-    cardCategorySubtitle: 'CIECHÓW • POLA RZEPAKOWE',
+    cardCategorySubtitle: 'PASIEKA WĘDROWNA • DOLNY ŚLĄSK',
     cardMainTitle: 'Wiosenny Krem & Serce',
     cardBadgeIcon: 'sun',
     cardFeatures: [
@@ -188,7 +190,7 @@ export const HERO_VARIETIES: VarietyItem[] = [
         iconName: 'droplets'
       },
       {
-        title: 'Pierwszy zbiór z Ciechowa',
+        title: 'Pierwszy zbiór wiosenny',
         description: 'Wiosenne miodobranie z wolnych od zanieczyszczeń łąk. Łagodny, ciepły zapach polskiego maja.',
         iconName: 'shield'
       }
@@ -198,15 +200,16 @@ export const HERO_VARIETIES: VarietyItem[] = [
   {
     id: 'wrzosowy',
     product: HONEY_PRODUCTS.find(p => p.id === 'miod-wrzosowy') || HONEY_PRODUCTS[1],
-    tagline: 'Szlachetny, galaretowaty miód z dolnośląskich wrzosowisk. Niezwykle rzadki rarytas o wytrawnym, głębokim smaku.',
+    defaultVideoUrl: getAssetUrl('videos/wrzosowy-v2.webm'),
+    tagline: 'Szlachetny, galaretowaty miód z dzikich pożytków wrzosowych. Niezwykle rzadki rarytas o wytrawnym, głębokim smaku.',
     vintageYear: 'Zbiór Wrześniowy 2026',
-    terroirLocation: 'Wrzosowiska Dolnośląskie',
+    terroirLocation: 'Pasieka Wędrowna Usza • Dolny Śląsk',
     pollenNote: 'Królewski miód z wrzosu • Galaretowata konsystencja',
     flavorTastingNotes: 'Aromatyczny, lekko gorzkawy, głęboki smak wrzosowiska o bursztynowo-rubinowej barwie.',
     teaPairingNote: 'Doskonały do degustacji łyżeczką oraz do wykwintnych serów i orzechów.',
     ambientToneHex: '#A05C22',
     badge: 'Rarytas Pasieki Usza',
-    cardCategorySubtitle: 'WRZOSOWISKA • DOLNY ŚLĄSK',
+    cardCategorySubtitle: 'PASIEKA WĘDROWNA • DOLNY ŚLĄSK',
     cardMainTitle: 'Królewski Wrzos & Galaretka',
     cardBadgeIcon: 'sparkles',
     cardFeatures: [
@@ -232,16 +235,16 @@ export const HERO_VARIETIES: VarietyItem[] = [
     id: 'spadziowy',
     product: HONEY_PRODUCTS.find(p => p.id === 'miod-ze-spadzi-iglastej') || HONEY_PRODUCTS[2],
     defaultVideoUrl: getAssetUrl('videos/spadziowy.mp4'),
-    tagline: 'Szlachetny, ciemny miód z dolnośląskich borów jodłowych i świerkowych. Żywiczny aromat i naturalne wsparcie odporności.',
+    tagline: 'Szlachetny, ciemny miód ze spadzi drzew iglastych. Żywiczny aromat i naturalne wsparcie odporności.',
     vintageYear: 'Zbiór Leśny 2026',
-    terroirLocation: 'Bory Dolnośląskie',
+    terroirLocation: 'Pasieka Wędrowna Usza • Dolny Śląsk',
     pollenNote: 'Spadź iglasta • 9-krotnie więcej biopierwiastków niż w miodach nektarowych',
     flavorTastingNotes: 'Łagodny, leśno-żywiczny aromat, głęboka barwa i nienachalna, stonowana słodycz.',
     teaPairingNote: 'Wyborny do powolnego kosztowania z drewnianej łyżeczki i do naparów z igliwia lub dzikiej róży.',
-    ambientToneHex: '#4D6B35',
-    badge: 'Skarb Borów Dolnośląskich',
-    cardCategorySubtitle: 'BORY DOLNOŚLĄSKIE',
-    cardMainTitle: 'Skarb Borów & Minerały',
+    ambientToneHex: '#C44D1E',
+    badge: 'Rarytas Pasieki Usza',
+    cardCategorySubtitle: 'PASIEKA WĘDROWNA • DOLNY ŚLĄSK',
+    cardMainTitle: 'Królewska Spadź & Minerały',
     cardBadgeIcon: 'trees',
     cardFeatures: [
       {
@@ -564,7 +567,7 @@ export const Hero: React.FC<HeroProps> = ({
       </div>
 
       {/* BOTTOM BAR: Minimalist Floating Editorial Variety Bar - Widoczny na tabletach i desktopie, ukryty na telefonach */}
-      <div className="relative z-30 w-full px-2 sm:px-6 lg:px-8 2xl:px-10 pb-6 sm:pb-10 lg:pb-12 pt-1 hidden sm:block">
+      <div className="relative z-30 w-full px-2 sm:px-6 lg:px-8 2xl:px-10 pb-4 sm:pb-6 lg:pb-8 pt-1 hidden sm:block">
         <div className={`adaptive-container ${activeContainerClass} flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-3`}>
           
           {/* Subtle Pasieka Note */}

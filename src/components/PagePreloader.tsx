@@ -39,14 +39,17 @@ export const PagePreloader: React.FC<PagePreloaderProps> = ({ onComplete }) => {
       targetP = Math.max(targetP, computed);
     };
 
-    // 1. Prawdziwe ładowanie i rozcinanie sprajtów 360° dla WSZYSTKICH odmian karuzeli w pamięci
-    // Gwarantuje, że po zakończeniu preloadera żadna karuzela nie wyświetli pustych slotów
-    const carouselVarietyIds = ['lipowy', 'gryczany', 'spadziowy'];
+    // 1. Prawdziwe ładowanie i rozcinanie sprajtów 360° dla 3 PIERWSZYCH widocznych w karuzeli odmian:
+    // Lipowy (centrum), Gryczany (prawa strona), Spadziowy (lewa strona)
+    // Pozostałe 3 odmiany (rzepakowy, akacja, wrzosowy) ładują się cicho w tle (idle queue)
+    const priorityVarietyIds = ['lipowy', 'gryczany', 'spadziowy'];
+    const backgroundVarietyIds = ['rzepakowy', 'akacja', 'wrzosowy'];
+
     let totalSpritesPct = 0;
-    const spritesCount = carouselVarietyIds.filter(id => BUNDLED_VARIETY_SPRITES[id]).length;
+    const spritesCount = priorityVarietyIds.filter(id => BUNDLED_VARIETY_SPRITES[id]).length;
     let spritesCompleted = 0;
 
-    const spritePromises = carouselVarietyIds.map(id => {
+    const priorityPromises = priorityVarietyIds.map(id => {
       const spriteInfo = BUNDLED_VARIETY_SPRITES[id];
       if (!spriteInfo) {
         spritesCompleted++;
@@ -56,7 +59,6 @@ export const PagePreloader: React.FC<PagePreloaderProps> = ({ onComplete }) => {
         varietyId: id,
         spriteInfo,
         onProgress: (pct) => {
-          // Uśredniamy postęp wszystkich sprajtów
           totalSpritesPct = Math.round(((spritesCompleted * 100 + pct) / spritesCount));
           spritePct = Math.min(100, totalSpritesPct);
           checkProgress();
@@ -72,16 +74,64 @@ export const PagePreloader: React.FC<PagePreloaderProps> = ({ onComplete }) => {
       });
     });
 
-    Promise.all(spritePromises).then(() => {
+    Promise.all(priorityPromises).then(() => {
       spriteDone = true;
       spritePct = 100;
       checkProgress();
+
+      // Po odsłonięciu strony cicho w tle dogrywamy pozostałe 3 odmiany (jedna po drugiej, bez obciążania wątku)
+      const loadBackgroundQueue = async () => {
+        // Ciche wczytanie wstęg miodowych w tle
+        const bgRibbons = [
+          getAssetUrl('assets/akacjowy-front.webp'),
+          getAssetUrl('assets/akacjowy-back.webp'),
+          getAssetUrl('assets/rzepakowy-front.webp'),
+          getAssetUrl('assets/rzepakowy-back.webp'),
+          getAssetUrl('assets/wrzosowy-front.webp'),
+          getAssetUrl('assets/wrzosowy-back.webp'),
+        ];
+        for (const rUrl of bgRibbons) {
+          const img = new Image();
+          img.src = rUrl;
+        }
+
+        for (const bgId of backgroundVarietyIds) {
+          const bgSprite = BUNDLED_VARIETY_SPRITES[bgId];
+          if (bgSprite) {
+            try {
+              await new Promise(r => setTimeout(r, 600));
+              await loadFramesFromSpriteSheet({
+                varietyId: bgId,
+                spriteInfo: bgSprite,
+              });
+            } catch (err) {
+              console.warn(`Background preload for ${bgId} skipped:`, err);
+            }
+          }
+        }
+      };
+
+      if (typeof window !== 'undefined') {
+        if ('requestIdleCallback' in window) {
+          (window as any).requestIdleCallback(() => {
+            setTimeout(loadBackgroundQueue, 1000);
+          }, { timeout: 3000 });
+        } else {
+          setTimeout(loadBackgroundQueue, 1200);
+        }
+      }
     });
 
-    // 2. Prawdziwe ładowanie i dekodowanie wstęg miodowych
+    // 2. Prawdziwe ładowanie i dekodowanie wstęg miodowych dla startowych odmian
     const ribbonUrls = [
-      getAssetUrl('assets/honey-ribbon-front.png'),
-      getAssetUrl('assets/honey-ribbon-back.png'),
+      getAssetUrl('assets/wstega-ogolna-front.webp'),
+      getAssetUrl('assets/wstega-ogolna-back.webp'),
+      getAssetUrl('assets/wstega-lipowy-front.webp'),
+      getAssetUrl('assets/wstega-lipowy-back.webp'),
+      getAssetUrl('assets/gryczany-front.webp'),
+      getAssetUrl('assets/gryczany-back.webp'),
+      getAssetUrl('assets/spadziowy-front.webp'),
+      getAssetUrl('assets/spadziowy-back.webp'),
     ];
     Promise.all(ribbonUrls.map(url => new Promise(res => {
       const img = new Image();

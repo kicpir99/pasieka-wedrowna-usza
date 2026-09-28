@@ -189,6 +189,10 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
   const autoSpinRampRef = useRef<number>(1);
   const idleResumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Track carousel visibility via ref for immediate, zero-lag access inside 60FPS RAF tick
+  const isCarouselVisibleRef = useRef<boolean>(isCarouselVisible);
+  isCarouselVisibleRef.current = isCarouselVisible;
+
   const pauseAutoSpin = useCallback(() => {
     if (idleResumeTimerRef.current) {
       clearTimeout(idleResumeTimerRef.current);
@@ -235,9 +239,63 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
   const rafIdRef = useRef<number | null>(null);
   const prevIsActiveRef = useRef<boolean>(isActive);
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
+  const reflectionCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const refCtxRef = useRef<CanvasRenderingContext2D | null>(null);
+  const reflectionContainerRef = useRef<HTMLDivElement | null>(null);
+  const lastReflectedFrameIdx = useRef<number>(-999);
 
   // Stored ImageBitmap frames
   const framesRef = useRef<ImageBitmap[]>([]);
+
+  // Synchronize live mirrored reflection canvas on dark studio floor
+  const syncReflectionCanvas = useCallback(() => {
+    const canvas = canvasRef.current;
+    const refCanvas = reflectionCanvasRef.current;
+    if (!canvas || !refCanvas) return;
+    if (!refCtxRef.current) {
+      refCtxRef.current = refCanvas.getContext('2d', { alpha: true });
+    }
+    const refCtx = refCtxRef.current;
+    if (refCtx && canvas.width > 0 && canvas.height > 0) {
+      const w = canvas.width;
+      const h = canvas.height;
+      const refW = w;
+      // Extended canvas height (70% of jar height) to accommodate full reflection fade
+      const refH = Math.round(h * 0.70);
+
+      if (refCanvas.width !== refW || refCanvas.height !== refH) {
+        refCanvas.width = refW;
+        refCanvas.height = refH;
+      }
+
+      // Base of the jar in 440x440 tile is at y = 406px (92.3% of height)
+      const pivotY = h * 0.923;
+
+      refCtx.clearRect(0, 0, refW, refH);
+      refCtx.save();
+
+      // 1. Draw vertically flipped jar starting at y = 0 of reflection canvas
+      // With realistic vertical perspective compression (-0.75)
+      refCtx.scale(1, -0.75);
+      refCtx.drawImage(canvas, 0, -pivotY);
+      refCtx.restore();
+
+      // 2. Apply silky-smooth organic gradient fade into the floor table depths
+      refCtx.save();
+      refCtx.globalCompositeOperation = 'destination-in';
+      const grad = refCtx.createLinearGradient(0, 0, 0, refH);
+      grad.addColorStop(0, 'rgba(0, 0, 0, 0.90)');    // crisp contact point
+      grad.addColorStop(0.18, 'rgba(0, 0, 0, 0.65)'); // rich honey & glass body
+      grad.addColorStop(0.45, 'rgba(0, 0, 0, 0.30)'); // gradual elegant falloff
+      grad.addColorStop(0.72, 'rgba(0, 0, 0, 0.08)'); // delicate ambient dissipation
+      grad.addColorStop(1.0, 'rgba(0, 0, 0, 0)');     // 100% seamless transition to zero
+      refCtx.fillStyle = grad;
+      refCtx.fillRect(0, 0, refW, refH);
+      refCtx.restore();
+
+      lastReflectedFrameIdx.current = currentRenderedFrameIdx.current;
+    }
+  }, []);
 
   // Main Draw Frame to Canvas: perfectly normalizes unbounded angle progress to [0, 1) loop with 100% Razor-Sharp clarity (zero smearing, zero ghosting)
   const drawActiveFrame = useCallback((angleProgress: number, forceRedraw: boolean = false) => {
@@ -268,6 +326,7 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
           ctx.clearRect(0, 0, canvas.width, canvas.height);
           ctx.globalAlpha = 1.0;
           ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+          syncReflectionCanvas();
         }
       }
     } else if (videoElementRef.current && videoUrl) {
@@ -281,10 +340,11 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
         if (!v.seeking && v.readyState >= 2) {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
           ctx.drawImage(v, 0, 0, canvas.width, canvas.height);
+          syncReflectionCanvas();
         }
       }
     }
-  }, [videoUrl, enableInterpolation]);
+  }, [videoUrl, enableInterpolation, syncReflectionCanvas]);
 
   // Frame extraction from video with strict aspect ratio preservation, fast 32-bit pixel pipeline and global memory caching
   const extractFramesFromVideo = useCallback(async (
@@ -380,8 +440,8 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
           const spriteResult = await loadFramesFromSpriteSheet({
             varietyId,
             spriteInfo: bundledSprite,
-            chromaMode,
-            chromaTolerance,
+            chromaMode: 'none',
+            chromaTolerance: 0,
             onFirstFrame: (firstBmp, dims) => {
               if (isMounted && framesRef.current.length === 0) {
                 framesRef.current = [firstBmp];
@@ -430,7 +490,8 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
 
       if (bundled && isMounted) {
         try {
-          await extractFramesFromVideo(bundled.url, bundled.fileName, chromaMode, chromaTolerance, framingMode, cropWidthRatio, targetFrameCount);
+          const effectiveChroma = bundled.fileName.toLowerCase().endsWith('.webm') ? 'none' : chromaMode;
+          await extractFramesFromVideo(bundled.url, bundled.fileName, effectiveChroma, chromaTolerance, framingMode, cropWidthRatio, targetFrameCount);
           return;
         } catch (err) {
           console.warn('Could not load bundled video:', err);
@@ -468,6 +529,57 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
     };
   }, [isActive, varietyId, defaultVideoUrl, chromaMode, chromaTolerance, framingMode, cropWidthRatio, targetFrameCount, extractFramesFromVideo, drawActiveFrame]);
 
+  // Reactive wake-up & frame cache validation when jar enters carousel view
+  useEffect(() => {
+    isCarouselVisibleRef.current = isCarouselVisible;
+    if (isCarouselVisible) {
+      // 1. If frames are not yet in framesRef, check cache or initiate load immediately
+      if (framesRef.current.length === 0) {
+        const cached = getCachedFrames(varietyId);
+        if (cached && cached.bitmaps.length > 0) {
+          framesRef.current = cached.bitmaps;
+          setFrameDimensions(cached.dimensions);
+          setDetectedAspect(cached.detectedAspect);
+          setIsUserVideoLoaded(true);
+          setVideoFileName(cached.fileName);
+          setVideoUrl(cached.url);
+          activeVideoUrlRef.current = cached.url;
+          currentRenderedFrameIdx.current = -1;
+          drawActiveFrame(currentAngleProgressRef.current, true);
+        } else {
+          const bundledSprite = BUNDLED_VARIETY_SPRITES[varietyId] || BUNDLED_VARIETY_SPRITES[varietyId.toLowerCase()];
+          if (bundledSprite) {
+            loadFramesFromSpriteSheet({
+              varietyId,
+              spriteInfo: bundledSprite,
+              chromaMode: 'none',
+              chromaTolerance: 0,
+            }).then((res) => {
+              if (res && res.bitmaps.length > 0) {
+                framesRef.current = res.bitmaps;
+                setFrameDimensions(res.dimensions);
+                setDetectedAspect(res.detectedAspect);
+                setIsUserVideoLoaded(true);
+                setVideoFileName(bundledSprite.fileName);
+                setVideoUrl(bundledSprite.videoUrl);
+                activeVideoUrlRef.current = bundledSprite.videoUrl;
+                currentRenderedFrameIdx.current = -1;
+                drawActiveFrame(currentAngleProgressRef.current, true);
+              }
+            });
+          }
+        }
+      } else {
+        // Redraw current frame immediately so jar displays cleanly
+        drawActiveFrame(currentAngleProgressRef.current, true);
+      }
+
+      // 2. Ensure auto-spin is immediately active
+      isAutoSpinActiveRef.current = true;
+      autoSpinRampRef.current = 1;
+    }
+  }, [isCarouselVisible, varietyId, drawActiveFrame]);
+
   // 60FPS RAF Engine with seamless infinite loop integration & decoupled GPU transform physics (Auto-spin for all jars)
   useEffect(() => {
     let lastTime = performance.now();
@@ -499,7 +611,7 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
     const tick = (now: number) => {
       rafIdRef.current = requestAnimationFrame(tick);
 
-      if (!isVisible || !isCarouselVisible) {
+      if (!isVisible || !isCarouselVisibleRef.current) {
         lastTime = now;
         return;
       }
@@ -508,8 +620,8 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
       const dt = Math.min(0.05, Math.max(0.001, (now - lastTime) / 1000));
       lastTime = now;
 
-      // 1. Process buffered pointer input deltas inside RAF with sub-pixel precision
-      if (isDraggingRef.current) {
+      // 1. Process buffered pointer input deltas inside RAF with sub-pixel precision (active jar only)
+      if (isActive && isDraggingRef.current) {
         if (hasPendingPointerDeltaRef.current) {
           const pendingDx = pendingPointerDeltaXRef.current;
           pendingPointerDeltaXRef.current = 0;
@@ -521,7 +633,7 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
         }
       } else if (!isUserScrubbingRef.current) {
         // 2. Smooth preset angle navigation (critically damped exponential lerp)
-        if (isNavigatingPresetRef.current) {
+        if (isActive && isNavigatingPresetRef.current) {
           const diff = targetAngleProgressRef.current - currentAngleProgressRef.current;
           if (Math.abs(diff) > 0.00008) {
             // Frame-rate independent exponential lerp
@@ -531,8 +643,8 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
             isNavigatingPresetRef.current = false;
           }
         } else {
-          // 3. Auto-rotation: smooth turntable idle rotation with gentle ease-in acceleration (paused during drag/scrub, resumes after 2.5s)
-          const shouldAutoSpin = (autoRotate || isAutoSpinActiveRef.current) && !isDraggingRef.current;
+          // 3. Auto-rotation: smooth turntable idle rotation with gentle ease-in acceleration (active for ALL visible jars)
+          const shouldAutoSpin = (autoRotate || isAutoSpinActiveRef.current) && (!isActive || !isDraggingRef.current);
           if (shouldAutoSpin) {
             autoSpinRampRef.current = Math.min(1, autoSpinRampRef.current + dt / 0.8);
             const speed = (invertDirection ? -1 : 1) * autoRotateSpeed * 0.088 * autoSpinRampRef.current; // Natural fluid turntable speed
@@ -566,6 +678,13 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
       // 5. Render active frame onto hardware-accelerated Canvas
       drawActiveFrame(currentAngleProgressRef.current);
 
+      // Always guarantee reflection canvas is rendered and in sync with active frame
+      if (reflectionCanvasRef.current && canvasRef.current) {
+        if (lastReflectedFrameIdx.current !== currentRenderedFrameIdx.current) {
+          syncReflectionCanvas();
+        }
+      }
+
       // 6. Calculate normalized 360° angle and discrete degree
       const current = currentAngleProgressRef.current;
       const normalizedP = ((current % 1) + 1) % 1;
@@ -582,10 +701,16 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
       currentTiltZRef.current += (targetTiltZ - currentTiltZRef.current) * (1 - Math.exp(-12 * dt));
 
       if (canvasRef.current) {
-        const scaleVal = isDraggingRef.current ? 0.985 : 1.0;
-        const baseTiltX = isEditorialTiltActive ? 3.5 : 0;
-        const baseTiltZ = isEditorialTiltActive ? -1.8 : 0;
-        canvasRef.current.style.transform = `perspective(1000px) rotateX(${baseTiltX}deg) rotateY(${currentTiltYRef.current.toFixed(2)}deg) rotateZ(${(baseTiltZ + currentTiltZRef.current).toFixed(2)}deg) scale(${scaleVal})`;
+        const scaleVal = (isActive && isDraggingRef.current) ? 0.985 : 1.0;
+        const baseTiltX = (isActive && isEditorialTiltActive) ? 3.5 : 0;
+        const baseTiltZ = (isActive && isEditorialTiltActive) ? -1.8 : 0;
+        const tiltY = isActive ? currentTiltYRef.current.toFixed(2) : '0';
+        const tiltZ = isActive ? (baseTiltZ + currentTiltZRef.current).toFixed(2) : '0';
+        canvasRef.current.style.transform = `perspective(1000px) rotateX(${baseTiltX}deg) rotateY(${tiltY}deg) rotateZ(${tiltZ}deg) scale(${scaleVal})`;
+
+        if (reflectionCanvasRef.current) {
+          reflectionCanvasRef.current.style.transform = canvasRef.current.style.transform;
+        }
       }
 
       // Dynamic reactive floor shadow shift with editorial tilt support
@@ -671,7 +796,7 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
         cancelAnimationFrame(rafIdRef.current);
       }
     };
-  }, [isActive, autoRotate, autoRotateSpeed, invertDirection, drawActiveFrame, isEditorialTiltActive, onAngleChange]);
+  }, [isActive, isCarouselVisible, autoRotate, autoRotateSpeed, invertDirection, drawActiveFrame, isEditorialTiltActive, onAngleChange]);
 
   // Pointer drag interactions with Pointer Capture for infinite continuous dragging across the screen
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -1004,38 +1129,63 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
         }}
         className="relative w-full max-h-[min(68vh,600px)] flex items-center justify-center cursor-grab active:cursor-grabbing group no-drag overflow-visible pointer-events-auto"
       >
-        {/* ATMOSPHERIC RADIAL BACKLIGHT GLOW (subtelny dla bocznych słoików, aby nie tworzył plamy na podłożu) */}
-        <div 
-          className={`absolute inset-x-8 top-8 bottom-14 pointer-events-none transition-all duration-700 ${isActive ? 'opacity-60 group-hover:opacity-85' : 'opacity-20'}`}
-          style={{
-            background: `radial-gradient(ellipse 65% 65% at 50% 50%, ${ambientToneHex}45 0%, ${ambientToneHex}10 50%, transparent 75%)`,
-          }}
-        />
+        {/* ATMOSPHERIC RADIAL BACKLIGHT GLOW (Tylko dla aktywnego słoika centralnego; słoiki boczne mają dedykowaną warstwę z-index: 4) */}
+        {isActive && (
+          <div 
+            className="absolute inset-x-8 top-8 bottom-14 pointer-events-none transition-all duration-700 opacity-60 group-hover:opacity-85"
+            style={{
+              background: `radial-gradient(ellipse 65% 65% at 50% 50%, ${ambientToneHex}45 0%, ${ambientToneHex}10 50%, transparent 75%)`,
+            }}
+          />
+        )}
 
-        {/* ORGANIC GROUND CONTACT SHADOWS with dynamic 3D response */}
-        <div 
-          ref={groundShadowRef}
-          className="absolute bottom-5 sm:bottom-7 left-1/2 -translate-x-1/2 w-[70%] h-10 pointer-events-none will-change-transform"
-        >
-          <div className="w-full h-full rounded-[100%] bg-black/60 blur-xl" />
-          <div className="absolute inset-x-[15%] bottom-1 h-5 rounded-[100%] bg-black/80 blur-md" />
-          {/* Golden amber caustic floor pool - TYLKO dla aktywnego słoika, aby słoiki boczne nie rzucały żółtej plamy na ziemię */}
-          {isActive && (
+        {/* ORGANIC GROUND CONTACT SHADOWS (Tylko dla aktywnego słoika; słoiki boczne są uziemione za wstęgą na z-index: 4) */}
+        {isActive && (
+          <div 
+            ref={groundShadowRef}
+            className="absolute bottom-5 sm:bottom-7 left-1/2 -translate-x-1/2 w-[70%] h-10 pointer-events-none will-change-transform"
+          >
+            <div className="w-full h-full rounded-[100%] bg-black/60 blur-xl" />
+            <div className="absolute inset-x-[15%] bottom-1 h-5 rounded-[100%] bg-black/80 blur-md" />
+            {/* Golden amber caustic floor pool */}
             <div 
               className="absolute inset-x-[12%] bottom-1 h-6 rounded-[100%] blur-md opacity-40"
               style={{
                 background: `radial-gradient(ellipse at center, ${ambientToneHex} 0%, transparent 75%)`
               }}
             />
-          )}
-        </div>
+          </div>
+        )}
 
-        {/* 60FPS HARDWARE-ACCELERATED TRANSPARENT CANVAS: Pixel-perfect aspect ratio, ZERO vertical distortion */}
+        {/* STUDIO FLOOR MIRROR REFLECTION OF JAR IN REFLECTIVE DARK SURFACE (Active & Orbiting Jars) */}
+        <canvas
+          ref={reflectionCanvasRef}
+          width={frameDimensions.width}
+          height={Math.round(frameDimensions.height * 0.70)}
+          className="absolute left-0 w-full pointer-events-none select-none will-change-transform"
+          style={{
+            top: '91.5%',
+            height: '70%',
+            filter: 'blur(1.4px) brightness(0.92)',
+            opacity: isActive ? 0.80 : 0.48,
+            zIndex: 2,
+            transformOrigin: '50% 0%',
+            maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 18%, rgba(0,0,0,0.35) 55%, transparent 95%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 18%, rgba(0,0,0,0.35) 55%, transparent 95%)',
+          }}
+        />
+
+        {/* 60FPS HARDWARE-ACCELERATED TRANSPARENT CANVAS: Pixel-perfect aspect ratio, ZERO artificial drop-shadow leaking onto ribbon */}
         <canvas
           ref={canvasRef}
           width={frameDimensions.width}
           height={frameDimensions.height}
-          className="relative z-10 w-full h-full object-contain pointer-events-none drop-shadow-[0_20px_35px_rgba(0,0,0,0.55)] will-change-transform"
+          className="relative z-10 w-full h-full object-contain pointer-events-none will-change-transform"
+          style={{
+            // Czysta, naturalna ekspozycja szkła bez sztucznego przyciemniania krawędzi słoika
+            filter: 'contrast(1.01) saturate(1.04)',
+            imageRendering: 'auto',
+          }}
         />
 
         {/* DRAG-AND-DROP ACTIVE OVERLAY */}
@@ -1119,7 +1269,7 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -15 }}
                     transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                    className="absolute z-50 top-0 sm:-top-6 lg:-top-8 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-12 lg:left-24 w-[92%] max-w-[290px] sm:w-[280px] pointer-events-none"
+                    className="absolute z-50 top-0 sm:-top-6 lg:-top-8 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-3.5 md:left-3 lg:left-[52px] xl:left-[48px] w-[92%] max-w-[290px] sm:w-[280px] pointer-events-none"
                   >
                     <div className="relative flex flex-col items-center sm:items-start text-center sm:text-left py-1">
                       {/* Subtelna winieta w tle dla idealnej czytelności bez twardych krawędzi */}
@@ -1153,7 +1303,7 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: 15 }}
                     transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                    className="absolute z-50 bottom-0 sm:-bottom-5 lg:-bottom-7 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-auto right-auto sm:right-12 lg:right-24 w-[92%] max-w-[290px] sm:w-[280px] pointer-events-none flex flex-col items-center sm:items-end text-center sm:text-right"
+                    className="absolute z-50 bottom-0 sm:-bottom-5 lg:-bottom-7 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-auto right-auto sm:right-3.5 md:right-3 lg:right-[52px] xl:right-[48px] w-[92%] max-w-[290px] sm:w-[280px] pointer-events-none flex flex-col items-center sm:items-end text-center sm:text-right"
                   >
                     <div className="relative flex flex-col items-center sm:items-end text-center sm:text-right py-1">
                       {/* Subtelna winieta w tle dla idealnej czytelności bez twardych krawędzi */}
@@ -1187,7 +1337,7 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                    className="absolute z-50 top-0 sm:-top-6 lg:-top-8 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-auto right-auto sm:right-12 lg:right-24 w-[92%] max-w-[290px] sm:w-[280px] pointer-events-none flex flex-col items-center sm:items-end text-center sm:text-right"
+                    className="absolute z-50 top-0 sm:-top-6 lg:-top-8 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-auto right-auto sm:right-3.5 md:right-3 lg:right-[52px] xl:right-[48px] w-[92%] max-w-[290px] sm:w-[280px] pointer-events-none flex flex-col items-center sm:items-end text-center sm:text-right"
                   >
                     <div className="relative flex flex-col items-center sm:items-end text-center sm:text-right py-1">
                       {/* Subtelna winieta w tle dla idealnej czytelności bez twardych krawędzi */}

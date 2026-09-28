@@ -86,14 +86,14 @@ export function useDisplayResolution() {
     screenName = 'Ekran Kompaktowy / Pionowy';
   }
 
-  // Active container class according to mode
-  let containerClass = 'max-w-7xl 2xl:max-w-[1460px] 3xl:max-w-[1720px]';
-  if (mode === 'ultrawide-21-9') {
+  // Active container class according to mode / viewport width
+  let containerClass = 'max-w-7xl 2xl:max-w-[1440px] 3xl:max-w-[1720px]';
+  if (effectiveUltrawide) {
     containerClass = 'max-w-[1720px]';
-  } else if (mode === 'standard-16-9') {
+  } else if (effectiveLaptop) {
+    containerClass = 'max-w-7xl xl:max-w-[1360px]';
+  } else if (effective169) {
     containerClass = 'max-w-[1440px]';
-  } else if (mode === 'laptop') {
-    containerClass = 'max-w-6xl';
   }
 
   return {

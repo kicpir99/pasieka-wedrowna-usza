@@ -15,7 +15,8 @@ export const BlogPage: React.FC<BlogPageProps> = ({ displayResolution }) => {
       readTime: '4 min czytania',
       category: 'Życie Pasieki',
       image: 'https://pasiekausza.pl/wp-content/uploads/2021/11/play.jpg',
-      videoEmbed: 'https://www.youtube.com/embed/af2qEqCfBTY?list=PLt_6KSMZr4ID93NpOtXojFsr-_JUtNT2m',
+      videoEmbed: 'https://www.youtube.com/embed/af2qEqCfBTY',
+      videoUrl: 'https://www.youtube.com/watch?v=af2qEqCfBTY',
       excerpt:
         'Jest to jedna z najważniejszych i jednocześnie najtrudniejszych czynności wykonywanych na pasiece. Odpowiednio przeprowadzone prace pasieczne, które zaczynamy już pod koniec lata, decydują o sile rodzin na kolejną wiosnę.',
       featured: true,
@@ -91,7 +92,7 @@ export const BlogPage: React.FC<BlogPageProps> = ({ displayResolution }) => {
                 {post.excerpt}
               </p>
 
-              <div className="pt-2">
+              <div className="pt-2 flex flex-wrap items-center gap-4">
                 <Link
                   to="/o-nas"
                   className="inline-flex items-center gap-2 text-xs font-bold text-[#1B4332] hover:text-[#945209] transition-colors"
@@ -99,6 +100,17 @@ export const BlogPage: React.FC<BlogPageProps> = ({ displayResolution }) => {
                   <span>Dowiedz się więcej o naszej pasiece</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
+                {post.videoUrl && (
+                  <a
+                    href={post.videoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-[#C4302B] hover:text-[#9B2622] transition-colors"
+                  >
+                    <Video className="w-3.5 h-3.5" />
+                    <span>Oglądaj na YouTube</span>
+                  </a>
+                )}
               </div>
             </div>
 

@@ -33,6 +33,9 @@ const getShortestAngularDiff = (current: number, target: number, total: number):
   return diff;
 };
 
+// Flaga wyświetlania wstęgi miodowej (wstęga renderuje się tylko dla miodów z zdefiniowanymi assetami, aktualnie 'lipowy')
+const SHOW_HONEY_RIBBON = true;
+
 export const HoneyJar3DCarousel: React.FC<HoneyJar3DCarouselProps> = ({
   varieties,
   selectedIndex,
@@ -48,6 +51,7 @@ export const HoneyJar3DCarousel: React.FC<HoneyJar3DCarouselProps> = ({
   const stageRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
   const jarItemRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const jarGlowRefs = useRef<(HTMLDivElement | null)[]>([]);
   const popupsPortalTargetRef = useRef<HTMLDivElement>(null);
   const backRibbonRef = useRef<HTMLDivElement>(null);
   const frontRibbonRef = useRef<HTMLDivElement>(null);
@@ -217,6 +221,12 @@ export const HoneyJar3DCarousel: React.FC<HoneyJar3DCarouselProps> = ({
           el.style.opacity = '0';
           el.style.pointerEvents = 'none';
           el.style.transform = 'translate3d(-50%, -50%, 0) scale(0.001)';
+          const glowEl = jarGlowRefs.current[index];
+          if (glowEl) {
+            glowEl.style.visibility = 'hidden';
+            glowEl.style.opacity = '0';
+            glowEl.style.transform = el.style.transform;
+          }
           return;
         }
 
@@ -235,12 +245,11 @@ export const HoneyJar3DCarousel: React.FC<HoneyJar3DCarouselProps> = ({
           : (isMobile ? 0.50 : 0.70);
 
         // Opacity & Layering:
-        // Wszystkie słoiki (zarówno boczny lewy, boczny prawy jak i główny) stoją PRZED tylną wstęgą (z-index: 5).
-        // Słoiki boczne mają zIndex 15 (lub 18 na hoverze), a główny słoik ma zIndex 25.
-        // Przednia wstęga (front) leży na samym wierzchu (zIndex: 30) przed dolną podstawą głównego słoika.
+        // Wszystkie słoiki stoją PRZED tylną wstęgą (z-index: 5).
+        // Słoiki boczne mają zIndex 15 w spoczynku i 20 na hoverze.
+        // Słoiki ZAWSZE pozostają pod przednią wstęgą (z-index: 30), dzięki czemu przednia wstęga fizycznie oplata słoiki od frontu.
         const isHovered = hoveredIndexRef.current === index;
         let posY = 0;
-        // Pełna, nasycona nieprzezroczystość (opacity 1.0) dla bocznych słoików, aby tylna wstęga NIE prześwitywała przez szkło ani etykiety!
         let opacity = 1.0;
         let blurAmount = 0;
         let zIndex = absDelta < 0.3 ? 25 : 15;
@@ -249,9 +258,9 @@ export const HoneyJar3DCarousel: React.FC<HoneyJar3DCarouselProps> = ({
         if (absDelta < 0.25) {
           posY = isMobile ? -2 : -8;
         } else if (isHovered) {
-          posY = isMobile ? -10 : -24; // Smooth levitation lift in 3D
-          scale = isMobile ? 0.60 : 0.82; // Expands symmetrically on hover
-          zIndex = 20; // Słoiki boczne są ZAWSZE w warstwie pomiędzy tyłem (z-index: 5) a przodem (z-index: 30) miodowej wstęgi (kokardy)
+          posY = isMobile ? -8 : -16; // Płynne, naturalne uniesienie
+          scale = isMobile ? 0.55 : 0.76; // Subtelne powiększenie na hoverze
+          zIndex = 20; // ZAWSZE poniżej przedniej wstęgi (20 < 30)
         }
 
         // Hardware-Accelerated 3D Transform write directly to DOM node (keeping posZ = 0 for rock-solid click & hover hit testing)
@@ -260,6 +269,14 @@ export const HoneyJar3DCarousel: React.FC<HoneyJar3DCarouselProps> = ({
         el.style.filter = blurAmount > 0.1 ? `blur(${blurAmount.toFixed(1)}px)` : 'none';
         el.style.zIndex = String(zIndex);
         el.style.pointerEvents = absDelta < 0.25 ? 'none' : 'auto';
+
+        // Synchronize dedicated hover glow layer (rendered at z-index: 4, strictly behind the liquid ribbons)
+        const glowEl = jarGlowRefs.current[index];
+        if (glowEl) {
+          glowEl.style.visibility = 'visible';
+          glowEl.style.transform = el.style.transform;
+          glowEl.style.opacity = opacity.toFixed(3);
+        }
       });
 
       // 2b. Synchronize Popups Portal Overlay and Liquid Ribbons with Active Center Jar
@@ -309,7 +326,7 @@ export const HoneyJar3DCarousel: React.FC<HoneyJar3DCarouselProps> = ({
       {/* 3D ORBITAL STAGE CONTAINER WITH HARDWARE-ACCELERATED PERSPECTIVE */}
       <div 
         ref={stageRef}
-        className="relative w-full max-w-[940px] h-[300px] sm:h-[570px] md:h-[620px] flex items-center justify-center overflow-visible"
+        className="relative z-50 w-full max-w-[940px] h-[300px] sm:h-[500px] md:h-[540px] lg:h-[560px] xl:h-[600px] flex items-center justify-center overflow-visible"
         style={{ 
           perspective: '1200px',
           perspectiveOrigin: '50% 50%',
@@ -321,14 +338,71 @@ export const HoneyJar3DCarousel: React.FC<HoneyJar3DCarouselProps> = ({
           className="absolute inset-0 pointer-events-none transition-all duration-700 blur-3xl opacity-45 -z-10"
         />
 
-        {/* LIQUID HONEY RIBBON - TYLNA GŁÓWNA STRUGI MIODU ŁĄCZĄCA SŁOIKI W KARUZELI */}
-        <div ref={backRibbonRef} className="absolute inset-0 pointer-events-none" style={{ zIndex: 5 }}>
-          <HoneyLiquidRibbon
-            varietyId={currentItem.id}
-            ambientColorHex={currentItem.ambientToneHex}
-            isFrontLayer={false}
-          />
+        {/* DEDICATED SIDE JARS HOVER GLOW LAYER (Z-INDEX: 4, strictly behind the liquid ribbon!) */}
+        <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 4 }}>
+          {varieties.map((variety, idx) => {
+            const isActive = idx === selectedIndex;
+            return (
+              <div
+                key={`side-glow-${variety.id}`}
+                ref={(el) => (jarGlowRefs.current[idx] = el)}
+                style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  pointerEvents: 'none',
+                  willChange: 'transform, opacity',
+                }}
+                className="origin-center overflow-visible max-w-[220px] sm:max-w-[460px]"
+              >
+                {!isActive && (
+                  <>
+                    {/* Natural soft contact shadow on the floor - strictly behind both ribbons at zIndex: 4 */}
+                    <div className="absolute bottom-4 sm:bottom-6 w-[55%] h-7 rounded-full bg-black/40 blur-md pointer-events-none" />
+
+                    <div
+                      className={`relative w-[240px] sm:w-[380px] h-[300px] sm:h-[450px] flex items-center justify-center transition-all duration-500 ease-out pointer-events-none ${
+                        hoveredIndex === idx ? 'opacity-100 scale-105' : 'opacity-0 scale-90'
+                      }`}
+                    >
+                      {/* Atmospheric soft radial aura behind the side jar */}
+                      <div 
+                        className="w-[120%] h-[120%] blur-[48px] rounded-full pointer-events-none"
+                        style={{ 
+                          background: `radial-gradient(circle at 50% 50%, ${variety.ambientToneHex} 0%, ${variety.ambientToneHex}bb 42%, transparent 72%)`,
+                          opacity: 0.90
+                        }}
+                      />
+                      {/* Concentrated warm core backlight illuminating the jar glass from behind */}
+                      <div 
+                        className="absolute w-[62%] h-[72%] blur-[24px] rounded-[44px] pointer-events-none"
+                        style={{ 
+                          background: `radial-gradient(ellipse at 50% 50%, #FFF5D0 0%, ${variety.ambientToneHex} 50%, transparent 78%)`,
+                          opacity: 0.85
+                        }}
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
+            );
+          })}
         </div>
+
+        {/* LIQUID HONEY RIBBON - TYLNA GŁÓWNA STRUGI MIODU ŁĄCZĄCA SŁOIKI W KARUZELI */}
+        {SHOW_HONEY_RIBBON && (
+          <div ref={backRibbonRef} className="absolute inset-0 pointer-events-none" style={{ zIndex: 5 }}>
+            <HoneyLiquidRibbon
+              varietyId={currentItem.id}
+              ambientColorHex={currentItem.ambientToneHex}
+              isFrontLayer={false}
+            />
+          </div>
+        )}
 
         {/* 3D ORBITAL JARS (Rendered in continuous 3D Space via RAF Lerp Engine) */}
         {varieties.map((variety, idx) => {
@@ -376,21 +450,6 @@ export const HoneyJar3DCarousel: React.FC<HoneyJar3DCarouselProps> = ({
                   navigateToIndex(idx);
                 }}
               >
-                {/* Glow & Info overlay for inactive (side) jars on hover */}
-                {!isActive && (
-                  <div
-                    className={`absolute inset-0 pointer-events-none transition-all duration-700 ease-out z-0 ${
-                      hoveredIndex === idx ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
-                    }`}
-                  >
-                    {/* Atmospheric Glow */}
-                    <div 
-                      className="absolute inset-0 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] blur-[64px] opacity-70 rounded-full"
-                      style={{ background: variety.ambientToneHex }}
-                    />
-                  </div>
-                )}
-                
                 <div className="relative z-10 w-full pointer-events-none">
                   <FramelessJar360Viewer
                     varietyId={variety.id}
@@ -412,46 +471,48 @@ export const HoneyJar3DCarousel: React.FC<HoneyJar3DCarouselProps> = ({
         })}
 
         {/* LIQUID HONEY RIBBON - PRZEDNIA DOLNA WARSTWA OPLATAJĄCA SŁOIK OD FRONTU */}
-        <div ref={frontRibbonRef} className="absolute inset-0 pointer-events-none" style={{ zIndex: 30 }}>
-          <HoneyLiquidRibbon
-            varietyId={currentItem.id}
-            ambientColorHex={currentItem.ambientToneHex}
-            isFrontLayer={true}
-          />
-        </div>
+        {SHOW_HONEY_RIBBON && (
+          <div ref={frontRibbonRef} className="absolute inset-0 pointer-events-none" style={{ zIndex: 30 }}>
+            <HoneyLiquidRibbon
+              varietyId={currentItem.id}
+              ambientColorHex={currentItem.ambientToneHex}
+              isFrontLayer={true}
+            />
+          </div>
+        )}
 
-        {/* DEDICATED POPUP OVERLAY STAGE (Z-INDEX: 60) */}
-        {/* Wyrenderowane bezpośrednio nad przednią wstęgą - gwarantuje, że wyskakujące pop-upy (karty) są w 100% na pierwszym planie */}
+        {/* DEDICATED POPUP OVERLAY STAGE (Z-INDEX: 80) */}
+        {/* Wyrenderowane bezpośrednio na najwyższej warstwie - gwarantuje, że wyskakujące pop-upy (karty) są w 100% na pierwszym planie, także ponad podpowiedzią przeciągania */}
         <div
           ref={popupsPortalTargetRef}
           id="jar-popups-portal-target"
           className="pointer-events-none absolute inset-0 w-full h-full"
-          style={{ zIndex: 60 }}
+          style={{ zIndex: 80 }}
         />
 
-        {/* WIDE-STANCE FLOATING NAVIGATION CHEVRONS */}
+        {/* FLOATING NAVIGATION CHEVRONS - Poszerzone z zachowaniem bezpiecznego marginesu na laptopie */}
         <button
           onClick={handlePrev}
           aria-label="Poprzedni miód w karuzeli 3D (obrót w lewo)"
           title={`Przejdź do: ${varieties[prevIndex].product.name}`}
-          className="absolute left-1 sm:-left-6 md:-left-10 lg:-left-12 xl:-left-16 z-50 w-9 h-9 sm:w-14 sm:h-14 rounded-full bg-[#160F0A]/90 hover:bg-[#2A1E14] text-[#D8C7B5] hover:text-[#FAF5ED] border-2 border-[#523F2D]/90 hover:border-[#E5983A] backdrop-blur-md shadow-[0_16px_36px_rgba(0,0,0,0.85)] flex items-center justify-center transition-all duration-200 active:scale-90 hover:scale-110 group cursor-pointer no-drag pointer-events-auto"
+          className="absolute left-1 sm:-left-2 md:-left-4 lg:-left-6 xl:-left-7 2xl:-left-9 z-50 w-9 h-9 sm:w-12 sm:h-12 md:w-13 md:h-13 lg:w-14 lg:h-14 rounded-full bg-[#160F0A]/90 hover:bg-[#2A1E14] text-[#D8C7B5] hover:text-[#FAF5ED] border-2 border-[#523F2D]/90 hover:border-[#E5983A] backdrop-blur-md shadow-[0_16px_36px_rgba(0,0,0,0.85)] flex items-center justify-center transition-all duration-200 active:scale-90 hover:scale-110 group cursor-pointer no-drag pointer-events-auto"
         >
-          <ChevronLeft className="w-5 h-5 sm:w-7 sm:h-7 group-hover:-translate-x-1 transition-transform text-[#FAF5ED]" />
+          <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 group-hover:-translate-x-1 transition-transform text-[#FAF5ED]" />
         </button>
 
         <button
           onClick={handleNext}
           aria-label="Następny miód w karuzeli 3D (obrót w prawo)"
           title={`Przejdź do: ${varieties[nextIndex].product.name}`}
-          className="absolute right-1 sm:-right-6 md:-right-10 lg:-right-12 xl:-right-16 z-50 w-9 h-9 sm:w-14 sm:h-14 rounded-full bg-[#160F0A]/90 hover:bg-[#2A1E14] text-[#D8C7B5] hover:text-[#FAF5ED] border-2 border-[#523F2D]/90 hover:border-[#E5983A] backdrop-blur-md shadow-[0_16px_36px_rgba(0,0,0,0.85)] flex items-center justify-center transition-all duration-200 active:scale-90 hover:scale-110 group cursor-pointer no-drag pointer-events-auto"
+          className="absolute right-1 sm:-right-2 md:-right-4 lg:-right-6 xl:-right-7 2xl:-right-9 z-50 w-9 h-9 sm:w-12 sm:h-12 md:w-13 md:h-13 lg:w-14 lg:h-14 rounded-full bg-[#160F0A]/90 hover:bg-[#2A1E14] text-[#D8C7B5] hover:text-[#FAF5ED] border-2 border-[#523F2D]/90 hover:border-[#E5983A] backdrop-blur-md shadow-[0_16px_36px_rgba(0,0,0,0.85)] flex items-center justify-center transition-all duration-200 active:scale-90 hover:scale-110 group cursor-pointer no-drag pointer-events-auto"
         >
-          <ChevronRight className="w-5 h-5 sm:w-7 sm:h-7 group-hover:translate-x-1 transition-transform text-[#FAF5ED]" />
+          <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 group-hover:translate-x-1 transition-transform text-[#FAF5ED]" />
         </button>
       </div>
 
-      {/* PRZYCISK / PODPOWIEDŹ OBROTU 360° - Widoczny na tabletach i komputerach, ukryty na mobile */}
+      {/* PRZYCISK / PODPOWIEDŹ OBROTU 360° - Lekko opuszczony z zachowaniem czystego marginesu nad dolnym menu */}
       <div 
-        className="absolute sm:-bottom-8 md:-bottom-10 left-1/2 -translate-x-1/2 z-[70] hidden sm:flex items-center gap-1.5 sm:gap-2 px-3 py-1 sm:px-4 sm:py-1.5 rounded-full bg-[#18120D]/95 backdrop-blur-md border border-[#524131]/90 text-[10px] sm:text-xs text-[#FAF5ED] pointer-events-none shadow-[0_8px_24px_rgba(0,0,0,0.8),0_0_16px_rgba(229,152,58,0.25)] whitespace-nowrap select-none transition-all duration-300"
+        className="absolute bottom-0 sm:-bottom-1 md:-bottom-2 lg:-bottom-2.5 left-1/2 -translate-x-1/2 z-40 hidden sm:flex items-center gap-1.5 sm:gap-2 px-3 py-1 sm:px-4 sm:py-1.5 rounded-full bg-[#18120D]/95 backdrop-blur-md border border-[#524131]/90 text-[10px] sm:text-xs text-[#FAF5ED] pointer-events-none shadow-[0_8px_24px_rgba(0,0,0,0.8),0_0_16px_rgba(229,152,58,0.25)] whitespace-nowrap select-none transition-all duration-300"
       >
         <Repeat className="w-3.5 h-3.5 text-[#E5983A]" />
         <span className="tracking-wide">Przeciągnij słoik, aby obrócić go 360°</span>

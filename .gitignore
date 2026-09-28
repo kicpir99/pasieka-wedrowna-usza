@@ -6,3 +6,10 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# Local processing backups & comparison artifacts
+**/backup/
+**/backup_originals/
+**/backup_caustics/
+edge_comparison.png
+

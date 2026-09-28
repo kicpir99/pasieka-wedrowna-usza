@@ -33,30 +33,33 @@ const IN_FLIGHT_PROMISES = new Map<string, Promise<CachedVarietyFrames | null>>(
 
 // Bundled variety videos in /public/videos
 export const BUNDLED_VARIETY_VIDEOS: Record<string, { url: string; fileName: string }> = {
-  lipowy: { url: getAssetUrl('videos/lipowy.mp4'), fileName: 'lipowy.mp4' },
-  'lipowy-warminski': { url: getAssetUrl('videos/lipowy.mp4'), fileName: 'lipowy.mp4' },
-  'miod-lipowy': { url: getAssetUrl('videos/lipowy.mp4'), fileName: 'lipowy.mp4' },
-  'miod-akacjowy': { url: getAssetUrl('videos/lipowy.mp4'), fileName: 'lipowy.mp4' },
-  'miod-rzepakowy': { url: getAssetUrl('videos/lipowy.mp4'), fileName: 'lipowy.mp4' },
-  'miod-wielokwiatowy': { url: getAssetUrl('videos/lipowy.mp4'), fileName: 'lipowy.mp4' },
-  'miod-faceliowy': { url: getAssetUrl('videos/lipowy.mp4'), fileName: 'lipowy.mp4' },
-  'miod-mniszkowy': { url: getAssetUrl('videos/lipowy.mp4'), fileName: 'lipowy.mp4' },
-  'miod-malinowy': { url: getAssetUrl('videos/lipowy.mp4'), fileName: 'lipowy.mp4' },
-  'miod-nawlociowy': { url: getAssetUrl('videos/lipowy.mp4'), fileName: 'lipowy.mp4' },
+  lipowy: { url: getAssetUrl('videos/lipowy-v2.webm'), fileName: 'lipowy-v2.webm' },
+  'lipowy-warminski': { url: getAssetUrl('videos/lipowy-v2.webm'), fileName: 'lipowy-v2.webm' },
+  'miod-lipowy': { url: getAssetUrl('videos/lipowy-v2.webm'), fileName: 'lipowy-v2.webm' },
+  akacja: { url: getAssetUrl('videos/akacja-v2.webm'), fileName: 'akacja-v2.webm' },
+  'miod-akacjowy': { url: getAssetUrl('videos/akacja-v2.webm'), fileName: 'akacja-v2.webm' },
+  rzepakowy: { url: getAssetUrl('videos/rzepakowy-v2.webm'), fileName: 'rzepakowy-v2.webm' },
+  'miod-rzepakowy': { url: getAssetUrl('videos/rzepakowy-v2.webm'), fileName: 'rzepakowy-v2.webm' },
+  'miod-wielokwiatowy': { url: getAssetUrl('videos/lipowy-v2.webm'), fileName: 'lipowy-v2.webm' },
+  'miod-faceliowy': { url: getAssetUrl('videos/lipowy-v2.webm'), fileName: 'lipowy-v2.webm' },
+  'miod-mniszkowy': { url: getAssetUrl('videos/lipowy-v2.webm'), fileName: 'lipowy-v2.webm' },
+  'miod-malinowy': { url: getAssetUrl('videos/lipowy-v2.webm'), fileName: 'lipowy-v2.webm' },
+  'miod-nawlociowy': { url: getAssetUrl('videos/lipowy-v2.webm'), fileName: 'lipowy-v2.webm' },
   gryczany: { url: getAssetUrl('videos/gryczany.mp4'), fileName: 'gryczany.mp4' },
   'gryczany-mazurski': { url: getAssetUrl('videos/gryczany.mp4'), fileName: 'gryczany.mp4' },
   'miod-gryczany': { url: getAssetUrl('videos/gryczany.mp4'), fileName: 'gryczany.mp4' },
   spadziowy: { url: getAssetUrl('videos/spadziowy.mp4'), fileName: 'spadziowy.mp4' },
   'spadz-iglastej': { url: getAssetUrl('videos/spadziowy.mp4'), fileName: 'spadziowy.mp4' },
   'miod-ze-spadzi-iglastej': { url: getAssetUrl('videos/spadziowy.mp4'), fileName: 'spadziowy.mp4' },
-  'miod-wrzosowy': { url: getAssetUrl('videos/spadziowy.mp4'), fileName: 'spadziowy.mp4' },
+  wrzosowy: { url: getAssetUrl('videos/wrzosowy-v2.webm'), fileName: 'wrzosowy-v2.webm' },
+  'miod-wrzosowy': { url: getAssetUrl('videos/wrzosowy-v2.webm'), fileName: 'wrzosowy-v2.webm' },
   'miod-lesny': { url: getAssetUrl('videos/spadziowy.mp4'), fileName: 'spadziowy.mp4' },
 };
 
 // Bundled 180-frame high-resolution sprite sheets in /public/sprites (2.0° per frame for ultra-smooth 60fps turntable spin)
 export const BUNDLED_VARIETY_SPRITES: Record<string, BundledSpriteInfo> = {
   lipowy: {
-    spriteUrl: getAssetUrl('sprites/lipowy.webp'),
+    spriteUrl: getAssetUrl('sprites/lipowy-v5.webp'),
     cols: 15,
     rows: 12,
     totalFrames: 180,
@@ -66,7 +69,7 @@ export const BUNDLED_VARIETY_SPRITES: Record<string, BundledSpriteInfo> = {
     videoUrl: getAssetUrl('videos/lipowy.mp4'),
   },
   'lipowy-warminski': {
-    spriteUrl: getAssetUrl('sprites/lipowy.webp'),
+    spriteUrl: getAssetUrl('sprites/lipowy-v5.webp'),
     cols: 15,
     rows: 12,
     totalFrames: 180,
@@ -76,37 +79,7 @@ export const BUNDLED_VARIETY_SPRITES: Record<string, BundledSpriteInfo> = {
     videoUrl: getAssetUrl('videos/lipowy.mp4'),
   },
   'miod-lipowy': {
-    spriteUrl: getAssetUrl('sprites/lipowy.webp'),
-    cols: 15,
-    rows: 12,
-    totalFrames: 180,
-    tileWidth: 440,
-    tileHeight: 440,
-    fileName: 'lipowy.mp4',
-    videoUrl: getAssetUrl('videos/lipowy.mp4'),
-  },
-  'miod-akacjowy': {
-    spriteUrl: getAssetUrl('sprites/lipowy.webp'),
-    cols: 15,
-    rows: 12,
-    totalFrames: 180,
-    tileWidth: 440,
-    tileHeight: 440,
-    fileName: 'lipowy.mp4',
-    videoUrl: getAssetUrl('videos/lipowy.mp4'),
-  },
-  'miod-rzepakowy': {
-    spriteUrl: getAssetUrl('sprites/lipowy.webp'),
-    cols: 15,
-    rows: 12,
-    totalFrames: 180,
-    tileWidth: 440,
-    tileHeight: 440,
-    fileName: 'lipowy.mp4',
-    videoUrl: getAssetUrl('videos/lipowy.mp4'),
-  },
-  'miod-wielokwiatowy': {
-    spriteUrl: getAssetUrl('sprites/lipowy.webp'),
+    spriteUrl: getAssetUrl('sprites/lipowy-v5.webp'),
     cols: 15,
     rows: 12,
     totalFrames: 180,
@@ -116,7 +89,7 @@ export const BUNDLED_VARIETY_SPRITES: Record<string, BundledSpriteInfo> = {
     videoUrl: getAssetUrl('videos/lipowy.mp4'),
   },
   gryczany: {
-    spriteUrl: getAssetUrl('sprites/gryczany.webp'),
+    spriteUrl: getAssetUrl('sprites/gryczany-v3.webp'),
     cols: 15,
     rows: 12,
     totalFrames: 180,
@@ -126,7 +99,7 @@ export const BUNDLED_VARIETY_SPRITES: Record<string, BundledSpriteInfo> = {
     videoUrl: getAssetUrl('videos/gryczany.mp4'),
   },
   'gryczany-mazurski': {
-    spriteUrl: getAssetUrl('sprites/gryczany.webp'),
+    spriteUrl: getAssetUrl('sprites/gryczany-v3.webp'),
     cols: 15,
     rows: 12,
     totalFrames: 180,
@@ -136,7 +109,7 @@ export const BUNDLED_VARIETY_SPRITES: Record<string, BundledSpriteInfo> = {
     videoUrl: getAssetUrl('videos/gryczany.mp4'),
   },
   'miod-gryczany': {
-    spriteUrl: getAssetUrl('sprites/gryczany.webp'),
+    spriteUrl: getAssetUrl('sprites/gryczany-v3.webp'),
     cols: 15,
     rows: 12,
     totalFrames: 180,
@@ -146,7 +119,7 @@ export const BUNDLED_VARIETY_SPRITES: Record<string, BundledSpriteInfo> = {
     videoUrl: getAssetUrl('videos/gryczany.mp4'),
   },
   spadziowy: {
-    spriteUrl: getAssetUrl('sprites/spadziowy.webp'),
+    spriteUrl: getAssetUrl('sprites/spadziowy-v2.webp'),
     cols: 15,
     rows: 12,
     totalFrames: 180,
@@ -156,7 +129,7 @@ export const BUNDLED_VARIETY_SPRITES: Record<string, BundledSpriteInfo> = {
     videoUrl: getAssetUrl('videos/spadziowy.mp4'),
   },
   'spadz-iglastej': {
-    spriteUrl: getAssetUrl('sprites/spadziowy.webp'),
+    spriteUrl: getAssetUrl('sprites/spadziowy-v2.webp'),
     cols: 15,
     rows: 12,
     totalFrames: 180,
@@ -166,7 +139,7 @@ export const BUNDLED_VARIETY_SPRITES: Record<string, BundledSpriteInfo> = {
     videoUrl: getAssetUrl('videos/spadziowy.mp4'),
   },
   'miod-ze-spadzi-iglastej': {
-    spriteUrl: getAssetUrl('sprites/spadziowy.webp'),
+    spriteUrl: getAssetUrl('sprites/spadziowy-v2.webp'),
     cols: 15,
     rows: 12,
     totalFrames: 180,
@@ -175,15 +148,65 @@ export const BUNDLED_VARIETY_SPRITES: Record<string, BundledSpriteInfo> = {
     fileName: 'spadziowy.mp4',
     videoUrl: getAssetUrl('videos/spadziowy.mp4'),
   },
-  'miod-wrzosowy': {
-    spriteUrl: getAssetUrl('sprites/spadziowy.webp'),
+  wrzosowy: {
+    spriteUrl: getAssetUrl('sprites/wrzosowy-v2.webp'),
     cols: 15,
     rows: 12,
     totalFrames: 180,
     tileWidth: 440,
     tileHeight: 440,
-    fileName: 'spadziowy.mp4',
-    videoUrl: getAssetUrl('videos/spadziowy.mp4'),
+    fileName: 'wrzosowy-v2.webm',
+    videoUrl: getAssetUrl('videos/wrzosowy-v2.webm'),
+  },
+  'miod-wrzosowy': {
+    spriteUrl: getAssetUrl('sprites/wrzosowy-v2.webp'),
+    cols: 15,
+    rows: 12,
+    totalFrames: 180,
+    tileWidth: 440,
+    tileHeight: 440,
+    fileName: 'wrzosowy-v2.webm',
+    videoUrl: getAssetUrl('videos/wrzosowy-v2.webm'),
+  },
+  rzepakowy: {
+    spriteUrl: getAssetUrl('sprites/rzepakowy-v2.webp'),
+    cols: 15,
+    rows: 12,
+    totalFrames: 180,
+    tileWidth: 440,
+    tileHeight: 440,
+    fileName: 'rzepakowy-v2.webm',
+    videoUrl: getAssetUrl('videos/rzepakowy-v2.webm'),
+  },
+  'miod-rzepakowy': {
+    spriteUrl: getAssetUrl('sprites/rzepakowy-v2.webp'),
+    cols: 15,
+    rows: 12,
+    totalFrames: 180,
+    tileWidth: 440,
+    tileHeight: 440,
+    fileName: 'rzepakowy-v2.webm',
+    videoUrl: getAssetUrl('videos/rzepakowy-v2.webm'),
+  },
+  akacja: {
+    spriteUrl: getAssetUrl('sprites/akacja-v2.webp'),
+    cols: 15,
+    rows: 12,
+    totalFrames: 180,
+    tileWidth: 440,
+    tileHeight: 440,
+    fileName: 'akacja-v2.webm',
+    videoUrl: getAssetUrl('videos/akacja-v2.webm'),
+  },
+  'miod-akacjowy': {
+    spriteUrl: getAssetUrl('sprites/akacja-v2.webp'),
+    cols: 15,
+    rows: 12,
+    totalFrames: 180,
+    tileWidth: 440,
+    tileHeight: 440,
+    fileName: 'akacja-v2.webm',
+    videoUrl: getAssetUrl('videos/akacja-v2.webm'),
   },
 };
 
@@ -399,8 +422,8 @@ export function setCachedFrames(varietyId: string, data: CachedVarietyFrames) {
 export async function loadFramesFromSpriteSheet({
   varietyId,
   spriteInfo,
-  chromaMode = 'black',
-  chromaTolerance = 25,
+  chromaMode = 'none',
+  chromaTolerance = 0,
   onProgress,
   onFirstFrame,
 }: {
@@ -412,7 +435,7 @@ export async function loadFramesFromSpriteSheet({
   onFirstFrame?: (firstBmp: ImageBitmap, dims: { width: number; height: number }) => void;
 }): Promise<CachedVarietyFrames | null> {
   const normId = varietyId.toLowerCase();
-  const cacheKey = `sprite_v2_${normId}_${chromaMode}_${chromaTolerance}`;
+  const cacheKey = `sprite_v3_${normId}_${chromaMode}_${chromaTolerance}`;
 
   const cached = GLOBAL_FRAME_CACHE.get(cacheKey);
   if (cached && cached.bitmaps.length > 0) {
@@ -441,16 +464,16 @@ export async function loadFramesFromSpriteSheet({
       });
 
       const { cols, rows, totalFrames, tileWidth, tileHeight } = spriteInfo;
-      const tileCanvas = document.createElement('canvas');
-      tileCanvas.width = tileWidth;
-      tileCanvas.height = tileHeight;
-      const tileCtx = tileCanvas.getContext('2d', { willReadFrequently: true, alpha: true });
-
-      if (!tileCtx) return null;
+      const tileCanvas = chromaMode !== 'none' ? document.createElement('canvas') : null;
+      if (tileCanvas) {
+        tileCanvas.width = tileWidth;
+        tileCanvas.height = tileHeight;
+      }
+      const tileCtx = tileCanvas ? tileCanvas.getContext('2d', { willReadFrequently: true, alpha: true }) : null;
 
       const bufferLen = tileWidth * tileHeight;
-      const visitedBuf = new Uint8Array(bufferLen);
-      const queueBuf = new Int32Array(bufferLen);
+      const visitedBuf = chromaMode !== 'none' ? new Uint8Array(bufferLen) : undefined;
+      const queueBuf = chromaMode !== 'none' ? new Int32Array(bufferLen) : undefined;
 
       const bitmaps: ImageBitmap[] = [];
 
@@ -463,35 +486,40 @@ export async function loadFramesFromSpriteSheet({
         const srcX = col * tileWidth;
         const srcY = row * tileHeight;
 
-        tileCtx.clearRect(0, 0, tileWidth, tileHeight);
-        tileCtx.drawImage(
-          img,
-          srcX,
-          srcY,
-          tileWidth,
-          tileHeight,
-          0,
-          0,
-          tileWidth,
-          tileHeight
-        );
-
-        if (chromaMode !== 'none') {
+        let bmp: ImageBitmap;
+        if (chromaMode === 'none') {
+          // Hardware-accelerated GPU direct frame slice from pre-baked transparent WebP
+          bmp = await createImageBitmap(img, srcX, srcY, tileWidth, tileHeight);
+        } else if (tileCtx && tileCanvas) {
+          tileCtx.clearRect(0, 0, tileWidth, tileHeight);
+          tileCtx.drawImage(
+            img,
+            srcX,
+            srcY,
+            tileWidth,
+            tileHeight,
+            0,
+            0,
+            tileWidth,
+            tileHeight
+          );
           applyFastChromaKey(tileCtx, tileWidth, tileHeight, chromaMode, chromaTolerance, visitedBuf, queueBuf);
+          bmp = await createImageBitmap(tileCanvas);
+        } else {
+          bmp = await createImageBitmap(img, srcX, srcY, tileWidth, tileHeight);
         }
 
-        const bmp = await createImageBitmap(tileCanvas);
         bitmaps.push(bmp);
 
         if (idx === 0 && onFirstFrame) {
           onFirstFrame(bmp, { width: tileWidth, height: tileHeight });
         }
 
-        if (onProgress && idx % 10 === 0) {
+        if (onProgress && idx % 15 === 0) {
           onProgress(Math.round(((idx + 1) / totalFrames) * 100));
         }
 
-        if (idx % 20 === 0 && idx > 0) {
+        if (chromaMode !== 'none' && idx % 20 === 0 && idx > 0) {
           await new Promise((r) => setTimeout(r, 0));
         }
       }
@@ -809,6 +837,12 @@ export function preloadAllHoneyVideos() {
       { id: 'gryczany-mazurski', sprite: BUNDLED_VARIETY_SPRITES['gryczany-mazurski'] },
       { id: 'spadziowy', sprite: BUNDLED_VARIETY_SPRITES.spadziowy },
       { id: 'spadz-iglastej', sprite: BUNDLED_VARIETY_SPRITES['spadz-iglastej'] },
+      { id: 'rzepakowy', sprite: BUNDLED_VARIETY_SPRITES.rzepakowy },
+      { id: 'miod-rzepakowy', sprite: BUNDLED_VARIETY_SPRITES['miod-rzepakowy'] },
+      { id: 'akacja', sprite: BUNDLED_VARIETY_SPRITES.akacja },
+      { id: 'miod-akacjowy', sprite: BUNDLED_VARIETY_SPRITES['miod-akacjowy'] },
+      { id: 'wrzosowy', sprite: BUNDLED_VARIETY_SPRITES.wrzosowy },
+      { id: 'miod-wrzosowy', sprite: BUNDLED_VARIETY_SPRITES['miod-wrzosowy'] },
     ];
 
     for (const item of list) {
@@ -817,8 +851,7 @@ export function preloadAllHoneyVideos() {
           await loadFramesFromSpriteSheet({
             varietyId: item.id,
             spriteInfo: item.sprite,
-            chromaMode: 'black',
-            chromaTolerance: 25,
+            chromaMode: 'none',
           });
         } catch (e) {
           console.warn(`Preload failed for ${item.id}:`, e);

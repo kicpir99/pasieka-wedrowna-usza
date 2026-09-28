@@ -189,7 +189,7 @@ export const AboutUsPage: React.FC<AboutUsPageProps> = ({ displayResolution }) =
           <div className="lg:col-span-6 rounded-2xl overflow-hidden shadow-lg border border-[#E0D4C3] aspect-video bg-black">
             <iframe 
               className="w-full h-full"
-              src="https://www.youtube.com/embed/af2qEqCfBTY?list=PLt_6KSMZr4ID93NpOtXojFsr-_JUtNT2m" 
+              src="https://www.youtube.com/embed/af2qEqCfBTY" 
               title="Pasieka Usza zimą" 
               frameBorder="0" 
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 

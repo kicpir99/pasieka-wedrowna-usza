@@ -91,12 +91,152 @@ const VARIETY_THEMES: Record<string, VarietyRibbonTheme> = {
   },
 };
 
+interface VarietyRibbonAsset {
+  front: string;
+  back: string;
+  caustics?: string;
+  reflection?: string;
+}
+
+/**
+ * Dedykowane fotorealistyczne wstęgi miodowe dla poszczególnych gatunków.
+ * Skonfigurowane odmiany z dedykowanymi wstęgami, kaustyką i odbiciami w podłożu:
+ * - Miód Lipowy
+ * - Miód Gryczany
+ * - Miód Akacjowy
+ * - Miód Rzepakowy
+ * - Miód Wrzosowy
+ * - Miód Spadziowy
+ */
+const VARIETY_CUSTOM_RIBBONS: Record<string, VarietyRibbonAsset> = {
+  // 1. Miód Lipowy
+  lipowy: {
+    front: 'assets/wstega-lipowy-front.webp',
+    back: 'assets/wstega-lipowy-back.webp',
+    caustics: 'assets/wstega-lipowy-caustics.webp',
+    reflection: 'assets/wstega-lipowy-floor-reflect.webp',
+  },
+  'miod-lipowy': {
+    front: 'assets/wstega-lipowy-front.webp',
+    back: 'assets/wstega-lipowy-back.webp',
+    caustics: 'assets/wstega-lipowy-caustics.webp',
+    reflection: 'assets/wstega-lipowy-floor-reflect.webp',
+  },
+
+  // 2. Miód Gryczany
+  gryczany: {
+    front: 'assets/gryczany-front.webp',
+    back: 'assets/gryczany-back.webp',
+    caustics: 'assets/gryczany-caustics.webp',
+    reflection: 'assets/gryczany-floor-reflect.webp',
+  },
+  'miod-gryczany': {
+    front: 'assets/gryczany-front.webp',
+    back: 'assets/gryczany-back.webp',
+    caustics: 'assets/gryczany-caustics.webp',
+    reflection: 'assets/gryczany-floor-reflect.webp',
+  },
+  'gryczany-mazurski': {
+    front: 'assets/gryczany-front.webp',
+    back: 'assets/gryczany-back.webp',
+    caustics: 'assets/gryczany-caustics.webp',
+    reflection: 'assets/gryczany-floor-reflect.webp',
+  },
+
+  // 3. Miód Akacjowy
+  akacja: {
+    front: 'assets/akacjowy-front.webp',
+    back: 'assets/akacjowy-back.webp',
+    caustics: 'assets/akacjowy-caustics.webp',
+    reflection: 'assets/akacjowy-floor-reflect.webp',
+  },
+  akacjowy: {
+    front: 'assets/akacjowy-front.webp',
+    back: 'assets/akacjowy-back.webp',
+    caustics: 'assets/akacjowy-caustics.webp',
+    reflection: 'assets/akacjowy-floor-reflect.webp',
+  },
+  'miod-akacjowy': {
+    front: 'assets/akacjowy-front.webp',
+    back: 'assets/akacjowy-back.webp',
+    caustics: 'assets/akacjowy-caustics.webp',
+    reflection: 'assets/akacjowy-floor-reflect.webp',
+  },
+
+  // 4. Miód Rzepakowy
+  rzepakowy: {
+    front: 'assets/rzepakowy-front.webp',
+    back: 'assets/rzepakowy-back.webp',
+    caustics: 'assets/rzepakowy-caustics.webp',
+    reflection: 'assets/rzepakowy-floor-reflect.webp',
+  },
+  'miod-rzepakowy': {
+    front: 'assets/rzepakowy-front.webp',
+    back: 'assets/rzepakowy-back.webp',
+    caustics: 'assets/rzepakowy-caustics.webp',
+    reflection: 'assets/rzepakowy-floor-reflect.webp',
+  },
+
+  // 5. Miód Wrzosowy
+  wrzosowy: {
+    front: 'assets/wrzosowy-front.webp',
+    back: 'assets/wrzosowy-back.webp',
+    caustics: 'assets/wrzosowy-caustics.webp',
+    reflection: 'assets/wrzosowy-floor-reflect.webp',
+  },
+  'miod-wrzosowy': {
+    front: 'assets/wrzosowy-front.webp',
+    back: 'assets/wrzosowy-back.webp',
+    caustics: 'assets/wrzosowy-caustics.webp',
+    reflection: 'assets/wrzosowy-floor-reflect.webp',
+  },
+
+  // 6. Miód Spadziowy (ze Spadzi Iglastej)
+  spadziowy: {
+    front: 'assets/spadziowy-front.webp',
+    back: 'assets/spadziowy-back.webp',
+    caustics: 'assets/spadziowy-caustics.webp',
+    reflection: 'assets/spadziowy-floor-reflect.webp',
+  },
+  'spadz-iglastej': {
+    front: 'assets/spadziowy-front.webp',
+    back: 'assets/spadziowy-back.webp',
+    caustics: 'assets/spadziowy-caustics.webp',
+    reflection: 'assets/spadziowy-floor-reflect.webp',
+  },
+  'miod-ze-spadzi-iglastej': {
+    front: 'assets/spadziowy-front.webp',
+    back: 'assets/spadziowy-back.webp',
+    caustics: 'assets/spadziowy-caustics.webp',
+    reflection: 'assets/spadziowy-floor-reflect.webp',
+  },
+  'miod-spadziowy': {
+    front: 'assets/spadziowy-front.webp',
+    back: 'assets/spadziowy-back.webp',
+    caustics: 'assets/spadziowy-caustics.webp',
+    reflection: 'assets/spadziowy-floor-reflect.webp',
+  },
+};
+
+/**
+ * Jednolity wygląd wstęgi miodowej (wstęga ogólna) do testów dla wszystkich miodów na karuzeli.
+ * Zawiera zoptymalizowane warstwy: przód, tył (z wygojonym łączeniem), odbicie w posadzce oraz kaustykę.
+ */
+export const UNIVERSAL_RIBBON_ASSET: VarietyRibbonAsset = {
+  front: 'assets/wstega-ogolna-front.webp',
+  back: 'assets/wstega-ogolna-back.webp',
+  caustics: 'assets/wstega-ogolna-caustics.webp',
+  reflection: 'assets/wstega-ogolna-floor-reflect.webp',
+};
+
+// Flaga testowa: po włączeniu (true) każdy miód w karuzeli używa jednej ogólnej wstęgi miodowej
+const USE_UNIVERSAL_RIBBON = true;
+
 /**
  * HoneyLiquidRibbon
  * Luksusowa płynna wstęga miodowa renderowana w fizycznych warstwach 3D:
- * - isFrontLayer = false: ładuje /assets/honey-ribbon-back.png (z-index: 5, za głównym słoikiem)
- * - isFrontLayer = true: ładuje /assets/honey-ribbon-front.png (z-index: 30, przed dolną krawędzią słoika)
- * - dynamicznie dostosowuje odcień, refleksy świetlne i kaustykę do wybranego gatunku miodu
+ * - isFrontLayer = false: ładuje warstwę tylną (z-index: 5, za głównym słoikiem) oraz organiczną kaustykę na podłożu
+ * - isFrontLayer = true: ładuje warstwę przednią (z-index: 30, przed dolną krawędzią słoika) oraz odbicie wstęgi w tafli
  */
 export const HoneyLiquidRibbon: React.FC<HoneyRibbonProps> = ({
   varietyId,
@@ -104,57 +244,79 @@ export const HoneyLiquidRibbon: React.FC<HoneyRibbonProps> = ({
   className = '',
   isFrontLayer = false,
 }) => {
-  const imageSrc = isFrontLayer 
-    ? getAssetUrl('assets/honey-ribbon-front.png') 
-    : getAssetUrl('assets/honey-ribbon-back.png');
+  // Jeśli włączona flaga USE_UNIVERSAL_RIBBON - stosujemy wstęgę ogólną do wszystkich miodów
+  const ribbonConfig = USE_UNIVERSAL_RIBBON
+    ? UNIVERSAL_RIBBON_ASSET
+    : (varietyId ? VARIETY_CUSTOM_RIBBONS[varietyId] : null);
 
-  const theme = (varietyId && VARIETY_THEMES[varietyId]) || {
-    filter: `drop-shadow(0 14px 28px ${ambientColorHex}45) brightness(1.03)`,
-    glowColor: ambientColorHex,
-    glowOpacity: 0.40,
-  };
+  if (!ribbonConfig) {
+    return null;
+  }
+
+  const imageSrc = getAssetUrl(isFrontLayer ? ribbonConfig.front : ribbonConfig.back);
 
   return (
     <div
-      className={`pointer-events-none absolute left-1/2 top-[calc(50%+18px)] sm:top-[calc(50%+30px)] md:top-[calc(50%+42px)] -translate-x-1/2 -translate-y-1/2 flex items-center justify-center select-none overflow-visible ${className}`}
+      className={`pointer-events-none absolute left-[calc(50%-18px)] sm:left-[calc(50%-28px)] md:left-[calc(50%-42px)] top-[calc(50%+24px)] sm:top-[calc(50%+32px)] md:top-[calc(50%+38px)] -translate-x-1/2 -translate-y-1/2 flex items-center justify-center select-none overflow-visible ${className}`}
       style={{
         zIndex: isFrontLayer ? 30 : 5,
       }}
     >
-      <div className="relative flex items-center justify-center animate-honey-breathe overflow-visible">
-        {/* Subtelna kaustyka świetlna pod wstęgą (skupiona wokół głównego słoika, nie rzuca żółtej plamy pod boczny prawy słoik) */}
+      <div className="relative flex items-center justify-center overflow-visible">
+        {/* 1. FOTOREALISTYCZNA ORGANICZNA KAUSTYKA MIODU NA PODŁOŻU (załamanie światła w szkle i płynie) */}
+        {!isFrontLayer && ribbonConfig.caustics && (
+          <img
+            src={getAssetUrl(ribbonConfig.caustics)}
+            alt=""
+            aria-hidden="true"
+            loading="eager"
+            decoding="async"
+            className="absolute inset-0 w-[410px] sm:w-[630px] md:w-[930px] lg:w-[1030px] xl:w-[1070px] max-w-none h-auto object-contain pointer-events-none select-none"
+            style={{
+              mixBlendMode: 'screen',
+              opacity: 0.90,
+              filter: 'contrast(1.1) brightness(1.05)',
+            }}
+          />
+        )}
+
+        {/* 2. LUSTRZANE ODBICIE PRZEDNIEJ WSTĘGI W CIEMNEJ TAFLI PODŁOŻA (na poziomie stołu, pod wstęgą) */}
+        {!isFrontLayer && ribbonConfig.reflection && (
+          <img
+            src={getAssetUrl(ribbonConfig.reflection)}
+            alt=""
+            aria-hidden="true"
+            loading="eager"
+            decoding="async"
+            className="absolute inset-0 w-[410px] sm:w-[630px] md:w-[930px] lg:w-[1030px] xl:w-[1070px] max-w-none h-auto object-contain pointer-events-none select-none"
+            style={{
+              opacity: 0.70,
+              filter: 'blur(0.5px)',
+            }}
+          />
+        )}
+
+        {/* 3. CIEPŁA AMBIENTOWA ŁUNA PODŁOGOWA W KOLORZE DANEGO MIODU (Tylko pod głównym słoikiem) */}
         {!isFrontLayer && (
           <div 
-            className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-[250px] sm:w-[390px] md:w-[560px] h-20 sm:h-28 rounded-full blur-2xl transition-all duration-700 pointer-events-none"
+            className="absolute bottom-4 sm:bottom-8 left-1/2 -translate-x-1/2 w-[70%] sm:w-[85%] h-20 sm:h-32 rounded-full blur-3xl pointer-events-none transition-all duration-700"
             style={{
-              opacity: theme.glowOpacity * 0.65,
-              background: `radial-gradient(ellipse at 50% 50%, ${theme.glowColor}65 0%, ${theme.glowColor}15 55%, transparent 75%)`,
+              opacity: 0.45,
+              background: `radial-gradient(ellipse at 50% 50%, ${ambientColorHex} 0%, ${ambientColorHex}55 40%, transparent 75%)`,
+              mixBlendMode: 'screen',
             }}
           />
         )}
 
-        {/* Delikatny refleks na frontowej warstwie oplatającej słoik */}
-        {isFrontLayer && (
-          <div 
-            className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 w-[200px] sm:w-[290px] md:w-[420px] h-14 sm:h-18 rounded-full blur-xl transition-all duration-700 pointer-events-none"
-            style={{
-              opacity: theme.glowOpacity * 0.65,
-              background: `radial-gradient(ellipse at 50% 50%, ${theme.glowColor}50 0%, transparent 70%)`,
-            }}
-          />
-        )}
-
-        {/* Warstwa wstęgi miodowej (Front lub Back) z płynną animacją zmiany barwy w czasie rzeczywistym - idealnie wycentrowana */}
+        {/* 4. WARSTWA GŁÓWNA WSTĘGI MIODOWEJ (FRONT LUB BACK) */}
         <img
           src={imageSrc}
           alt={isFrontLayer ? "Miodowa wstęga - przód" : "Miodowa wstęga - tło"}
           loading="eager"
           decoding="async"
-          className="w-[440px] sm:w-[670px] md:w-[1080px] lg:w-[1140px] max-w-none h-auto object-contain pointer-events-none select-none translate-y-1"
+          className="w-[410px] sm:w-[630px] md:w-[930px] lg:w-[1030px] xl:w-[1070px] max-w-none h-auto object-contain pointer-events-none select-none"
           style={{
-            filter: theme.filter,
-            transition: 'filter 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
-            willChange: 'filter, transform'
+            willChange: 'transform'
           }}
         />
       </div>

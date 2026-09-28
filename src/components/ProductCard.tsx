@@ -110,11 +110,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           <span className="whitespace-nowrap">{product.colorName}</span>
         </div>
 
-        {/* Bottom batch on image */}
-        <div className="absolute bottom-2.5 left-3 text-white text-[12px] font-semibold flex items-center gap-1 drop-shadow-md">
-          <MapPin className="w-4 h-4 text-[#F3C06B]" />
-          <span className="truncate max-w-[220px]">{product.apiaryLocation.split(',')[0]}</span>
-        </div>
       </Link>
 
       {/* Card Content */}
