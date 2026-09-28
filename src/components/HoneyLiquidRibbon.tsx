@@ -268,12 +268,12 @@ export const HoneyLiquidRibbon: React.FC<HoneyRibbonProps> = React.memo(({
       const angle = (time * 2 * Math.PI) / 6.2; // Spokojny, organiczny cykl oddechu (6.2 sekundy)
       const sinVal = Math.sin(angle); // Ciągła harmoniczna fala sinusoidalna [-1, +1]
 
-      // Wstęga miodowa: amplituda 8.5px (od -8.5px w górę do +8.5px w dół)
-      const ribbonY = sinVal * -8.5;
+      // Wstęga miodowa: subtelna, delikatna amplituda ~6.0px (zmniejszona o 30%)
+      const ribbonY = sinVal * -6.0;
 
       // Odbicie w lustrze podłoża: ŚCIŚLE ZSYNCHRONIZOWANA ODWROĆNA FAZA LUSTRZANA!
-      // Gdy wstęga opada (+8.5px ku blatowi), odbicie podnosi się (-6.2px ku powierzchni stołu)
-      // Gdy wstęga unosi się (-8.5px w górę), odbicie oddala się w dół (+6.2px w głąb tafli)
+      // Gdy wstęga opada (+6.0px ku blatowi), odbicie podnosi się (-4.4px ku powierzchni stołu)
+      // Gdy wstęga unosi się (-6.0px w górę), odbicie oddala się w dół (+4.4px w głąb tafli)
       const reflectionY = -ribbonY * 0.73;
 
       if (ribbonRef.current) {
@@ -286,7 +286,7 @@ export const HoneyLiquidRibbon: React.FC<HoneyRibbonProps> = React.memo(({
 
       if (causticsRef.current) {
         // Blask kaustyki na podłożu subtelnie narasta, gdy struga miodu zbliża się do tafli
-        const causticsOpacity = 0.88 - sinVal * 0.08;
+        const causticsOpacity = 0.88 - sinVal * 0.05;
         causticsRef.current.style.opacity = causticsOpacity.toFixed(3);
       }
 
