@@ -123,7 +123,7 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
   // Aspect ratio & Framing state (prevents vertical stretching)
   const [framingMode, setFramingMode] = useState<FramingMode>('crop-center');
   const [cropWidthRatio, setCropWidthRatio] = useState<number>(1.0); // 1.0 = 1:1 square centered on jar
-  const [frameDimensions, setFrameDimensions] = useState<{ width: number; height: number }>({ width: 640, height: 640 });
+  const [frameDimensions, setFrameDimensions] = useState<{ width: number; height: number }>({ width: 440, height: 440 });
   const [detectedAspect, setDetectedAspect] = useState<string>('1:1');
 
   // Chroma key / transparency options
@@ -142,6 +142,12 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
   useEffect(() => {
     setIsEditorialTiltActive(editorialTiltEnabled);
   }, [editorialTiltEnabled]);
+
+  // Immediate redraw whenever canvas dimensions or layout changes
+  useEffect(() => {
+    currentRenderedFrameIdx.current = -1;
+    drawActiveFrame(currentAngleProgressRef.current, true);
+  }, [frameDimensions, drawActiveFrame]);
 
   // Interaction controls & infinite loop options
   const [autoRotate, setAutoRotate] = useState(false);
@@ -746,7 +752,7 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
       }
 
       // 5. Render active frame onto hardware-accelerated Canvas
-      drawActiveFrame(currentAngleProgressRef.current);
+      drawActiveFrame(currentAngleProgressRef.current, currentRenderedFrameIdx.current === -1);
 
       // Always guarantee reflection canvas is rendered and in sync with active frame
       if (reflectionCanvasRef.current && canvasRef.current) {

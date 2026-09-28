@@ -20,8 +20,8 @@ export const PagePreloader: React.FC<PagePreloaderProps> = ({ onComplete }) => {
   useEffect(() => {
     let isMounted = true;
     const startTime = performance.now();
-    const minDisplayTimeMs = 600; // Płynna, dynamiczna animacja powitania
-    const maxSafetyTimeoutMs = 2500; // Failsafe: maksymalnie 2.5s - preloader ZAWSZE płynnie odsłania stronę
+    const minDisplayTimeMs = 800; // Płynna, dynamiczna animacja powitania
+    const maxSafetyTimeoutMs = 3500; // Bezpieczny timeout maksymalny na wypadek słabszego łącza
     let finished = false;
 
     let spritePct = 0;
@@ -38,62 +38,74 @@ export const PagePreloader: React.FC<PagePreloaderProps> = ({ onComplete }) => {
       targetP = Math.max(targetP, computed);
     };
 
-    // 1. Priorytetowe, błyskawiczne załadowanie pierwszego widocznego w karuzeli słoika (Lipowy)
-    // Pozostałe odmiany ładują się cicho w tle (idle queue) po odsłonięciu strony
-    const priorityVarietyId = 'lipowy';
-    const backgroundVarietyIds = ['gryczany', 'spadziowy', 'rzepakowy', 'akacja', 'wrzosowy'];
+    // 1. Priorytetowe, równoległe załadowanie 3 GŁÓWNYCH słoików widocznych na starcie karuzeli:
+    // Lipowy (centrum), Gryczany (prawa strona), Spadziowy (lewa strona)
+    // Pozostałe 3 odmiany (rzepakowy, akacja, wrzosowy) ładują się cicho w tle (lazy loading)
+    const priorityVarietyIds = ['lipowy', 'gryczany', 'spadziowy'];
+    const backgroundVarietyIds = ['rzepakowy', 'akacja', 'wrzosowy'];
 
-    const initialSpriteInfo = BUNDLED_VARIETY_SPRITES[priorityVarietyId];
-    if (initialSpriteInfo) {
-      loadFramesFromSpriteSheet({
-        varietyId: priorityVarietyId,
-        spriteInfo: initialSpriteInfo,
+    let totalSpritesPct = 0;
+    const spritesCount = priorityVarietyIds.length;
+    let spritesCompleted = 0;
+
+    const priorityPromises = priorityVarietyIds.map(id => {
+      const spriteInfo = BUNDLED_VARIETY_SPRITES[id];
+      if (!spriteInfo) {
+        spritesCompleted++;
+        return Promise.resolve();
+      }
+      return loadFramesFromSpriteSheet({
+        varietyId: id,
+        spriteInfo,
         onProgress: (pct) => {
-          spritePct = pct;
+          totalSpritesPct = Math.round(((spritesCompleted * 100 + pct) / spritesCount));
+          spritePct = Math.min(100, totalSpritesPct);
           checkProgress();
         }
       }).then(() => {
-        spriteDone = true;
-        spritePct = 100;
+        spritesCompleted++;
+        spritePct = Math.round((spritesCompleted / spritesCount) * 100);
         checkProgress();
       }).catch(() => {
-        spriteDone = true;
-        spritePct = 100;
+        spritesCompleted++;
+        spritePct = Math.round((spritesCompleted / spritesCount) * 100);
         checkProgress();
       });
-    } else {
+    });
+
+    Promise.all(priorityPromises).then(() => {
       spriteDone = true;
       spritePct = 100;
       checkProgress();
-    }
 
-    // Po odsłonięciu strony cicho w tle dogrywamy pozostałe odmiany (jedna po drugiej, bez obciążania wątku)
-    const loadBackgroundQueue = async () => {
-      for (const bgId of backgroundVarietyIds) {
-        const bgSprite = BUNDLED_VARIETY_SPRITES[bgId];
-        if (bgSprite) {
-          try {
-            await new Promise(r => setTimeout(r, 400));
-            await loadFramesFromSpriteSheet({
-              varietyId: bgId,
-              spriteInfo: bgSprite,
-            });
-          } catch (err) {
-            console.warn(`Background preload for ${bgId} skipped:`, err);
+      // Po odsłonięciu strony cicho w tle dogrywamy pozostałe odmiany (jedna po drugiej, bez obciążania wątku)
+      const loadBackgroundQueue = async () => {
+        for (const bgId of backgroundVarietyIds) {
+          const bgSprite = BUNDLED_VARIETY_SPRITES[bgId];
+          if (bgSprite) {
+            try {
+              await new Promise(r => setTimeout(r, 400));
+              await loadFramesFromSpriteSheet({
+                varietyId: bgId,
+                spriteInfo: bgSprite,
+              });
+            } catch (err) {
+              console.warn(`Background preload for ${bgId} skipped:`, err);
+            }
           }
         }
-      }
-    };
+      };
 
-    if (typeof window !== 'undefined') {
-      if ('requestIdleCallback' in window) {
-        (window as any).requestIdleCallback(() => {
+      if (typeof window !== 'undefined') {
+        if ('requestIdleCallback' in window) {
+          (window as any).requestIdleCallback(() => {
+            setTimeout(loadBackgroundQueue, 800);
+          }, { timeout: 3000 });
+        } else {
           setTimeout(loadBackgroundQueue, 1000);
-        }, { timeout: 3000 });
-      } else {
-        setTimeout(loadBackgroundQueue, 1200);
+        }
       }
-    }
+    });
 
     // 2. Błyskawiczne ładowanie wstęgi miodowej (wstęga ogólna używana na stronie głównej)
     const ribbonUrls = [
