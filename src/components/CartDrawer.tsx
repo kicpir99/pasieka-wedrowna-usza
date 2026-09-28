@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { CartItem, HoneyProduct } from '../types';
 import { X, Trash2, ShoppingBag, ArrowRight, ShieldCheck, Truck, Check, Scale, Package, Sparkles, Plus, Lock } from 'lucide-react';
 import { HONEY_PRODUCTS } from '../data/honeyProducts';
+import { WOO_CONFIG, getWooCommerceCheckoutUrl } from '../services/wooCommerceService';
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -149,6 +150,10 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   }, [items, remainingForFreeShipping]);
 
   const handleCheckout = () => {
+    if (WOO_CONFIG.isConfigured && WOO_CONFIG.url) {
+      window.location.href = getWooCommerceCheckoutUrl(items);
+      return;
+    }
     setOrderSubmitted(true);
   };
 

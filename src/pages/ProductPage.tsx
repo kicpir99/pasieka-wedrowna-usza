@@ -37,6 +37,8 @@ import {
   BookOpen
 } from 'lucide-react';
 
+import { useProducts } from '../context/ProductContext';
+
 interface ProductPageProps {
   onAddToCart: (product: HoneyProduct, weightGrams: number, pricePln: number, subscriptionInterval?: number) => void;
   onOpenCompare?: (product: HoneyProduct) => void;
@@ -46,8 +48,9 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const lenis = useLenis();
+  const { getProductById, honeyVarieties, hiveTreasures } = useProducts();
 
-  const rawProduct = HONEY_PRODUCTS.find((p) => p.id === id);
+  const rawProduct = getProductById(id || '') || HONEY_PRODUCTS.find((p) => p.id === id);
 
   useLayoutEffect(() => {
     setActiveTab('opis');
@@ -173,7 +176,9 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
   const effectivePrice = purchaseMode === 'subscription' ? Math.round(basePrice * 0.9) : basePrice;
 
   // Related products - strictly isolate honey varieties vs. hive treasures
-  const candidatePool = isTreasure ? HIVE_TREASURES : HONEY_VARIETIES;
+  const candidatePool = isTreasure 
+    ? (hiveTreasures.length > 0 ? hiveTreasures : HIVE_TREASURES) 
+    : (honeyVarieties.length > 0 ? honeyVarieties : HONEY_VARIETIES);
   const relatedProducts = [...candidatePool]
     .filter(p => p.id !== rawProduct.id)
     .sort((a, b) => {

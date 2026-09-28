@@ -4,6 +4,7 @@ import { ProductFilter } from '../components/ProductFilter';
 import { FilterState, HoneyCategory, HoneyProduct, HealthIntentFilter } from '../types';
 import { ProductCard } from '../components/ProductCard';
 import { HONEY_PRODUCTS, HONEY_VARIETIES } from '../data/honeyProducts';
+import { useProducts } from '../context/ProductContext';
 import { getEnrichedProduct, isProductBestseller, isProductRecommended } from '../utils/honeyHelpers';
 import { Sparkles, ArrowUp, ShoppingBag, ShieldCheck, Truck, RotateCcw, ArrowRight } from 'lucide-react';
 
@@ -24,6 +25,8 @@ export const ShopPage: React.FC<ShopPageProps> = ({
   compareList,
   onOpenQuiz,
 }) => {
+  const { honeyVarieties } = useProducts();
+  const currentHoneyVarieties = honeyVarieties.length > 0 ? honeyVarieties : HONEY_VARIETIES;
   const [detailProduct, setDetailProduct] = useState<HoneyProduct | null>(null);
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -109,7 +112,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({
   };
 
   const filteredProducts = useMemo(() => {
-    let result = [...HONEY_VARIETIES];
+    let result = [...currentHoneyVarieties];
 
     if (filters.searchQuery.trim()) {
       const q = filters.searchQuery.toLowerCase();
@@ -312,9 +315,9 @@ export const ShopPage: React.FC<ShopPageProps> = ({
         <ProductFilter
           filters={filters}
           onFilterChange={handleFilterChange}
-          totalCount={HONEY_VARIETIES.length}
+          totalCount={currentHoneyVarieties.length}
           filteredCount={filteredProducts.length}
-          totalProductsCount={HONEY_VARIETIES.length}
+          totalProductsCount={currentHoneyVarieties.length}
           filteredProductsCount={filteredProducts.length}
         />
 
