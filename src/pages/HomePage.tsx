@@ -8,6 +8,7 @@ import { PagePreloader } from '../components/PagePreloader';
 import { HoneyProduct } from '../types';
 import { HONEY_PRODUCTS, HONEY_VARIETIES } from '../data/honeyProducts';
 import { isProductBestseller } from '../utils/honeyHelpers';
+import { getAssetUrl } from '../utils/assets';
 import { Sparkles, ArrowRight, ShieldCheck, Heart, Droplets, Star, Quote, MapPin, CheckCircle2 } from 'lucide-react';
 
 const ProductDetailModal = React.lazy(() => import('../components/ProductDetailModal').then(m => ({ default: m.ProductDetailModal })));
@@ -110,7 +111,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         />
 
         {/* Sekcja: Nasza Filozofia – Pasieka Usza */}
-        <section className="py-20 bg-white border-b border-[#E8DECFA0]">
+        <section className="py-20 bg-white border-b border-[#E8DECFA0] content-visibility-auto">
           <div className={`adaptive-container ${displayResolution.containerClass} px-4 sm:px-6 lg:px-8`}>
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
               
@@ -160,20 +161,26 @@ export const HomePage: React.FC<HomePageProps> = ({
               </div>
 
               <div className="lg:col-span-6 grid grid-cols-2 gap-3 sm:gap-4">
-                <div className="rounded-2xl overflow-hidden border border-[#E7DCCE] shadow-md">
+                <div className="rounded-2xl overflow-hidden border border-[#E7DCCE] shadow-md bg-[#EDE4D5]">
                   <img
-                    src="https://pasiekausza.pl/wp-content/uploads/2022/02/DSC02154-683x1024.jpg"
-                    alt="Praca przy ulach"
+                    src={getAssetUrl('assets/about-apiary-1.webp')}
+                    alt="Praca przy ulach w pasiece Usza"
+                    width={683}
+                    height={1024}
                     className="w-full h-48 sm:h-80 object-cover"
                     loading="lazy"
+                    decoding="async"
                   />
                 </div>
-                <div className="rounded-2xl overflow-hidden border border-[#E7DCCE] shadow-md mt-3 sm:mt-6">
+                <div className="rounded-2xl overflow-hidden border border-[#E7DCCE] shadow-md mt-3 sm:mt-6 bg-[#EDE4D5]">
                   <img
-                    src="https://pasiekausza.pl/wp-content/uploads/2022/02/DSC01985-683x1024.jpg"
-                    alt="Plaster miodu w ulu"
+                    src={getAssetUrl('assets/about-apiary-2.webp')}
+                    alt="Plaster miodu w ulu w pasiece Usza"
+                    width={683}
+                    height={1024}
                     className="w-full h-48 sm:h-80 object-cover"
                     loading="lazy"
+                    decoding="async"
                   />
                 </div>
               </div>
@@ -183,7 +190,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         </section>
 
         {/* Wybrane Odmiany Miodów – Bestsellery ze Sklepu */}
-        <section className="py-20 bg-[#FAF7F2] border-b border-[#E8DECFA0]">
+        <section className="py-20 bg-[#FAF7F2] border-b border-[#E8DECFA0] content-visibility-auto">
           <div className={`adaptive-container ${displayResolution.containerClass} px-4 sm:px-6 lg:px-8 space-y-12`}>
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
               <div className="space-y-2">
@@ -252,7 +259,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         </section>
 
         {/* Opinie Klientów */}
-        <section className="py-20 bg-white border-b border-[#E8DECFA0]">
+        <section className="py-20 bg-white border-b border-[#E8DECFA0] content-visibility-auto">
           <div className={`adaptive-container ${displayResolution.containerClass} px-4 sm:px-6 lg:px-8 space-y-12`}>
             {/* Header Sekcji Ocen */}
             <div className="text-center space-y-4 max-w-2xl mx-auto">
@@ -380,8 +387,12 @@ export const HomePage: React.FC<HomePageProps> = ({
         </section>
 
         {/* Standard Quality & FAQ */}
-        <HoneyQualitySection containerClass={displayResolution.containerClass} />
-        <HoneyFAQSection containerClass={displayResolution.containerClass} />
+        <div className="content-visibility-auto">
+          <HoneyQualitySection containerClass={displayResolution.containerClass} />
+        </div>
+        <div className="content-visibility-auto">
+          <HoneyFAQSection containerClass={displayResolution.containerClass} />
+        </div>
       </main>
 
       <React.Suspense fallback={null}>

@@ -80,4 +80,60 @@ h1, h2, h3, .font-display {
   background: rgba(217, 130, 30, 0.55);
 }
 
+/* 360 Hotspot Badge Keyframe Animations (Pure CSS, 0kb JS runtime) */
+@keyframes hotspotSlideLeft {
+  0% {
+    opacity: 0;
+    transform: translate3d(-18px, 0, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes hotspotSlideRight {
+  0% {
+    opacity: 0;
+    transform: translate3d(18px, 0, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes hotspotSlideDown {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -14px, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.animate-hotspot-left {
+  animation: hotspotSlideLeft 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
+}
+
+.animate-hotspot-right {
+  animation: hotspotSlideRight 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
+}
+
+.animate-hotspot-down {
+  animation: hotspotSlideDown 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
+}
+
+/* Below-the-fold content visibility optimization for mobile CPU & DOM thriftiness */
+.content-visibility-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 650px;
+}
+
+
 
