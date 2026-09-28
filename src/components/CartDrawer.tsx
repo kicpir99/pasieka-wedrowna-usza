@@ -4,6 +4,7 @@ import { CartItem, HoneyProduct } from '../types';
 import { X, Trash2, ShoppingBag, ArrowRight, ShieldCheck, Truck, Check, Scale, Package, Sparkles, Plus, Lock } from 'lucide-react';
 import { HONEY_PRODUCTS } from '../data/honeyProducts';
 import { WOO_CONFIG, getWooCommerceCheckoutUrl } from '../services/wooCommerceService';
+import { useAuth } from '../context/AuthContext';
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -29,6 +30,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   onNavigateToCatalog,
 }) => {
   const navigate = useNavigate();
+  const { isLoggedIn, user } = useAuth();
   const [deliveryMethod, setDeliveryMethod] = useState<'paczkomat' | 'kurier' | 'odbior'>('paczkomat');
   const [orderSubmitted, setOrderSubmitted] = useState(false);
 
@@ -432,6 +434,59 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                       <span className="text-[10px] text-[#847461]">0 zł</span>
                     </button>
                   </div>
+
+                  {/* Auto-filled Address & Paczkomat banner for logged-in user */}
+                  {deliveryMethod === 'paczkomat' && (
+                    <div className="p-2.5 rounded-xl border text-[11px] leading-tight transition-all">
+                      {isLoggedIn && user?.address?.parcelLocker ? (
+                        <div className="flex items-start gap-2 text-[#1B4332] bg-[#E8F3E6] border border-[#C5E1BF] p-2 rounded-lg">
+                          <Check className="w-3.5 h-3.5 mt-0.5 shrink-0 text-[#1B4332]" />
+                          <div>
+                            <span className="font-bold block">Paczkomat z Twojego profilu:</span>
+                            <span className="text-[#2D5A27]">{user.address.parcelLocker}</span>
+                            <span className="text-[10px] text-[#4F7A4A] block mt-0.5">Podstawiony automatycznie bez ponownego wpisywania!</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-between gap-2 text-[#7A6C5B] bg-[#F7F2EB] p-2 rounded-lg border border-[#E5DACD]">
+                          <span>Zapisz swój Paczkomat w profilu, by nie wpisywać go ponownie:</span>
+                          <button
+                            type="button"
+                            onClick={() => { onClose(); navigate('/konto'); }}
+                            className="shrink-0 text-[10px] font-bold text-[#8B5337] underline hover:text-[#5E321B] cursor-pointer"
+                          >
+                            {isLoggedIn ? 'Uzupełnij profil →' : 'Zaloguj się →'}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {deliveryMethod === 'kurier' && (
+                    <div className="p-2.5 rounded-xl border text-[11px] leading-tight transition-all">
+                      {isLoggedIn && user?.address?.street ? (
+                        <div className="flex items-start gap-2 text-[#1B4332] bg-[#E8F3E6] border border-[#C5E1BF] p-2 rounded-lg">
+                          <Check className="w-3.5 h-3.5 mt-0.5 shrink-0 text-[#1B4332]" />
+                          <div>
+                            <span className="font-bold block">Adres dostawy z profilu:</span>
+                            <span className="text-[#2D5A27]">{user.address.street}, {user.address.postalCode} {user.address.city}</span>
+                            <span className="text-[10px] text-[#4F7A4A] block mt-0.5">Podstawiony automatycznie!</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-between gap-2 text-[#7A6C5B] bg-[#F7F2EB] p-2 rounded-lg border border-[#E5DACD]">
+                          <span>Konto w pasiece pozwala zapisać adres i kupować 1 kliknięciem:</span>
+                          <button
+                            type="button"
+                            onClick={() => { onClose(); navigate('/konto'); }}
+                            className="shrink-0 text-[10px] font-bold text-[#8B5337] underline hover:text-[#5E321B] cursor-pointer"
+                          >
+                            {isLoggedIn ? 'Uzupełnij adres →' : 'Zaloguj się →'}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {/* Wskaźnik wagi przesyłki & format paczki */}

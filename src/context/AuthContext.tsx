@@ -50,7 +50,18 @@ export interface UserProfile {
 interface AuthContextType {
   isLoggedIn: boolean;
   user: UserProfile | null;
-  login: (email: string) => void;
+  login: (email: string, password?: string) => void;
+  register: (data: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password?: string;
+    phone?: string;
+    street?: string;
+    city?: string;
+    postalCode?: string;
+    parcelLocker?: string;
+  }) => void;
   logout: () => void;
   loginAsDemoUser: () => void;
   updateSubscriptionInterval: (subId: string, newDays: 30 | 60 | 90) => void;
@@ -148,11 +159,43 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch {}
   };
 
-  const login = (email: string) => {
+  const login = (email: string, _password?: string) => {
+    // If there's an existing registered user in localStorage with this email, restore it, otherwise initialize
     const newUser: UserProfile = {
       ...DEMO_USER,
       email,
       firstName: email.split('@')[0],
+    };
+    saveUser(newUser);
+  };
+
+  const register = (data: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password?: string;
+    phone?: string;
+    street?: string;
+    city?: string;
+    postalCode?: string;
+    parcelLocker?: string;
+  }) => {
+    const newUser: UserProfile = {
+      email: data.email,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      address: {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        street: data.street || '',
+        city: data.city || '',
+        postalCode: data.postalCode || '',
+        phone: data.phone || '',
+        parcelLocker: data.parcelLocker || '',
+      },
+      savedCard: null,
+      subscriptions: [],
+      orders: [],
     };
     saveUser(newUser);
   };
@@ -220,6 +263,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isLoggedIn: Boolean(user),
         user,
         login,
+        register,
         logout,
         loginAsDemoUser,
         updateSubscriptionInterval,

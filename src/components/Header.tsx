@@ -9,7 +9,7 @@ interface HeaderProps {
   cartSubtotal: number;
   onOpenCart: () => void;
   onOpenQuiz: () => void;
-  onOpenAccount: () => void;
+  onOpenAccount?: () => void;
   containerClass?: string;
 }
 
@@ -422,10 +422,14 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
             )}
 
-            {/* Account / Moje Konto Button */}
-            <button
-              onClick={onOpenAccount}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[#DFCBB5] bg-[#FAF5ED] hover:bg-[#F2E5D3] text-[#484138] transition-all cursor-pointer shadow-2xs"
+            {/* Account / Moje Konto Link */}
+            <Link
+              to="/konto"
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl border transition-all cursor-pointer shadow-2xs ${
+                isActive('/konto')
+                  ? 'border-[#8B5337] bg-[#F2E5D3] text-[#8B5337] font-bold'
+                  : 'border-[#DFCBB5] bg-[#FAF5ED] hover:bg-[#F2E5D3] text-[#484138]'
+              }`}
               id="header-account-btn"
               title="Moje Konto i Subskrypcje"
               aria-label="Konto użytkownika"
@@ -434,7 +438,10 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="hidden sm:inline text-xs font-semibold text-[#3D3428]">
                 {isLoggedIn ? (user?.firstName || 'Konto') : 'Konto'}
               </span>
-            </button>
+              {isLoggedIn && user?.subscriptions && user.subscriptions.length > 0 && (
+                <span className="w-2 h-2 rounded-full bg-[#1B4332] ml-0.5" title="Aktywne subskrypcje" />
+              )}
+            </Link>
 
             <button
               onClick={onOpenCart}
@@ -529,13 +536,14 @@ export const Header: React.FC<HeaderProps> = ({
               Kontakt (Ciechów)
             </Link>
 
-            <button
-              type="button"
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onOpenAccount();
-              }}
-              className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold text-[#24211D] hover:bg-[#EDE5D8] transition-colors cursor-pointer text-left border border-[#E0D3C1] bg-[#FAF5ED]"
+            <Link
+              to="/konto"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-colors cursor-pointer text-left border ${
+                isActive('/konto')
+                  ? 'bg-[#F2E5D3] text-[#8B5337] font-bold border-[#8B5337]'
+                  : 'border-[#E0D3C1] bg-[#FAF5ED] text-[#24211D] hover:bg-[#EDE5D8]'
+              }`}
             >
               <div className="flex items-center gap-2.5">
                 <User className="w-4 h-4 text-[#8C4609]" />
@@ -546,7 +554,7 @@ export const Header: React.FC<HeaderProps> = ({
                   {user.subscriptions.length} subskrypcje
                 </span>
               )}
-            </button>
+            </Link>
 
             <button
               type="button"
