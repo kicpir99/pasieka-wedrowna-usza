@@ -389,7 +389,7 @@ export const Hero: React.FC<HeroProps> = ({
       </div>
 
       {/* CENTRAL STAGE: EDITORIAL 2-COLUMN BALANCED LAYOUT (ZOPTYMALIZOWANY POD EKRANY MOBILNE, 16:9 I 21:9) */}
-      <div className={`relative z-20 adaptive-container ${activeContainerClass} px-3 sm:px-6 lg:px-8 2xl:px-10 my-auto py-2 sm:py-6 grid grid-cols-1 lg:grid-cols-12 items-center gap-4 sm:gap-8 lg:gap-10 2xl:gap-14`}>
+      <div className={`relative z-20 adaptive-container ${activeContainerClass} px-3 sm:px-6 lg:px-8 2xl:px-10 my-auto py-2 sm:py-6 grid grid-cols-1 lg:grid-cols-12 items-center gap-3 sm:gap-8 lg:gap-10 2xl:gap-14`}>
         
         {/* RIGHT COLUMN (NA MOBILE NA GÓRZE): Duża centralna scenografia 3D z obracającym się słoikiem i dynamicznymi dymkami */}
         <div className="order-1 lg:order-2 lg:col-span-7 xl:col-span-7 relative flex items-center justify-center w-full min-h-[300px] sm:min-h-[500px]">
