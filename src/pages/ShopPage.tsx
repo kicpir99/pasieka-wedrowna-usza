@@ -45,7 +45,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({
   const urlFlavorNote = searchParams.get('nuta');
   const urlCategory = searchParams.get('kategoria') as HoneyCategory | null;
   const urlHealthIntent = searchParams.get('intencja') as HealthIntentFilter | null;
-  const validCategories: HoneyCategory[] = ['wszystkie', 'wiosenne', 'letnie', 'lesne-spadz', 'z-dodatkami', 'zestawy'];
+  const validCategories: HoneyCategory[] = ['wszystkie', 'wiosenne', 'letnie', 'lesne-spadz'];
   const validIntents: HealthIntentFilter[] = ['wszystkie', 'odpornosc', 'lagodne', 'koneser', 'prezent'];
   const initialCategory = urlCategory && validCategories.includes(urlCategory) ? urlCategory : 'wszystkie';
   const initialIntent = urlHealthIntent && validIntents.includes(urlHealthIntent) ? urlHealthIntent : 'wszystkie';
@@ -109,7 +109,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({
   };
 
   const filteredProducts = useMemo(() => {
-    let result = [...HONEY_PRODUCTS];
+    let result = [...HONEY_VARIETIES];
 
     if (filters.searchQuery.trim()) {
       const q = filters.searchQuery.toLowerCase();
@@ -135,13 +135,13 @@ export const ShopPage: React.FC<ShopPageProps> = ({
 
         switch (filters.healthIntent) {
           case 'odpornosc':
-            return combined.includes('odporn') || combined.includes('przezięb') || combined.includes('gryp') || combined.includes('infekc') || p.id.includes('propolis') || p.id.includes('pierzga');
+            return combined.includes('odporn') || combined.includes('przezięb') || combined.includes('gryp') || combined.includes('infekc') || p.id.includes('lipow') || p.id.includes('nawloc') || p.id.includes('spadz');
           case 'lagodne':
-            return p.flavorIntensity === 'lagodny' || p.category === 'wiosenne' || combined.includes('dzieci') || p.id.includes('rzepak') || p.id.includes('akacj') || p.id.includes('pylek');
+            return p.flavorIntensity === 'lagodny' || p.category === 'wiosenne' || combined.includes('dzieci') || p.id.includes('rzepak') || p.id.includes('akacj');
           case 'koneser':
             return p.flavorIntensity === 'wyrazisty' || p.category === 'lesne-spadz' || p.id.includes('grycz') || p.id.includes('spadz') || p.id.includes('wrzos');
           case 'prezent':
-            return isProductBestseller(p) || isProductRecommended(p) || p.isLimitedBatch || p.category === 'z-dodatkami' || p.category === 'zestawy';
+            return isProductBestseller(p) || isProductRecommended(p) || p.isLimitedBatch;
           default:
             return true;
         }

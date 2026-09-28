@@ -5,11 +5,11 @@ import { HONEY_PRODUCTS, HONEY_VARIETIES } from '../data/honeyProducts';
 import { Search, Sparkles, X, ChevronDown, ChevronUp, ChevronRight, Check, RotateCcw, SlidersHorizontal } from 'lucide-react';
 
 const HEALTH_INTENTS: { id: HealthIntentFilter; label: string; icon: string; desc: string }[] = [
-  { id: 'wszystkie', label: 'Wszystkie produkty', icon: '✨', desc: `${HONEY_PRODUCTS.length} naturalnych skarbów z Dolnego Śląska` },
-  { id: 'odpornosc', label: 'Odporność & Infekcje', icon: '🛡️', desc: 'Miód lipowy, spadziowy, propolis, pierzga' },
-  { id: 'lagodne', label: 'Łagodne & Dla Dzieci', icon: '🥞', desc: 'Miód rzepakowy, akacjowy, faceliowy, pyłek' },
+  { id: 'wszystkie', label: 'Wszystkie miody', icon: '✨', desc: `${HONEY_VARIETIES.length} odmian surowego miodu z Dolnego Śląska` },
+  { id: 'odpornosc', label: 'Odporność & Infekcje', icon: '🛡️', desc: 'Miód lipowy, spadziowy, nawłociowy' },
+  { id: 'lagodne', label: 'Łagodne & Dla Dzieci', icon: '🥞', desc: 'Miód rzepakowy, akacjowy, faceliowy' },
   { id: 'koneser', label: 'Głębokie & Koneser', icon: '🌲', desc: 'Miód gryczany, wrzosowy, spadziowy' },
-  { id: 'prezent', label: 'Na Prezent & Rarytas', icon: '🎁', desc: 'Miód wrzosowy, świece woskowe, zestawy' },
+  { id: 'prezent', label: 'Na Prezent & Rarytas', icon: '🎁', desc: 'Miód wrzosowy, spadź iglasta, miody limitowane' },
 ];
 
 interface ProductFilterProps {
@@ -45,7 +45,7 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({
   totalCount,
   filteredCount,
 }) => {
-  const effectiveTotalCount = totalProductsCount ?? totalCount ?? HONEY_PRODUCTS.length;
+  const effectiveTotalCount = totalProductsCount ?? totalCount ?? HONEY_VARIETIES.length;
   const effectiveFilteredCount = filteredProductsCount ?? filteredCount ?? effectiveTotalCount;
 
   const [isFlavorFilterOpen, setIsFlavorFilterOpen] = useState(Boolean(filters.flavorNote));
@@ -59,18 +59,16 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({
   }, [filters.flavorNote]);
 
   const categories: { id: HoneyCategory; label: string }[] = [
-    { id: 'wszystkie', label: 'Wszystkie produkty pasieki' },
+    { id: 'wszystkie', label: 'Wszystkie odmiany miodów' },
     { id: 'wiosenne', label: '🌸 Wiosenne (Rzepak, Akacja, Mniszek)' },
     { id: 'letnie', label: '☀️ Letnie (Lipa, Gryka, Facelia)' },
     { id: 'lesne-spadz', label: '🌲 Leśne & Spadziowe (Spadź, Wrzos, Leśny)' },
-    { id: 'z-dodatkami', label: '🐝 Skarby Ula (Propolis, Pierzga, Pyłek)' },
-    { id: 'zestawy', label: '🕯️ Świece i Manufaktura' },
   ];
 
-  // Wszystkie unikalne nuty smakowe zebrane z bazy produktów
+  // Wszystkie unikalne nuty smakowe zebrane z bazy odmian miodów
   const allUniqueFlavorNotes = useMemo(() => {
     const notesSet = new Set<string>();
-    HONEY_PRODUCTS.forEach((p) => {
+    HONEY_VARIETIES.forEach((p) => {
       p.flavorNotes?.forEach((n) => notesSet.add(n));
     });
     return Array.from(notesSet).sort((a, b) => a.localeCompare(b, 'pl'));
