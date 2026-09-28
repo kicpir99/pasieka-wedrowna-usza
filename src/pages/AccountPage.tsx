@@ -57,14 +57,10 @@ export const AccountPage: React.FC<AccountPageProps> = ({ displayResolution }) =
   const [loginPassword, setLoginPassword] = useState('');
   const [loginRemember, setLoginRemember] = useState(true);
 
-  // Register form state
+  // Register form state (simplified for maximum conversion & minimum friction)
   const [regFirstName, setRegFirstName] = useState('');
-  const [regLastName, setRegLastName] = useState('');
   const [regEmail, setRegEmail] = useState('');
-  const [regPhone, setRegPhone] = useState('');
   const [regPassword, setRegPassword] = useState('');
-  const [regPasswordRepeat, setRegPasswordRepeat] = useState('');
-  const [regParcelLocker, setRegParcelLocker] = useState('');
   const [regTermsAccepted, setRegTermsAccepted] = useState(false);
   const [regNewsletterAccepted, setRegNewsletterAccepted] = useState(true);
   const [formError, setFormError] = useState<string | null>(null);
@@ -103,15 +99,11 @@ export const AccountPage: React.FC<AccountPageProps> = ({ displayResolution }) =
     login(loginEmail.trim(), loginPassword);
   };
 
-  // Handle Register
+  // Handle Register (Lightweight 5-second signup)
   const handleRegisterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setFormError(null);
 
-    if (!regFirstName.trim() || !regLastName.trim()) {
-      setFormError('Proszę podać imię i nazwisko.');
-      return;
-    }
     if (!regEmail.trim() || !regEmail.includes('@')) {
       setFormError('Proszę podać poprawny adres e-mail.');
       return;
@@ -120,22 +112,17 @@ export const AccountPage: React.FC<AccountPageProps> = ({ displayResolution }) =
       setFormError('Hasło musi mieć co najmniej 6 znaków.');
       return;
     }
-    if (regPassword !== regPasswordRepeat) {
-      setFormError('Podane hasła nie są identyczne.');
-      return;
-    }
     if (!regTermsAccepted) {
       setFormError('Wymagana jest akceptacja regulaminu i polityki prywatności.');
       return;
     }
 
+    const displayName = regFirstName.trim() || regEmail.split('@')[0];
     register({
-      firstName: regFirstName.trim(),
-      lastName: regLastName.trim(),
+      firstName: displayName,
+      lastName: '',
       email: regEmail.trim(),
       password: regPassword,
-      phone: regPhone.trim(),
-      parcelLocker: regParcelLocker.trim(),
     });
   };
 
@@ -388,121 +375,80 @@ export const AccountPage: React.FC<AccountPageProps> = ({ displayResolution }) =
                 </form>
               )}
 
-              {/* REGISTER FORM */}
+              {/* REGISTER FORM (OPTIMIZED FOR FAST ONBOARDING) */}
               {authMode === 'register' && (
-                <form onSubmit={handleRegisterSubmit} className="space-y-3.5">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-bold text-[#4A4033] mb-1">
-                        Imię *
+                <form onSubmit={handleRegisterSubmit} className="space-y-4">
+                  {/* Optional First Name */}
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-xs font-bold text-[#4A4033]">
+                        Twoje imię
                       </label>
+                      <span className="text-[10px] text-[#8C7D6B] font-medium">
+                        opcjonalne
+                      </span>
+                    </div>
+                    <div className="relative">
+                      <User className="w-4 h-4 text-[#A69784] absolute left-3.5 top-1/2 -translate-y-1/2" />
                       <input
                         type="text"
-                        required
                         value={regFirstName}
                         onChange={(e) => setRegFirstName(e.target.value)}
-                        placeholder="np. Anna"
-                        className="w-full px-3.5 py-2 rounded-xl border border-[#D9CDBD] bg-[#FAF8F5] focus:bg-white text-xs text-[#23201C]"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-[#4A4033] mb-1">
-                        Nazwisko *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={regLastName}
-                        onChange={(e) => setRegLastName(e.target.value)}
-                        placeholder="np. Kowalska"
-                        className="w-full px-3.5 py-2 rounded-xl border border-[#D9CDBD] bg-[#FAF8F5] focus:bg-white text-xs text-[#23201C]"
+                        placeholder="np. Anna (żebyśmy wiedzieli, jak się witać)"
+                        className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[#D9CDBD] bg-[#FAF8F5] focus:bg-white text-xs sm:text-sm text-[#23201C] focus:outline-none focus:ring-2 focus:ring-[#D9821E]/30"
                       />
                     </div>
                   </div>
 
+                  {/* Required Email */}
                   <div>
                     <label className="block text-xs font-bold text-[#4A4033] mb-1">
                       Adres e-mail *
                     </label>
                     <div className="relative">
-                      <Mail className="w-3.5 h-3.5 text-[#A69784] absolute left-3 top-1/2 -translate-y-1/2" />
+                      <Mail className="w-4 h-4 text-[#A69784] absolute left-3.5 top-1/2 -translate-y-1/2" />
                       <input
                         type="email"
                         required
                         value={regEmail}
                         onChange={(e) => setRegEmail(e.target.value)}
                         placeholder="twoj.email@example.com"
-                        className="w-full pl-9 pr-3.5 py-2 rounded-xl border border-[#D9CDBD] bg-[#FAF8F5] focus:bg-white text-xs text-[#23201C]"
+                        className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[#D9CDBD] bg-[#FAF8F5] focus:bg-white text-xs sm:text-sm text-[#23201C] focus:outline-none focus:ring-2 focus:ring-[#D9821E]/30"
                       />
                     </div>
                   </div>
 
+                  {/* Required Password */}
                   <div>
                     <label className="block text-xs font-bold text-[#4A4033] mb-1">
-                      Numer telefonu (dla SMS od InPost)
+                      Hasło *
                     </label>
                     <div className="relative">
-                      <Phone className="w-3.5 h-3.5 text-[#A69784] absolute left-3 top-1/2 -translate-y-1/2" />
-                      <input
-                        type="tel"
-                        value={regPhone}
-                        onChange={(e) => setRegPhone(e.target.value)}
-                        placeholder="+48 600 000 000"
-                        className="w-full pl-9 pr-3.5 py-2 rounded-xl border border-[#D9CDBD] bg-[#FAF8F5] focus:bg-white text-xs text-[#23201C]"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-[#4A4033] mb-1">
-                      Preferowany Paczkomat InPost (opcjonalnie)
-                    </label>
-                    <div className="relative">
-                      <Truck className="w-3.5 h-3.5 text-[#A69784] absolute left-3 top-1/2 -translate-y-1/2" />
-                      <input
-                        type="text"
-                        value={regParcelLocker}
-                        onChange={(e) => setRegParcelLocker(e.target.value)}
-                        placeholder="np. WRO05M • ul. Sienkiewicza 32, Wrocław"
-                        className="w-full pl-9 pr-3.5 py-2 rounded-xl border border-[#D9CDBD] bg-[#FAF8F5] focus:bg-white text-xs text-[#23201C]"
-                      />
-                    </div>
-                    <span className="text-[10px] text-[#8C7D6B] mt-0.5 block">
-                      Zapisany Paczkomat podstawi się automatycznie przy każdym zamówieniu!
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-bold text-[#4A4033] mb-1">
-                        Hasło *
-                      </label>
+                      <Lock className="w-4 h-4 text-[#A69784] absolute left-3.5 top-1/2 -translate-y-1/2" />
                       <input
                         type="password"
                         required
                         value={regPassword}
                         onChange={(e) => setRegPassword(e.target.value)}
                         placeholder="min. 6 znaków"
-                        className="w-full px-3.5 py-2 rounded-xl border border-[#D9CDBD] bg-[#FAF8F5] focus:bg-white text-xs text-[#23201C]"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-[#4A4033] mb-1">
-                        Powtórz hasło *
-                      </label>
-                      <input
-                        type="password"
-                        required
-                        value={regPasswordRepeat}
-                        onChange={(e) => setRegPasswordRepeat(e.target.value)}
-                        placeholder="powtórz hasło"
-                        className="w-full px-3.5 py-2 rounded-xl border border-[#D9CDBD] bg-[#FAF8F5] focus:bg-white text-xs text-[#23201C]"
+                        className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[#D9CDBD] bg-[#FAF8F5] focus:bg-white text-xs sm:text-sm text-[#23201C] focus:outline-none focus:ring-2 focus:ring-[#D9821E]/30"
                       />
                     </div>
                   </div>
 
+                  {/* Progressive Profiling Hint Box */}
+                  <div className="p-3.5 rounded-2xl bg-[#F6EFE5] border border-[#DFCBB5] text-xs space-y-1">
+                    <div className="flex items-center gap-1.5 font-bold text-[#8B5337]">
+                      <Truck className="w-3.5 h-3.5" />
+                      <span>Gdzie podać adres i Paczkomat?</span>
+                    </div>
+                    <p className="text-[11px] text-[#716556] leading-relaxed">
+                      Dane do wysyłki (adres domowy lub preferowany Paczkomat InPost) uzupełnisz wygodnie w swoim profilu lub podczas składania pierwszego zamówienia w kasie – zapiszą się one automatycznie!
+                    </p>
+                  </div>
+
                   {/* Consents */}
-                  <div className="space-y-2 pt-2 border-t border-[#EFE5D8]">
+                  <div className="space-y-2 pt-1 border-t border-[#EFE5D8]">
                     <label className="flex items-start gap-2.5 cursor-pointer text-[11px] text-[#635747]">
                       <input
                         type="checkbox"
@@ -531,7 +477,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({ displayResolution }) =
 
                   <button
                     type="submit"
-                    className="w-full py-3 px-5 rounded-xl bg-[#1B4332] hover:bg-[#143326] text-white font-bold text-xs sm:text-sm transition-all shadow-md active:scale-98 cursor-pointer flex items-center justify-center gap-2 mt-4"
+                    className="w-full py-3 px-5 rounded-xl bg-[#1B4332] hover:bg-[#143326] text-white font-bold text-xs sm:text-sm transition-all shadow-md active:scale-98 cursor-pointer flex items-center justify-center gap-2 mt-2"
                   >
                     <span>Załóż konto i odbierz korzyści</span>
                     <Gift className="w-4 h-4 text-[#E6C065]" />
