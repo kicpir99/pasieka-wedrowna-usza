@@ -457,8 +457,8 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
           setDetectedAspect(cached.detectedAspect);
           setIsUserVideoLoaded(true);
           setVideoFileName(cached.fileName);
-          setVideoUrl(cached.url);
-          activeVideoUrlRef.current = cached.url;
+          setVideoUrl(null);
+          activeVideoUrlRef.current = null;
           currentRenderedFrameIdx.current = -1;
           setIsExtracting(false);
           drawActiveFrame(currentAngleProgressRef.current, true);
@@ -469,8 +469,8 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
           setDetectedAspect(cached.detectedAspect);
           setIsUserVideoLoaded(true);
           setVideoFileName(cached.fileName);
-          setVideoUrl(cached.url);
-          activeVideoUrlRef.current = cached.url;
+          setVideoUrl(null);
+          activeVideoUrlRef.current = null;
           currentRenderedFrameIdx.current = -1;
           setIsExtracting(false);
           drawActiveFrame(currentAngleProgressRef.current, true);
@@ -501,8 +501,8 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
               setDetectedAspect('1:1');
               setIsUserVideoLoaded(true);
               setVideoFileName(bundledSprite.fileName);
-              setVideoUrl(bundledSprite.videoUrl);
-              activeVideoUrlRef.current = bundledSprite.videoUrl;
+              setVideoUrl(null);
+              activeVideoUrlRef.current = null;
               currentRenderedFrameIdx.current = -1;
               setIsExtracting(false);
               drawActiveFrame(currentAngleProgressRef.current, true);
@@ -513,8 +513,8 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
               setDetectedAspect(spriteResult.detectedAspect);
               setIsUserVideoLoaded(true);
               setVideoFileName(bundledSprite.fileName);
-              setVideoUrl(bundledSprite.videoUrl);
-              activeVideoUrlRef.current = bundledSprite.videoUrl;
+              setVideoUrl(null);
+              activeVideoUrlRef.current = null;
               currentRenderedFrameIdx.current = -1;
               setIsExtracting(false);
               drawActiveFrame(currentAngleProgressRef.current, true);
@@ -1165,15 +1165,15 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
     <div 
       className="relative w-full flex flex-col items-center select-none overflow-visible pointer-events-none"
     >
-      {/* Hidden reference video with loop attribute */}
-      {videoUrl && (
+      {/* Hidden reference video for custom user upload fallback only - never preloads when sprite is active */}
+      {videoUrl && !spriteImageRef.current && framesRef.current.length === 0 && (
         <video
           ref={videoElementRef}
           src={videoUrl}
           playsInline
           muted
           loop
-          preload="auto"
+          preload="none"
           className="hidden"
         />
       )}

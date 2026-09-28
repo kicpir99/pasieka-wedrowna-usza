@@ -19,13 +19,15 @@ const ComparisonModal = React.lazy(() => import('./components/ComparisonModal').
 const HoneyFinderQuiz = React.lazy(() => import('./components/HoneyFinderQuiz').then(m => ({ default: m.HoneyFinderQuiz })));
 const ProductPage = React.lazy(() => import('./pages/ProductPage').then(m => ({ default: m.ProductPage })));
 
-// Pages
+// Primary landing page (static for instant FCP)
 import { HomePage } from './pages/HomePage';
-import { AboutUsPage } from './pages/AboutUsPage';
-import { ShopPage } from './pages/ShopPage';
-import { OfferPage } from './pages/OfferPage';
-import { BlogPage } from './pages/BlogPage';
-import { ContactPage } from './pages/ContactPage';
+
+// Secondary subpages (code-split for optimal initial load speed)
+const AboutUsPage = React.lazy(() => import('./pages/AboutUsPage').then(m => ({ default: m.AboutUsPage })));
+const ShopPage = React.lazy(() => import('./pages/ShopPage').then(m => ({ default: m.ShopPage })));
+const OfferPage = React.lazy(() => import('./pages/OfferPage').then(m => ({ default: m.OfferPage })));
+const BlogPage = React.lazy(() => import('./pages/BlogPage').then(m => ({ default: m.BlogPage })));
+const ContactPage = React.lazy(() => import('./pages/ContactPage').then(m => ({ default: m.ContactPage })));
 
 function GlobalQuizModal({
   isOpen,
@@ -296,81 +298,81 @@ function App() {
           containerClass={displayResolution.containerClass}
         />
 
-        <Routes>
-          <Route 
-            path="/" 
-            element={
-              <HomePage 
-                onAddToCart={handleAddToCart} 
-                displayResolution={displayResolution}
-                toggleCompare={toggleCompare}
-                compareList={compareList}
-                scrollToProducts={scrollToProducts}
-                onOpenQuiz={() => setIsQuizOpen(true)}
-                hasPreloadedHome={hasPreloadedHome}
-                onPreloadComplete={() => setHasPreloadedHome(true)}
-              />
-            } 
-          />
-          <Route 
-            path="/o-nas" 
-            element={
-              <AboutUsPage 
-                displayResolution={displayResolution}
-                scrollToProducts={scrollToProducts}
-              />
-            } 
-          />
-          <Route 
-            path="/sklep" 
-            element={
-              <ShopPage 
-                onAddToCart={handleAddToCart} 
-                displayResolution={displayResolution}
-                toggleCompare={toggleCompare}
-                compareList={compareList}
-                onOpenQuiz={() => setIsQuizOpen(true)}
-              />
-            } 
-          />
-          <Route 
-            path="/oferta" 
-            element={
-              <OfferPage 
-                displayResolution={displayResolution}
-                onAddToCart={handleAddToCart}
-              />
-            } 
-          />
-          <Route 
-            path="/skarby-ula" 
-            element={
-              <OfferPage 
-                displayResolution={displayResolution}
-                onAddToCart={handleAddToCart}
-              />
-            } 
-          />
-          <Route 
-            path="/blog" 
-            element={
-              <BlogPage 
-                displayResolution={displayResolution}
-              />
-            } 
-          />
-          <Route 
-            path="/kontakt" 
-            element={
-              <ContactPage 
-                displayResolution={displayResolution}
-              />
-            } 
-          />
-          <Route 
-            path="/produkt/:id" 
-            element={
-              <Suspense fallback={<div className="min-h-screen bg-[#FAF7F2]" />}>
+        <Suspense fallback={<div className="min-h-screen bg-[#FAF7F2] flex items-center justify-center"><div className="w-8 h-8 rounded-full border-2 border-amber-600 border-t-transparent animate-spin" /></div>}>
+          <Routes>
+            <Route 
+              path="/" 
+              element={
+                <HomePage 
+                  onAddToCart={handleAddToCart} 
+                  displayResolution={displayResolution}
+                  toggleCompare={toggleCompare}
+                  compareList={compareList}
+                  scrollToProducts={scrollToProducts}
+                  onOpenQuiz={() => setIsQuizOpen(true)}
+                  hasPreloadedHome={hasPreloadedHome}
+                  onPreloadComplete={() => setHasPreloadedHome(true)}
+                />
+              } 
+            />
+            <Route 
+              path="/o-nas" 
+              element={
+                <AboutUsPage 
+                  displayResolution={displayResolution}
+                  scrollToProducts={scrollToProducts}
+                />
+              } 
+            />
+            <Route 
+              path="/sklep" 
+              element={
+                <ShopPage 
+                  onAddToCart={handleAddToCart} 
+                  displayResolution={displayResolution}
+                  toggleCompare={toggleCompare}
+                  compareList={compareList}
+                  onOpenQuiz={() => setIsQuizOpen(true)}
+                />
+              } 
+            />
+            <Route 
+              path="/oferta" 
+              element={
+                <OfferPage 
+                  displayResolution={displayResolution}
+                  onAddToCart={handleAddToCart}
+                />
+              } 
+            />
+            <Route 
+              path="/skarby-ula" 
+              element={
+                <OfferPage 
+                  displayResolution={displayResolution}
+                  onAddToCart={handleAddToCart}
+                />
+              } 
+            />
+            <Route 
+              path="/blog" 
+              element={
+                <BlogPage 
+                  displayResolution={displayResolution}
+                />
+              } 
+            />
+            <Route 
+              path="/kontakt" 
+              element={
+                <ContactPage 
+                  displayResolution={displayResolution}
+                />
+              } 
+            />
+            <Route 
+              path="/produkt/:id" 
+              element={
                 <ProductPage 
                   onAddToCart={handleAddToCart} 
                   onOpenCompare={(p) => {
@@ -378,26 +380,26 @@ function App() {
                     setIsCompareModalOpen(true);
                   }}
                 />
-              </Suspense>
-            } 
-          />
-          {/* Catch-all fallback */}
-          <Route 
-            path="*" 
-            element={
-              <HomePage 
-                onAddToCart={handleAddToCart} 
-                displayResolution={displayResolution}
-                toggleCompare={toggleCompare}
-                compareList={compareList}
-                scrollToProducts={scrollToProducts}
-                onOpenQuiz={() => setIsQuizOpen(true)}
-                hasPreloadedHome={hasPreloadedHome}
-                onPreloadComplete={() => setHasPreloadedHome(true)}
-              />
-            } 
-          />
-        </Routes>
+              } 
+            />
+            {/* Catch-all fallback */}
+            <Route 
+              path="*" 
+              element={
+                <HomePage 
+                  onAddToCart={handleAddToCart} 
+                  displayResolution={displayResolution}
+                  toggleCompare={toggleCompare}
+                  compareList={compareList}
+                  scrollToProducts={scrollToProducts}
+                  onOpenQuiz={() => setIsQuizOpen(true)}
+                  hasPreloadedHome={hasPreloadedHome}
+                  onPreloadComplete={() => setHasPreloadedHome(true)}
+                />
+              } 
+            />
+          </Routes>
+        </Suspense>
 
         <Footer containerClass={displayResolution.containerClass} />
 
