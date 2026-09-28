@@ -319,7 +319,7 @@ export const HoneyJar3DCarousel: React.FC<HoneyJar3DCarouselProps> = ({
 
   return (
     <div 
-      className="relative w-full flex items-center justify-center py-1 sm:py-2 px-1 select-none overflow-hidden sm:overflow-visible"
+      className="relative w-full flex items-center justify-center pt-7 pb-1 sm:py-2 px-1 select-none overflow-hidden sm:overflow-visible"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >

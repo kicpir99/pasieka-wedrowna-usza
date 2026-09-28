@@ -43,6 +43,7 @@ import {
   applyFastChromaKey,
   ChromaKeyMode,
   FramingMode,
+  BundledSpriteInfo,
 } from '../utils/framePreloader';
 import { getVarietyHotspots, VarietyHotspot } from '../data/varietyHotspots';
 
@@ -143,11 +144,6 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
     setIsEditorialTiltActive(editorialTiltEnabled);
   }, [editorialTiltEnabled]);
 
-  // Immediate redraw whenever canvas dimensions or layout changes
-  useEffect(() => {
-    currentRenderedFrameIdx.current = -1;
-    drawActiveFrame(currentAngleProgressRef.current, true);
-  }, [frameDimensions, drawActiveFrame]);
 
   // Interaction controls & infinite loop options
   const [autoRotate, setAutoRotate] = useState(false);
@@ -374,6 +370,12 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
       }
     }
   }, [videoUrl, syncReflectionCanvas]);
+
+  // Immediate redraw whenever canvas dimensions or layout changes
+  useEffect(() => {
+    currentRenderedFrameIdx.current = -1;
+    drawActiveFrame(currentAngleProgressRef.current, true);
+  }, [frameDimensions, drawActiveFrame]);
 
   // Frame extraction from video with strict aspect ratio preservation, fast 32-bit pixel pipeline and global memory caching
   const extractFramesFromVideo = useCallback(async (
@@ -1379,7 +1381,7 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: 15 }}
                     transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                    className="absolute z-50 bottom-0 sm:-bottom-5 lg:-bottom-7 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-auto right-auto sm:right-3.5 md:right-3 lg:right-[52px] xl:right-[48px] w-[92%] max-w-[290px] sm:w-[280px] pointer-events-none flex flex-col items-center sm:items-end text-center sm:text-right"
+                    className="absolute z-50 -top-1 sm:top-auto sm:-bottom-5 lg:-bottom-7 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-auto right-auto sm:right-3.5 md:right-3 lg:right-[52px] xl:right-[48px] w-[92%] max-w-[290px] sm:w-[280px] pointer-events-none flex flex-col items-center sm:items-end text-center sm:text-right"
                   >
                     <div className="relative flex flex-col items-center sm:items-end text-center sm:text-right py-1">
                       {/* Subtelna winieta w tle dla idealnej czytelności bez twardych krawędzi */}
@@ -1443,7 +1445,9 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
             </div>
           );
 
-          return portalElement ? createPortal(popupsContent, portalElement) : popupsContent;
+          return (portalElement && typeof document !== 'undefined' && document.body.contains(portalElement))
+            ? createPortal(popupsContent, portalElement)
+            : popupsContent;
         })()}
       </div>
 
