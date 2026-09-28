@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { getAssetUrl } from '../utils/assets';
 import { isMobileDeviceScreen } from '../utils/framePreloader';
 
@@ -244,15 +244,62 @@ const USE_UNIVERSAL_RIBBON = true;
 /**
  * HoneyLiquidRibbon
  * Luksusowa płynna wstęga miodowa renderowana w fizycznych warstwach 3D:
- * - isFrontLayer = false: ładuje warstwę tylną (z-index: 5, za głównym słoikiem) oraz organiczną kaustykę na podłożu
- * - isFrontLayer = true: ładuje warstwę przednią (z-index: 30, przed dolną krawędzią słoika) oraz odbicie wstęgi w tafli
+ * - isFrontLayer = false: ładuje warstwę tylną (z-index: 5, za głównym słoikiem) oraz organiczną kaustykę na podłożu i lustrzane odbicie
+ * - isFrontLayer = true: ładuje warstwę przednią (z-index: 30, przed dolną krawędzią słoika)
+ * - 100% zsynchronizowana fizyka unoszenia (RAF Harmonic Motion z globalnym czasem performance.now())
  */
-export const HoneyLiquidRibbon: React.FC<HoneyRibbonProps> = ({
+export const HoneyLiquidRibbon: React.FC<HoneyRibbonProps> = React.memo(({
   varietyId,
   ambientColorHex,
   className = '',
   isFrontLayer = false,
 }) => {
+  const ribbonRef = useRef<HTMLDivElement>(null);
+  const reflectionRef = useRef<HTMLDivElement>(null);
+  const causticsRef = useRef<HTMLDivElement>(null);
+
+  // Zsynchronizowany silnik fizyczny unoszenia i opadania w 60/120 FPS
+  useEffect(() => {
+    let rafId: number | null = null;
+
+    const tick = () => {
+      // Globalny monotoniczny zegar przeglądarki - gwarantuje identyczną fazę dla warstwy przedniej, tylnej i odbicia
+      const time = performance.now() / 1000;
+      const angle = (time * 2 * Math.PI) / 6.2; // Spokojny, organiczny cykl oddechu (6.2 sekundy)
+      const sinVal = Math.sin(angle); // Ciągła harmoniczna fala sinusoidalna [-1, +1]
+
+      // Wstęga miodowa: amplituda 8.5px (od -8.5px w górę do +8.5px w dół)
+      const ribbonY = sinVal * -8.5;
+
+      // Odbicie w lustrze podłoża: ŚCIŚLE ZSYNCHRONIZOWANA ODWROĆNA FAZA LUSTRZANA!
+      // Gdy wstęga opada (+8.5px ku blatowi), odbicie podnosi się (-6.2px ku powierzchni stołu)
+      // Gdy wstęga unosi się (-8.5px w górę), odbicie oddala się w dół (+6.2px w głąb tafli)
+      const reflectionY = -ribbonY * 0.73;
+
+      if (ribbonRef.current) {
+        ribbonRef.current.style.transform = `translate3d(0, ${ribbonY.toFixed(3)}px, 0)`;
+      }
+
+      if (reflectionRef.current) {
+        reflectionRef.current.style.transform = `translate3d(0, ${reflectionY.toFixed(3)}px, 0)`;
+      }
+
+      if (causticsRef.current) {
+        // Blask kaustyki na podłożu subtelnie narasta, gdy struga miodu zbliża się do tafli
+        const causticsOpacity = 0.88 - sinVal * 0.08;
+        causticsRef.current.style.opacity = causticsOpacity.toFixed(3);
+      }
+
+      rafId = requestAnimationFrame(tick);
+    };
+
+    rafId = requestAnimationFrame(tick);
+
+    return () => {
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, []);
+
   // Jeśli włączona flaga USE_UNIVERSAL_RIBBON - stosujemy wstęgę ogólną do wszystkich miodów
   const ribbonConfig = USE_UNIVERSAL_RIBBON
     ? UNIVERSAL_RIBBON_ASSET
@@ -278,9 +325,13 @@ export const HoneyLiquidRibbon: React.FC<HoneyRibbonProps> = ({
       }}
     >
       <div className="relative flex items-center justify-center overflow-visible">
-        {/* 1. FOTOREALISTYCZNA ORGANICZNA KAUSTYKA MIODU NA PODŁOŻU (Stabilna na posadzce z delikatną mikro-pulsacją blasku) */}
+        {/* 1. FOTOREALISTYCZNA ORGANICZNA KAUSTYKA MIODU NA PODŁOŻU (Mikro-pulsacja blasku zsynchronizowana z ruchem wstęgi) */}
         {!isFrontLayer && causticsAsset && (
-          <div className="absolute inset-0 flex items-center justify-center animate-honey-caustics pointer-events-none">
+          <div 
+            ref={causticsRef}
+            className="absolute inset-0 flex items-center justify-center pointer-events-none will-change-[opacity]"
+            style={{ opacity: 0.88 }}
+          >
             <img
               src={getAssetUrl(causticsAsset)}
               alt=""
@@ -298,9 +349,13 @@ export const HoneyLiquidRibbon: React.FC<HoneyRibbonProps> = ({
           </div>
         )}
 
-        {/* 2. LUSTRZANE ODBICIE PRZEDNIEJ WSTĘGI W CIEMNEJ TAFLI PODŁOŻA (Odwrócona faza lustrzana: zbliża się ku górze, gdy wstęga opada ku dołowi!) */}
+        {/* 2. LUSTRZANE ODBICIE PRZEDNIEJ WSTĘGI W CIEMNEJ TAFLI PODŁOŻA (Ściśle zsynchronizowana przeciwfaza lustrzana 60/120fps) */}
         {!isFrontLayer && reflectionAsset && (
-          <div className="absolute inset-0 flex items-center justify-center animate-honey-breathe-reflection pointer-events-none">
+          <div 
+            ref={reflectionRef}
+            className="absolute inset-0 flex items-center justify-center pointer-events-none will-change-transform"
+            style={{ transform: 'translate3d(0, 0, 0)' }}
+          >
             <img
               src={getAssetUrl(reflectionAsset)}
               alt=""
@@ -330,8 +385,12 @@ export const HoneyLiquidRibbon: React.FC<HoneyRibbonProps> = ({
           />
         )}
 
-        {/* 4. WARSTWA GŁÓWNA WSTĘGI MIODOWEJ (FRONT LUB BACK) - Płynne unoszenie i opadanie w fazie głównej */}
-        <div className="relative flex items-center justify-center animate-honey-breathe pointer-events-none">
+        {/* 4. WARSTWA GŁÓWNA WSTĘGI MIODOWEJ (FRONT LUB BACK) - Aksamitny, zsynchronizowany ruch subpikselowy */}
+        <div 
+          ref={ribbonRef}
+          className="relative flex items-center justify-center pointer-events-none will-change-transform"
+          style={{ transform: 'translate3d(0, 0, 0)' }}
+        >
           <img
             src={imageSrc}
             alt={isFrontLayer ? "Miodowa wstęga - przód" : "Miodowa wstęga - tło"}
@@ -347,4 +406,4 @@ export const HoneyLiquidRibbon: React.FC<HoneyRibbonProps> = ({
       </div>
     </div>
   );
-};
+});

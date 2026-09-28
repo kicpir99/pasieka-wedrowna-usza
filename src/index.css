@@ -42,58 +42,6 @@ h1, h2, h3, .font-display {
   }
 }
 
-@keyframes honeyBreathe {
-  0%, 100% {
-    transform: translate3d(0, 0px, 0);
-  }
-  50% {
-    transform: translate3d(0, -8px, 0);
-  }
-}
-
-/* Odbicie w lustrze podłoża: naturalna odwrócona faza (gdy wstęga unosi się w górę, odbicie oddala się w głąb stołu; gdy wstęga opada ku blatowi, odbicie zbliża się ku górze) */
-@keyframes honeyBreatheReflection {
-  0%, 100% {
-    transform: translate3d(0, 0px, 0);
-  }
-  50% {
-    transform: translate3d(0, 6.5px, 0);
-  }
-}
-
-/* Płynna mikro-pulsacja blasku kaustyki na podłożu w rytm zbliżania wstęgi */
-@keyframes honeyCausticsPulse {
-  0%, 100% {
-    opacity: 0.85;
-  }
-  50% {
-    opacity: 0.98;
-  }
-}
-
-.animate-honey-breathe {
-  animation: honeyBreathe 6.5s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
-  will-change: transform;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  transform: translateZ(0);
-}
-
-.animate-honey-breathe-reflection {
-  animation: honeyBreatheReflection 6.5s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
-  will-change: transform;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  transform: translateZ(0);
-}
-
-.animate-honey-caustics {
-  animation: honeyCausticsPulse 6.5s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
-  will-change: opacity;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  transform: translateZ(0);
-}
 
 /* Custom smooth modal scrolling & aesthetic scrollbar */
 .custom-modal-scroll {
