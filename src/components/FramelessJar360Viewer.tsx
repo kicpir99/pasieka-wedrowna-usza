@@ -2,36 +2,17 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
-  RotateCw, 
-  RotateCcw, 
-  Play, 
-  Pause, 
-  UploadCloud, 
-  Trash2, 
   Sparkles, 
-  Sliders, 
-  X,
-  Compass,
-  Crop,
-  Maximize2,
-  ZoomIn,
-  Infinity as InfinityIcon,
-  ChevronLeft,
-  ChevronRight,
-  Repeat,
-  Layers,
-  ShieldCheck,
-  Droplets,
-  FileText,
-  Coffee,
-  Heart,
-  Flame,
-  Trees,
-  Feather,
-  Zap,
-  Sun
+  ShieldCheck, 
+  Droplets, 
+  Coffee, 
+  Heart, 
+  Flame, 
+  Trees, 
+  Feather, 
+  Zap, 
+  Sun 
 } from 'lucide-react';
-import { saveVideoToStorage, loadVideoFromStorage, deleteVideoFromStorage } from '../utils/videoStorage';
 import { generateTransparent360JarFrames } from '../utils/generateJar360Frames';
 import {
   extractVideoFramesFast,
@@ -60,8 +41,6 @@ interface FramelessJar360ViewerProps {
   onAngleChange?: (degrees: number) => void;
   targetAnglePreset?: number | null;
   editorialTiltEnabled?: boolean;
-  showAdminTools?: boolean;
-  onToggleAdminTools?: () => void;
   isActive?: boolean;
   isCarouselVisible?: boolean;
 }
@@ -109,8 +88,6 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
   onAngleChange,
   targetAnglePreset,
   editorialTiltEnabled = true,
-  showAdminTools = false,
-  onToggleAdminTools,
   isActive = true,
   isCarouselVisible = true,
 }) => {
@@ -130,8 +107,6 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
   // Chroma key / transparency options
   const [chromaMode, setChromaMode] = useState<ChromaKeyMode>('black');
   const [chromaTolerance, setChromaTolerance] = useState<number>(25);
-  const [showOptionsModal, setShowOptionsModal] = useState(false);
-  const [autoKeyNotice, setAutoKeyNotice] = useState<string | null>(null);
 
   // Smoothness & Frame Interpolation state (100% razor-sharp anti-ghosting: zero blur, zero smearing on labels)
   const [enableInterpolation, setEnableInterpolation] = useState<boolean>(true);
@@ -144,13 +119,11 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
     setIsEditorialTiltActive(editorialTiltEnabled);
   }, [editorialTiltEnabled]);
 
-
   // Interaction controls & infinite loop options
   const [autoRotate, setAutoRotate] = useState(false);
   const [autoRotateSpeed, setAutoRotateSpeed] = useState<number>(1.0); // 1x, 1.5x, 2x
   const [invertDirection, setInvertDirection] = useState(false);
   const [isInfiniteLoopEnabled, setIsInfiniteLoopEnabled] = useState(true);
-  const [isDragOver, setIsDragOver] = useState(false);
   // Active hotspot zone state — updated ONLY when transitioning between zones (0 re-renders during 99% of spinning frames)
   const [activeHotspotKey, setActiveHotspotKey] = useState<'h0' | 'h120' | 'h240' | null>('h0');
   // Target DOM element for rendering popups directly onto the foreground overlay (above front ribbon)
@@ -172,14 +145,7 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
   // DOM References
   const stageRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const videoElementRef = useRef<HTMLVideoElement>(null);
-  const hudDegRef = useRef<HTMLSpanElement>(null);
-  const hudTextRef = useRef<HTMLSpanElement>(null);
-  const scrubberInputRef = useRef<HTMLInputElement>(null);
-  const scrubberProgressFillRef = useRef<HTMLDivElement>(null);
-  const scrubberThumbRef = useRef<HTMLDivElement>(null);
-  const scrubberDegLabelRef = useRef<HTMLSpanElement>(null);
   const groundShadowRef = useRef<HTMLDivElement>(null);
 
   // Raw video cache ref for instant re-extraction when adjusting framing or chroma
@@ -234,7 +200,6 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
   const velocitySamplesRef = useRef<{ time: number; velocity: number }[]>([]);
   const currentTiltYRef = useRef<number>(0);
   const currentTiltZRef = useRef<number>(0);
-  const isUserScrubbingRef = useRef<boolean>(false);
   const isNavigatingPresetRef = useRef<boolean>(false);
   const activeHotspotKeyRef = useRef<'h0' | 'h120' | 'h240' | null>('h0');
   const currentRenderedFrameIdx = useRef<number>(-1);
@@ -526,16 +491,7 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
         }
       }
 
-      // 2. Try loading user video for this variety from IndexedDB (if user explicitly uploaded a custom video in admin mode)
-      const saved = await loadVideoFromStorage(varietyId);
-      if (saved && isMounted) {
-        activeVideoBlobRef.current = saved.blob;
-        const blobUrl = URL.createObjectURL(saved.blob);
-        await extractFramesFromVideo(blobUrl, saved.fileName, chromaMode, chromaTolerance, framingMode, cropWidthRatio, targetFrameCount);
-        return;
-      }
-
-      // 3. Fallback to extracting frames from bundled video (/public/videos/*.mp4) if sprite sheet unavailable
+      // 2. Fallback to extracting frames from bundled video (/public/videos/*.mp4) if sprite sheet unavailable
       const bundled = defaultVideoUrl
         ? { url: defaultVideoUrl, fileName: defaultVideoUrl.split('/').pop() || `${varietyId}.mp4` }
         : BUNDLED_VARIETY_VIDEOS[varietyId];
@@ -804,42 +760,7 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
         }
       }
 
-      // 8. Fast direct DOM updates without triggering React re-renders
-      if (scrubberInputRef.current && !isUserScrubbingRef.current) {
-        scrubberInputRef.current.value = String(deg360);
-      }
-      const pct = (deg360 / 360) * 100;
-      if (scrubberProgressFillRef.current) {
-        scrubberProgressFillRef.current.style.width = `${pct}%`;
-      }
-      if (scrubberThumbRef.current) {
-        scrubberThumbRef.current.style.left = `${pct}%`;
-      }
-      if (scrubberDegLabelRef.current) {
-        scrubberDegLabelRef.current.textContent = `${deg360}° / 360°`;
-      }
-
-      // Visual angle HUD
-      if (hudDegRef.current) {
-        hudDegRef.current.textContent = `${deg360}°`;
-      }
-      if (hudTextRef.current) {
-        if (deg360 <= 15 || deg360 >= 345) {
-          hudTextRef.current.textContent = 'Front etykiety (0°)';
-        } else if (Math.abs(deg360 - 90) <= 20) {
-          hudTextRef.current.textContent = 'Prawy bok słoika (90°)';
-        } else if (Math.abs(deg360 - 180) <= 20) {
-          hudTextRef.current.textContent = 'Tył słoika (180°)';
-        } else if (Math.abs(deg360 - 270) <= 20) {
-          hudTextRef.current.textContent = 'Lewy bok słoika (270°)';
-        } else if (deg360 < 180) {
-          hudTextRef.current.textContent = `Obrót w prawo (+${deg360}°)`;
-        } else {
-          hudTextRef.current.textContent = `Obrót w lewo (${deg360}°)`;
-        }
-      }
-
-      // 9. Zone-Triggered Hotspot State & External Notification (Active Jar only - 0% React re-renders on background jars)
+      // 8. Zone-Triggered Hotspot State & External Notification (Active Jar only - 0% React re-renders on background jars)
       if (isActive) {
         let computedHotspotKey: 'h0' | 'h120' | 'h240' = 'h0';
         if (deg360 >= 60 && deg360 < 180) {
@@ -1024,110 +945,6 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
     }
   }, [isActive]);
 
-  // User uploads video file
-  const handleFileUpload = async (file: File) => {
-    if (!file) return;
-    const url = URL.createObjectURL(file);
-    activeVideoBlobRef.current = file;
-    setVideoUrl(url);
-    setVideoFileName(file.name);
-
-    await saveVideoToStorage(varietyId, file, file.name);
-    await extractFramesFromVideo(url, file.name, chromaMode, chromaTolerance, framingMode, cropWidthRatio);
-
-    targetAngleProgressRef.current = 0;
-    currentAngleProgressRef.current = 0;
-  };
-
-  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      handleFileUpload(file);
-    }
-  };
-
-  // Drag & drop handlers on stage
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragOver(true);
-  };
-
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragOver(false);
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragOver(false);
-    const file = e.dataTransfer.files?.[0];
-    if (file && (file.type.includes('video') || file.name.endsWith('.mp4') || file.name.endsWith('.webm') || file.name.endsWith('.mov'))) {
-      handleFileUpload(file);
-    }
-  };
-
-  const handleResetVideo = async () => {
-    await deleteVideoFromStorage(varietyId);
-    activeVideoBlobRef.current = null;
-    activeVideoUrlRef.current = null;
-    setVideoUrl(null);
-    setVideoFileName(null);
-    setIsUserVideoLoaded(false);
-    
-    // Check if there's a bundled video in code for this honey
-    const bundled = defaultVideoUrl
-      ? { url: defaultVideoUrl, fileName: defaultVideoUrl.split('/').pop() || `${varietyId}.mp4` }
-      : BUNDLED_VARIETY_VIDEOS[varietyId];
-
-    if (bundled) {
-      try {
-        await extractFramesFromVideo(bundled.url, bundled.fileName, chromaMode, chromaTolerance, framingMode, cropWidthRatio, targetFrameCount);
-        return;
-      } catch (e) {
-        console.warn('Could not restore bundled video on reset:', e);
-      }
-    }
-
-    // Regenerate procedural frames with 1:1 aspect ratio (96 discrete frames for ultra-smooth rotation)
-    const defaultFrames = await generateTransparent360JarFrames(96, 640, 640);
-    framesRef.current = defaultFrames;
-    setFrameDimensions({ width: 640, height: 640 });
-    currentRenderedFrameIdx.current = -1;
-    // Cache procedural frames so they survive React re-mounts
-    setCachedFrames(varietyId, {
-      varietyId,
-      bitmaps: defaultFrames,
-      dimensions: { width: 640, height: 640 },
-      detectedAspect: '1:1',
-      fileName: `${varietyId}_procedural`,
-      url: `procedural://${varietyId}`,
-    });
-  };
-
-  // Re-extract using current settings without re-uploading
-  const reProcessCurrentVideo = (
-    newMode: ChromaKeyMode = chromaMode, 
-    newTolerance: number = chromaTolerance,
-    newFraming: FramingMode = framingMode,
-    newCropRatio: number = cropWidthRatio,
-    newFramesCount: number = targetFrameCount
-  ) => {
-    if (activeVideoUrlRef.current && videoFileName) {
-      extractFramesFromVideo(
-        activeVideoUrlRef.current,
-        videoFileName,
-        newMode,
-        newTolerance,
-        newFraming,
-        newCropRatio,
-        newFramesCount
-      );
-    }
-  };
-
   // Active hotspots for the selected honey variety
   const varietyHotspots = getVarietyHotspots(varietyId);
   const h0Hotspot = varietyHotspots.find(h => h.angle === 0) || varietyHotspots[0];
@@ -1178,15 +995,6 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
         />
       )}
 
-      {/* Hidden file input */}
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="video/webm,video/mp4,video/quicktime,video/*"
-        onChange={handleFileInputChange}
-        className="hidden"
-      />
-
       {/* MAIN FRAMELESS STAGE: Infinite drag rotation strictly bounded to jar silhouette (page scrolls naturally on wheel) */}
       <div
         ref={stageRef}
@@ -1198,9 +1006,6 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
         onTouchStart={isActive ? (e) => e.stopPropagation() : undefined}
         onTouchMove={isActive ? (e) => e.stopPropagation() : undefined}
         onTouchEnd={isActive ? (e) => e.stopPropagation() : undefined}
-        onDragOver={isActive ? handleDragOver : undefined}
-        onDragLeave={isActive ? handleDragLeave : undefined}
-        onDrop={isActive ? handleDrop : undefined}
         style={{
           aspectRatio: `${frameDimensions.width} / ${frameDimensions.height}`,
           touchAction: 'pan-y',
@@ -1265,74 +1070,6 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
             imageRendering: 'auto',
           }}
         />
-
-        {/* DRAG-AND-DROP ACTIVE OVERLAY */}
-        {isDragOver && (
-          <div className="absolute inset-4 z-40 rounded-3xl border-2 border-dashed border-[#E5983A] bg-[#14100C]/90 backdrop-blur-md flex flex-col items-center justify-center gap-3 p-6 animate-in fade-in zoom-in-95 duration-150">
-            <div className="w-14 h-14 rounded-full bg-[#E5983A]/20 text-[#E5983A] flex items-center justify-center">
-              <UploadCloud className="w-8 h-8 animate-bounce" />
-            </div>
-            <p className="font-serif text-lg font-bold text-[#FAF5ED] text-center">
-              Upuść wideo 360° dla {varietyName}
-            </p>
-            <p className="text-xs text-[#D4C7B5] text-center max-w-xs">
-              Obsługuje format 16:9, MP4 z czarnym tłem oraz WebM z przezroczystością
-            </p>
-          </div>
-        )}
-
-        {/* FRAME EXTRACTION PROGRESS (Admin tools only, never shown to regular visitors) */}
-        {showAdminTools && isExtracting && (
-          <div className="absolute inset-x-8 top-1/2 -translate-y-1/2 z-30 p-4 rounded-2xl bg-black/90 backdrop-blur-md border border-[#E5983A]/40 shadow-2xl space-y-2">
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-[#E5983A] font-semibold flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-[#E5983A] animate-ping" />
-                Dopasowywanie naturalnych proporcji słoika...
-              </span>
-              <span className="font-mono text-[#FAF5ED] font-bold">{extractionProgress}%</span>
-            </div>
-            <div className="w-full h-2 bg-white/15 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-gradient-to-r from-[#D48B28] to-[#F5B027] transition-all duration-150 rounded-full"
-                style={{ width: `${extractionProgress}%` }}
-              />
-            </div>
-            <p className="text-[10px] text-[#A69784] text-center">
-              Korygowanie proporcji 16:9 na słoik 1:1 bez zniekształceń w pionie...
-            </p>
-          </div>
-        )}
-
-        {/* NOTIFICATION WHEN BLACK BG AUTO-DETECTED */}
-        {autoKeyNotice && (
-          <div className="absolute top-12 left-1/2 -translate-x-1/2 z-30 px-3.5 py-1.5 rounded-full bg-[#1C160F]/95 border border-[#E5983A] text-xs text-[#E5983A] shadow-xl animate-in fade-in slide-in-from-top-2">
-            ✨ {autoKeyNotice}
-          </div>
-        )}
-
-        {/* FLOATING STATUS BADGE & HUD (Widoczne tylko w trybie podglądu dla administratora) */}
-        {showAdminTools && (
-          <>
-            <div className="absolute top-2 left-2 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[11px] text-[#FAF5ED] shadow-lg">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="font-medium">
-                {isUserVideoLoaded ? `Wideo 360° (${videoFileName || 'wideo.mp4'})` : `Model 3D (${framesRef.current.length || 96} klatek)`}
-              </span>
-              <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-semibold ml-1 ${
-                !enableInterpolation ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
-              }`}>
-                <Sparkles className="w-2.5 h-2.5 text-amber-400" />
-                {!enableInterpolation ? '100% Ostrości' : 'Przenikanie'}
-              </span>
-            </div>
-
-            <div className="absolute top-2 right-2 z-20 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[11px] text-[#FAF5ED] shadow-lg">
-              <Compass className="w-3.5 h-3.5 text-[#E5983A]" />
-              <span ref={hudTextRef} className="text-[#E5DAC8]">Front etykiety (0°)</span>
-              <span ref={hudDegRef} className="font-mono font-bold text-[#E5983A] text-xs">0°</span>
-            </div>
-          </>
-        )}
 
         {/* INTERACTIVE ROTATION-BASED POPUPS */}
         {/* Rendered via portal into #jar-popups-portal-target (z-index: 60) so they always remain completely in front of the honey ribbon */}
@@ -1450,387 +1187,8 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
             : popupsContent;
         })()}
       </div>
-
-
-      {/* TRYB PODGLĄDU & EDYCJI (DLA CIEBIE): WYRAŹNIE ODSEPAROWANY OD SKLEPU */}
-      {showAdminTools && (
-        <div className="w-full max-w-lg mt-3 p-4 rounded-3xl bg-[#241C16] border-2 border-[#E5983A]/70 shadow-2xl space-y-3.5 text-left pointer-events-auto">
-          {/* Nagłówek panelu deweloperskiego */}
-          <div className="flex items-center justify-between border-b border-[#473627] pb-2">
-            <div>
-              <div className="flex items-center gap-1.5 text-xs font-bold text-[#E5983A] uppercase tracking-wider">
-                <Sliders className="w-3.5 h-3.5" />
-                <span>Panel Podglądu i Wgrywania (Dla Ciebie)</span>
-              </div>
-              <p className="text-[10px] text-[#B8A796] mt-0.5">
-                Te narzędzia służą do oceny i testów. Klient sklepu ich nie widzi.
-              </p>
-            </div>
-            {onToggleAdminTools && (
-              <button
-                onClick={onToggleAdminTools}
-                className="px-2 py-1 rounded-lg text-xs bg-white/10 hover:bg-white/15 text-[#FAF5ED]"
-              >
-                Ukryj panel
-              </button>
-            )}
-          </div>
-
-          {/* Scrubber i skoki do kątów w trybie podglądu */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-[#C4B7A5]">Precyzyjne sterowanie kątem obrotu:</span>
-              <span ref={scrubberDegLabelRef} className="font-mono font-bold text-[#E5983A]">0° / 360°</span>
-            </div>
-
-            <div className="relative flex items-center">
-              <div className="absolute inset-x-0 h-2 rounded-full bg-white/10 overflow-hidden pointer-events-none">
-                <div 
-                  ref={scrubberProgressFillRef}
-                  className="h-full bg-gradient-to-r from-[#D48B28] via-[#F5B027] to-[#E5983A] rounded-full transition-all duration-75"
-                  style={{ width: '0%' }}
-                />
-              </div>
-
-              <input
-                ref={scrubberInputRef}
-                type="range"
-                min={0}
-                max={359}
-                defaultValue={0}
-                onPointerDown={() => { isUserScrubbingRef.current = true; }}
-                onPointerUp={() => { isUserScrubbingRef.current = false; }}
-                onChange={handleScrubberChange}
-                aria-label="Suwak obrotu 360 stopni"
-                className="relative z-10 w-full h-4 opacity-0 cursor-ew-resize"
-              />
-
-              <div 
-                ref={scrubberThumbRef}
-                className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-[#FAF5ED] border-2 border-[#E5983A] shadow-md pointer-events-none transition-all duration-75"
-                style={{ left: '0%' }}
-              />
-            </div>
-
-            {/* 3 Przyciski do testowania perspektyw */}
-            <div className="grid grid-cols-3 gap-2 pt-1 text-center">
-              {[
-                { deg: 0, label: h0Hotspot.badge, desc: h0Hotspot.category },
-                { deg: 120, label: h120Hotspot.badge, desc: h120Hotspot.category },
-                { deg: 240, label: h240Hotspot.badge, desc: h240Hotspot.category },
-              ].map((item) => (
-                <button
-                  key={item.deg}
-                  onClick={() => setAnglePreset(item.deg)}
-                  className="py-2 px-1.5 rounded-xl text-[11px] bg-white/5 border border-white/10 hover:border-[#E5983A] text-[#C4B7A5] hover:text-[#FAF5ED] transition-all truncate"
-                >
-                  <div className="font-semibold text-xs text-[#E5983A] truncate">{item.label}</div>
-                  <div className="text-[10px] text-[#A69784] truncate">{item.desc}</div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Doki narzędzi testowych */}
-          <div className="pt-2 border-t border-white/10 flex flex-wrap items-center justify-between gap-2">
-            <div className="flex items-center gap-1.5">
-              {/* Krokowe obracanie */}
-              <button
-                onClick={() => stepRotationDegrees(-15)}
-                className="px-2 py-1 rounded-lg text-xs bg-white/10 hover:bg-white/15 text-[#FAF5ED]"
-              >
-                -15°
-              </button>
-              <button
-                onClick={() => stepRotationDegrees(15)}
-                className="px-2 py-1 rounded-lg text-xs bg-white/10 hover:bg-white/15 text-[#FAF5ED]"
-              >
-                +15°
-              </button>
-
-              {/* Kąt ze stołu */}
-              <button
-                onClick={() => setIsEditorialTiltActive(!isEditorialTiltActive)}
-                className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold border ${
-                  isEditorialTiltActive
-                    ? 'bg-[#E5983A]/20 text-[#E5983A] border-[#E5983A]/40'
-                    : 'bg-white/10 text-[#C4B7A5] border-white/10'
-                }`}
-              >
-                <Layers className="w-3 h-3" />
-                <span>{isEditorialTiltActive ? 'Kąt ze stołu' : 'Kąt płaski'}</span>
-              </button>
-
-              {/* Auto-Obrót */}
-              <button
-                onClick={() => setAutoRotate(!autoRotate)}
-                className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold border ${
-                  autoRotate
-                    ? 'bg-[#E5983A] text-[#14100C] border-[#E5983A]'
-                    : 'bg-white/10 text-[#FAF5ED] border-white/10'
-                }`}
-              >
-                {autoRotate ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
-                <span>Auto-Obrót</span>
-              </button>
-            </div>
-
-            <div className="flex items-center gap-1.5">
-              {/* Wgrywanie wideo */}
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#E5983A] hover:bg-[#F2A74B] text-[#14100C] shadow-md transition-all"
-              >
-                <UploadCloud className="w-3.5 h-3.5" />
-                <span>{isUserVideoLoaded ? 'Zmień Wideo' : 'Wgraj Wideo'}</span>
-              </button>
-
-              {/* Opcje wycinania tła / chroma */}
-              <button
-                onClick={() => setShowOptionsModal(true)}
-                className="p-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-[#FAF5ED] border border-white/10"
-                title="Opcje tła i kadrowania"
-              >
-                <Sliders className="w-3.5 h-3.5 text-[#E5DAC8]" />
-              </button>
-
-              {isUserVideoLoaded && (
-                <button
-                  onClick={handleResetVideo}
-                  className="p-1.5 rounded-xl bg-white/10 hover:bg-red-500/20 text-red-300 border border-white/10"
-                  title="Przywróć model 3D"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* QUICK INLINE HINT FOR THE USER (Only in admin preview mode) */}
-      {showAdminTools && (
-        <div className="w-full max-w-lg mt-2 px-2 text-center">
-          <p className="text-[11px] text-[#A69784] flex items-center justify-center gap-1.5">
-            <InfinityIcon className="w-3.5 h-3.5 text-[#E5983A]" />
-            <span>Materiał zapętla się w nieskończoność — obracaj myszką lub suwakiem bez żadnych ograniczeń.</span>
-          </p>
-        </div>
-      )}
-
-      {/* ADVANCED PROPORTIONS, FRAMING & TRANSPARENCY MODAL */}
-      {showOptionsModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-150">
-          <div className="relative w-full max-w-lg bg-[#201A14] rounded-3xl border border-[#483B2E] p-6 text-[#FAF5ED] space-y-5 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-white/10 pb-3">
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-[#E5983A]" />
-                <h3 className="font-serif text-base font-bold">Dopasowanie Proporcji i Tła Wideo</h3>
-              </div>
-              <button
-                onClick={() => setShowOptionsModal(false)}
-                className="p-1 rounded-full text-[#A69784] hover:text-white"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* Framing Mode Selection (Fix for vertical stretching) */}
-            <div className="space-y-2">
-              <label className="text-xs font-semibold text-[#E5DAC8] block flex items-center gap-1.5">
-                <Crop className="w-3.5 h-3.5 text-[#E5983A]" />
-                Tryb kadrowania (Zapobieganie rozciąganiu w pionie):
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  onClick={() => {
-                    setFramingMode('crop-center');
-                    reProcessCurrentVideo(chromaMode, chromaTolerance, 'crop-center', cropWidthRatio);
-                  }}
-                  className={`p-3 rounded-2xl border text-left transition-all ${
-                    framingMode === 'crop-center'
-                      ? 'bg-[#E5983A]/20 border-[#E5983A] text-white'
-                      : 'bg-black/30 border-white/10 text-[#A69784] hover:border-white/25'
-                  }`}
-                >
-                  <div className="font-bold text-xs text-[#FAF5ED]">Centralnie na słoik (Zalecane)</div>
-                  <div className="text-[10px] text-[#B8A996] mt-1">
-                    Wycina czarne pasy po bokach wideo 16:9. Słoik zachowuje naturalne, okrągłe proporcje.
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => {
-                    setFramingMode('contain-full');
-                    reProcessCurrentVideo(chromaMode, chromaTolerance, 'contain-full', cropWidthRatio);
-                  }}
-                  className={`p-3 rounded-2xl border text-left transition-all ${
-                    framingMode === 'contain-full'
-                      ? 'bg-[#E5983A]/20 border-[#E5983A] text-white'
-                      : 'bg-black/30 border-white/10 text-[#A69784] hover:border-white/25'
-                  }`}
-                >
-                  <div className="font-bold text-xs text-[#FAF5ED]">Pełny kadr 16:9</div>
-                  <div className="text-[10px] text-[#B8A996] mt-1">
-                    Prezentuje cały plik wideo w proporcji 16:9 bez przycinania krawędzi.
-                  </div>
-                </button>
-              </div>
-            </div>
-
-            {/* Zoom / Crop Width Slider (When in crop-center mode) */}
-            {framingMode === 'crop-center' && (
-              <div className="space-y-1.5 p-3 rounded-2xl bg-black/25 border border-white/5">
-                <div className="flex justify-between text-xs">
-                  <span className="text-[#E5DAC8] flex items-center gap-1.5">
-                    <ZoomIn className="w-3.5 h-3.5 text-[#E5983A]" />
-                    Szerokość kadrowania słoika:
-                  </span>
-                  <span className="font-mono text-[#E5983A] font-bold">{Math.round(cropWidthRatio * 100)}%</span>
-                </div>
-                <input
-                  type="range"
-                  min={60}
-                  max={150}
-                  value={Math.round(cropWidthRatio * 100)}
-                  onChange={(e) => {
-                    const ratio = Number(e.target.value) / 100;
-                    setCropWidthRatio(ratio);
-                    reProcessCurrentVideo(chromaMode, chromaTolerance, framingMode, ratio);
-                  }}
-                  className="w-full accent-[#E5983A]"
-                />
-                <div className="flex justify-between text-[10px] text-[#8C7D6D]">
-                  <span>Większe zbliżenie słoika</span>
-                  <span>Szerszy kadr</span>
-                </div>
-              </div>
-            )}
-
-            {/* Transparency & Chroma Key Mode Selection */}
-            <div className="space-y-2 pt-2 border-t border-white/10">
-              <label className="text-xs font-semibold text-[#E5DAC8] block">
-                Usuwanie tła z wideo:
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                {[
-                  { id: 'black', label: 'Kluczuj Czerń (Studio)', desc: 'Usuwa czarne tło w MP4 / MOV' },
-                  { id: 'none', label: 'Czysta Alfa', desc: 'Dla WebM z przezroczystością' },
-                  { id: 'green', label: 'Green Screen', desc: 'Usuwa zielone tło wideo' },
-                  { id: 'white', label: 'Kluczuj Biel', desc: 'Usuwa białe tło wideo' },
-                ].map((m) => (
-                  <button
-                    key={m.id}
-                    onClick={() => {
-                      const nextMode = m.id as ChromaKeyMode;
-                      setChromaMode(nextMode);
-                      reProcessCurrentVideo(nextMode, chromaTolerance, framingMode, cropWidthRatio);
-                    }}
-                    className={`p-2.5 rounded-2xl border text-left transition-all ${
-                      chromaMode === m.id
-                        ? 'bg-[#E5983A]/20 border-[#E5983A] text-white'
-                        : 'bg-black/30 border-white/10 text-[#A69784] hover:border-white/25'
-                    }`}
-                  >
-                    <div className="font-bold text-xs text-[#FAF5ED]">{m.label}</div>
-                    <div className="text-[10px] text-[#B8A996] mt-0.5">{m.desc}</div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Tolerance slider if keying enabled */}
-            {chromaMode !== 'none' && (
-              <div className="space-y-1.5 pt-2 border-t border-white/10">
-                <div className="flex justify-between text-xs">
-                  <span className="text-[#E5DAC8]">Płynność i czułość usuwania tła:</span>
-                  <span className="font-mono text-[#E5983A] font-bold">{chromaTolerance}</span>
-                </div>
-                <input
-                  type="range"
-                  min={10}
-                  max={60}
-                  value={chromaTolerance}
-                  onChange={(e) => {
-                    const val = Number(e.target.value);
-                    setChromaTolerance(val);
-                    reProcessCurrentVideo(chromaMode, val, framingMode, cropWidthRatio);
-                  }}
-                  className="w-full accent-[#E5983A]"
-                />
-              </div>
-            )}
-
-            {/* Smoothness & Sharpness (Anti-Ghosting) */}
-            <div className="space-y-3 pt-3 border-t border-white/10">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5">
-                  <Sparkles className="w-4 h-4 text-[#E5983A]" />
-                  <label className="text-xs font-semibold text-[#FAF5ED]">
-                    Tryb ostrości klatek (Anti-Ghosting):
-                  </label>
-                </div>
-                <button
-                  onClick={() => setEnableInterpolation(!enableInterpolation)}
-                  className={`px-3 py-1 rounded-full text-[11px] font-semibold border transition-all ${
-                    !enableInterpolation
-                      ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
-                      : 'bg-white/10 text-[#A69784] border-white/15'
-                  }`}
-                >
-                  {!enableInterpolation ? '100% Ostrości (Zalecane)' : 'Przenikanie (Eksperymentalne)'}
-                </button>
-              </div>
-
-              <p className="text-[11px] text-[#A69784] leading-relaxed">
-                <strong className="text-[#FAF5ED]">Tryb 100% Ostrości (Zalecany):</strong> Każdy kąt (np. 6°, 12°, 90°) renderuje czystą, pojedynczą klatkę w pełnej rozdzielczości bez nakładania warstw przezroczystych. Całkowicie eliminuje rozwarstwienie liter na etykiecie i efekt smużenia przy powolnym obrocie. Płynność ruchu zapewnia gęste próbkowanie 96 klatek oraz fizyka bezwładności.
-              </p>
-
-              {isUserVideoLoaded && (
-                <div className="space-y-2 pt-1">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-[#E5DAC8] font-medium">Gęstość klatek z Twojego wideo:</span>
-                    <span className="font-mono text-[#E5983A] font-bold">{targetFrameCount} klatek</span>
-                  </div>
-                  <div className="grid grid-cols-3 gap-2">
-                    {[
-                      { count: 60, label: '60 klatek', desc: 'co 6.0° obrotu' },
-                      { count: 96, label: '96 klatek', desc: 'co 3.75° (Zalecane)' },
-                      { count: 120, label: '120 klatek', desc: 'co 3.0° (Ultra)' },
-                    ].map((f) => (
-                      <button
-                        key={f.count}
-                        onClick={() => {
-                          setTargetFrameCount(f.count);
-                          reProcessCurrentVideo(chromaMode, chromaTolerance, framingMode, cropWidthRatio, f.count);
-                        }}
-                        className={`p-2.5 rounded-xl border text-center transition-all ${
-                          targetFrameCount === f.count
-                            ? 'bg-[#E5983A]/20 border-[#E5983A] text-white font-bold ring-1 ring-[#E5983A]'
-                            : 'bg-black/30 border-white/10 text-[#A69784] hover:border-white/25'
-                        }`}
-                      >
-                        <div className="text-xs text-[#FAF5ED]">{f.label}</div>
-                        <div className="text-[10px] text-[#B8A996] mt-0.5">{f.desc}</div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div className="pt-2 flex justify-end">
-              <button
-                onClick={() => setShowOptionsModal(false)}
-                className="px-5 py-2.5 rounded-xl bg-[#E5983A] text-[#14100C] text-xs font-bold hover:bg-[#F2A74B] transition-colors"
-              >
-                Zastosuj i Zamknij
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
+
 
