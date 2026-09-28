@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { CartItem, HoneyProduct } from '../types';
-import { X, Trash2, ShoppingBag, ArrowRight, ShieldCheck, Truck, Check, Scale, Package } from 'lucide-react';
+import { X, Trash2, ShoppingBag, ArrowRight, ShieldCheck, Truck, Check, Scale, Package, Sparkles, Plus, Lock } from 'lucide-react';
+import { HONEY_PRODUCTS } from '../data/honeyProducts';
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -84,6 +85,32 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   const parcelLockerSize =
     totalGrossWeightGrams <= 3200 ? 'Gabaryt A' : totalGrossWeightGrams <= 8500 ? 'Gabaryt B' : 'Gabaryt C';
 
+  const suggestedCrossSell = useMemo(() => {
+    if (remainingForFreeShipping <= 0 || remainingForFreeShipping > 55) return null;
+
+    const cartProductIds = new Set(items.map(i => i.id));
+    
+    // Lista preferowanych dodatków (niedrogie, uniwersalne, popularne słoiki 400g lub skarby ula):
+    const candidates = [
+      { id: 'pylek-pszczeli', weight: 200 },
+      { id: 'miod-lipowy', weight: 400 },
+      { id: 'miod-faceliowy', weight: 400 },
+      { id: 'miod-wielokwiatowy', weight: 400 },
+      { id: 'miod-gryczany', weight: 400 },
+      { id: 'propolis-kit', weight: 50 },
+    ];
+
+    let selected = candidates.find(c => !cartProductIds.has(c.id));
+    if (!selected) selected = candidates[0];
+
+    const prod = HONEY_PRODUCTS.find(p => p.id === selected.id);
+    if (!prod) return null;
+    const size = prod.sizes.find(s => s.weightGrams === selected.weight) || prod.sizes[0];
+    if (!size) return null;
+
+    return { product: prod, size };
+  }, [items, remainingForFreeShipping]);
+
   const handleCheckout = () => {
     setOrderSubmitted(true);
   };
@@ -120,7 +147,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
           {/* Free shipping progress bar */}
           <div className="px-5 py-3 bg-[#F2E8D8] border-b border-[#E3D4BE] text-xs">
             {remainingForFreeShipping > 0 ? (
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 <div className="flex justify-between text-[#685947]">
                   <span>Darmowa dostawa od 180 zł:</span>
                   <span className="font-bold text-[#8C4609]">Brakuje jeszcze {remainingForFreeShipping} zł</span>
@@ -131,6 +158,35 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                     style={{ width: `${freeShippingProgress}%` }}
                   />
                 </div>
+
+                {/* Inteligentny cross-selling do darmowej dostawy */}
+                {suggestedCrossSell && onAddToCart && (
+                  <div className="mt-2 pt-2 border-t border-[#E3D4BE]/70 flex items-center justify-between gap-2.5 bg-[#FAF5ED]/90 p-2 rounded-lg border border-[#DECDB8]">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <img 
+                        src={suggestedCrossSell.product.imageUrl} 
+                        alt={suggestedCrossSell.product.name}
+                        className="w-8 h-8 rounded-md object-cover border border-[#DFCDB8] shrink-0" 
+                      />
+                      <div className="min-w-0">
+                        <span className="text-[10px] font-bold text-[#945209] flex items-center gap-1 uppercase tracking-wider">
+                          <Sparkles className="w-3 h-3 text-[#D97706]" /> Dobierz do darmowej dostawy:
+                        </span>
+                        <p className="text-[11px] font-semibold text-[#2D2821] truncate leading-tight">
+                          {suggestedCrossSell.product.name} ({suggestedCrossSell.size.label})
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => onAddToCart(suggestedCrossSell.product, suggestedCrossSell.size.weightGrams, suggestedCrossSell.size.pricePln)}
+                      className="shrink-0 px-2.5 py-1 rounded-md bg-[#945209] hover:bg-[#784107] text-[#FAF8F5] text-[11px] font-bold flex items-center gap-1 transition-all active:scale-95 shadow-xs cursor-pointer"
+                      title="Dodaj do koszyka"
+                    >
+                      <Plus className="w-3 h-3" />
+                      +{suggestedCrossSell.size.pricePln} zł
+                    </button>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="flex items-center gap-1.5 text-[#385C31] font-semibold">
@@ -401,25 +457,43 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 
           {/* Drawer Compact Sticky Footer (Summary & Checkout) */}
           {!orderSubmitted && items.length > 0 && (
-            <div className="p-3.5 sm:p-4 border-t border-[#E7DDCE] bg-[#FAF8F5] flex items-center justify-between gap-3 shrink-0 shadow-lg">
-              <div>
-                <span className="text-[10px] text-[#736655] uppercase tracking-wider block font-medium">Do zapłaty:</span>
-                <div className="flex items-baseline gap-1">
-                  <span className="font-serif text-xl sm:text-2xl font-bold text-[#8C4609] leading-none">{total} zł</span>
-                  <span className="text-[10px] text-[#847461]">
-                    {deliveryCost === 0 ? '(dostawa gratis)' : `(+${deliveryCost} zł dostawa)`}
-                  </span>
+            <div className="p-3.5 sm:p-4 border-t border-[#E7DDCE] bg-[#FAF8F5] shrink-0 shadow-lg space-y-2">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <span className="text-[10px] text-[#736655] uppercase tracking-wider block font-medium">Do zapłaty:</span>
+                  <div className="flex items-baseline gap-1">
+                    <span className="font-serif text-xl sm:text-2xl font-bold text-[#8C4609] leading-none">{total} zł</span>
+                    <span className="text-[10px] text-[#847461]">
+                      {deliveryCost === 0 ? '(dostawa gratis)' : `(+${deliveryCost} zł dostawa)`}
+                    </span>
+                  </div>
                 </div>
+
+                <button
+                  onClick={handleCheckout}
+                  className="flex-1 py-3 px-4 rounded-xl bg-[#2D2821] hover:bg-[#433B31] text-[#FAF5ED] font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md transition-all active:scale-95 cursor-pointer"
+                  id="cart-checkout-btn"
+                >
+                  <span>Przejdź do kasy</span>
+                  <ArrowRight className="w-4 h-4 text-[#E5983A]" />
+                </button>
               </div>
 
-              <button
-                onClick={handleCheckout}
-                className="flex-1 py-3 px-4 rounded-xl bg-[#2D2821] hover:bg-[#433B31] text-[#FAF5ED] font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md transition-all active:scale-95"
-                id="cart-checkout-btn"
-              >
-                <span>Przejdź do kasy</span>
-                <ArrowRight className="w-4 h-4 text-[#E5983A]" />
-              </button>
+              {/* Kompaktowy pasek zaufania (Trust Badges) zoptymalizowany pod mobile */}
+              <div className="pt-2 border-t border-[#EAE0D1]/80 grid grid-cols-3 gap-1 text-[10px] text-[#695D4E] font-medium">
+                <div className="flex items-center justify-center gap-1 text-center py-0.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#2A6546] shrink-0" />
+                  <span className="truncate">BLIK & Przelewy</span>
+                </div>
+                <div className="flex items-center justify-center gap-1 text-center py-0.5 border-x border-[#E3D6C4]/80 px-1">
+                  <Truck className="w-3.5 h-3.5 text-[#8C4609] shrink-0" />
+                  <span className="truncate">InPost & Kurier 24h</span>
+                </div>
+                <div className="flex items-center justify-center gap-1 text-center py-0.5">
+                  <Lock className="w-3.5 h-3.5 text-[#2A6546] shrink-0" />
+                  <span className="truncate">100% Gwarancja szkła</span>
+                </div>
+              </div>
             </div>
           )}
 
