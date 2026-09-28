@@ -90,25 +90,62 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 
     const cartProductIds = new Set(items.map(i => i.id));
     
-    // Lista preferowanych dodatków (niedrogie, uniwersalne, popularne słoiki 400g lub skarby ula):
-    const candidates = [
-      { id: 'pylek-pszczeli', weight: 200 },
-      { id: 'miod-lipowy', weight: 400 },
-      { id: 'miod-faceliowy', weight: 400 },
-      { id: 'miod-wielokwiatowy', weight: 400 },
-      { id: 'miod-gryczany', weight: 400 },
-      { id: 'propolis-kit', weight: 50 },
+    // Starannie dobrana pula lekkich, bestsellerowych produktów impulsowych:
+    const curatedCandidates = [
+      { id: 'swieca-wosk-pszczeli', weight: 150 }, // 22 zł
+      { id: 'propolis-kit', weight: 50 },          // 25 zł
+      { id: 'pylek-pszczeli', weight: 200 },       // 28 zł
+      { id: 'miod-wielokwiatowy', weight: 400 },   // 30 zł
+      { id: 'miod-rzepakowy', weight: 400 },       // 30 zł
+      { id: 'miod-lipowy', weight: 400 },          // 35 zł
+      { id: 'miod-faceliowy', weight: 400 },       // 35 zł
+      { id: 'miod-gryczany', weight: 400 },        // 38 zł
+      { id: 'miod-akacjowy', weight: 400 },        // 40 zł
+      { id: 'miod-lesny', weight: 400 },           // 42 zł
+      { id: 'miod-malinowy', weight: 400 },        // 45 zł
+      { id: 'miod-mniszkowy', weight: 400 },       // 45 zł
+      { id: 'miod-ze-spadzi-iglastej', weight: 400 }, // 50 zł
+      { id: 'miod-wrzosowy', weight: 400 },        // 55 zł
     ];
 
-    let selected = candidates.find(c => !cartProductIds.has(c.id));
-    if (!selected) selected = candidates[0];
+    // Pobierz pełne obiekty i dane cenowe
+    const availableItems = curatedCandidates
+      .map(cand => {
+        const prod = HONEY_PRODUCTS.find(p => p.id === cand.id);
+        if (!prod) return null;
+        const size = prod.sizes.find(s => s.weightGrams === cand.weight) || prod.sizes[0];
+        if (!size || !size.inStock) return null;
+        return {
+          product: prod,
+          size,
+          price: size.pricePln,
+          alreadyInCart: cartProductIds.has(prod.id),
+        };
+      })
+      .filter((item): item is NonNullable<typeof item> => item !== null);
 
-    const prod = HONEY_PRODUCTS.find(p => p.id === selected.id);
-    if (!prod) return null;
-    const size = prod.sizes.find(s => s.weightGrams === selected.weight) || prod.sizes[0];
-    if (!size) return null;
+    // KROK 1: Produkty o cenie >= remainingForFreeShipping,
+    // aby pojedyncze kliknięcie ZAWSZE odblokowało darmową dostawę (180 zł)
+    const qualifyingItems = availableItems.filter(item => item.price >= remainingForFreeShipping);
+    const pool = qualifyingItems.length > 0 ? qualifyingItems : availableItems;
 
-    return { product: prod, size };
+    // KROK 2: Sortowanie hybrydowe:
+    // 1. Preferuj te, których nie ma jeszcze w koszyku
+    // 2. Najmniejsza dopłata ponad brakującą kwotę (optymalizacja wydatku klienta)
+    pool.sort((a, b) => {
+      if (a.alreadyInCart !== b.alreadyInCart) {
+        return a.alreadyInCart ? 1 : -1;
+      }
+      const diffA = a.price - remainingForFreeShipping;
+      const diffB = b.price - remainingForFreeShipping;
+      if (diffA >= 0 && diffB >= 0) return diffA - diffB;
+      return Math.abs(diffA) - Math.abs(diffB);
+    });
+
+    const best = pool[0];
+    if (!best) return null;
+
+    return { product: best.product, size: best.size };
   }, [items, remainingForFreeShipping]);
 
   const handleCheckout = () => {
