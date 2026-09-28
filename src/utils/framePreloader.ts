@@ -12,6 +12,8 @@ export interface CachedVarietyFrames {
   detectedAspect: string;
   fileName: string;
   url: string;
+  spriteImage?: HTMLImageElement;
+  spriteInfo?: BundledSpriteInfo;
 }
 
 export interface BundledSpriteInfo {
@@ -437,9 +439,9 @@ export async function loadFramesFromSpriteSheet({
   const normId = varietyId.toLowerCase();
   const cacheKey = `sprite_v3_${normId}_${chromaMode}_${chromaTolerance}`;
 
-  const cached = GLOBAL_FRAME_CACHE.get(cacheKey);
-  if (cached && cached.bitmaps.length > 0) {
-    if (onFirstFrame) onFirstFrame(cached.bitmaps[0], cached.dimensions);
+  const cached = GLOBAL_FRAME_CACHE.get(cacheKey) || GLOBAL_FRAME_CACHE.get(normId);
+  if (cached && (cached.spriteImage || cached.bitmaps.length > 0)) {
+    if (onFirstFrame && cached.bitmaps.length > 0) onFirstFrame(cached.bitmaps[0], cached.dimensions);
     if (onProgress) onProgress(100);
     return cached;
   }
@@ -451,7 +453,6 @@ export async function loadFramesFromSpriteSheet({
   const loaderPromise = (async () => {
     try {
       const img = new Image();
-      img.crossOrigin = 'anonymous';
       img.src = spriteInfo.spriteUrl;
 
       await new Promise<void>((resolve, reject) => {
@@ -463,17 +464,45 @@ export async function loadFramesFromSpriteSheet({
         img.onerror = () => reject(new Error(`Failed to load sprite: ${spriteInfo.spriteUrl}`));
       });
 
-      const { cols, rows, totalFrames, tileWidth, tileHeight } = spriteInfo;
-      const tileCanvas = chromaMode !== 'none' ? document.createElement('canvas') : null;
-      if (tileCanvas) {
-        tileCanvas.width = tileWidth;
-        tileCanvas.height = tileHeight;
+      // 1. FAST DIRECT HARDWARE PATH: Pre-baked transparent sprites require ZERO slicing loops
+      // Eliminates 180 createImageBitmap calls, prevents GPU OOM crashes on iOS / Android mobile browsers
+      if (chromaMode === 'none') {
+        if ('decode' in img) {
+          try {
+            await img.decode();
+          } catch {
+            // decode fallback
+          }
+        }
+
+        const result: CachedVarietyFrames = {
+          varietyId,
+          bitmaps: [],
+          dimensions: { width: spriteInfo.tileWidth, height: spriteInfo.tileHeight },
+          detectedAspect: '1:1 (440x440)',
+          fileName: spriteInfo.fileName,
+          url: spriteInfo.videoUrl,
+          spriteImage: img,
+          spriteInfo,
+        };
+
+        GLOBAL_FRAME_CACHE.set(cacheKey, result);
+        GLOBAL_FRAME_CACHE.set(normId, result);
+        GLOBAL_FRAME_CACHE.set(varietyId, result);
+
+        if (onProgress) onProgress(100);
+        return result;
       }
-      const tileCtx = tileCanvas ? tileCanvas.getContext('2d', { willReadFrequently: true, alpha: true }) : null;
+
+      const { cols, rows, totalFrames, tileWidth, tileHeight } = spriteInfo;
+      const tileCanvas = document.createElement('canvas');
+      tileCanvas.width = tileWidth;
+      tileCanvas.height = tileHeight;
+      const tileCtx = tileCanvas.getContext('2d', { willReadFrequently: true, alpha: true });
 
       const bufferLen = tileWidth * tileHeight;
-      const visitedBuf = chromaMode !== 'none' ? new Uint8Array(bufferLen) : undefined;
-      const queueBuf = chromaMode !== 'none' ? new Int32Array(bufferLen) : undefined;
+      const visitedBuf = new Uint8Array(bufferLen);
+      const queueBuf = new Int32Array(bufferLen);
 
       const bitmaps: ImageBitmap[] = [];
 
@@ -487,10 +516,7 @@ export async function loadFramesFromSpriteSheet({
         const srcY = row * tileHeight;
 
         let bmp: ImageBitmap;
-        if (chromaMode === 'none') {
-          // Hardware-accelerated GPU direct frame slice from pre-baked transparent WebP
-          bmp = await createImageBitmap(img, srcX, srcY, tileWidth, tileHeight);
-        } else if (tileCtx && tileCanvas) {
+        if (tileCtx && tileCanvas) {
           tileCtx.clearRect(0, 0, tileWidth, tileHeight);
           tileCtx.drawImage(
             img,
@@ -519,7 +545,7 @@ export async function loadFramesFromSpriteSheet({
           onProgress(Math.round(((idx + 1) / totalFrames) * 100));
         }
 
-        if (chromaMode !== 'none' && idx % 20 === 0 && idx > 0) {
+        if (idx % 20 === 0 && idx > 0) {
           await new Promise((r) => setTimeout(r, 0));
         }
       }
@@ -597,8 +623,8 @@ export async function extractVideoFramesFast({
       chromaTolerance,
       onProgress,
     });
-    if (spriteResult && spriteResult.bitmaps.length > 0) {
-      if (onFirstFrame && spriteResult.bitmaps[0]) {
+    if (spriteResult && (spriteResult.spriteImage || spriteResult.bitmaps.length > 0)) {
+      if (onFirstFrame && spriteResult.bitmaps.length > 0) {
         onFirstFrame(spriteResult.bitmaps[0], spriteResult.dimensions);
       }
       return spriteResult;

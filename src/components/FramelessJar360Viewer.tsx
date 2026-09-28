@@ -244,8 +244,10 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
   const reflectionContainerRef = useRef<HTMLDivElement | null>(null);
   const lastReflectedFrameIdx = useRef<number>(-999);
 
-  // Stored ImageBitmap frames
+  // Stored ImageBitmap frames (for user custom uploaded video) and Direct Hardware Sprite Image (for bundled varieties)
   const framesRef = useRef<ImageBitmap[]>([]);
+  const spriteImageRef = useRef<HTMLImageElement | null>(null);
+  const spriteInfoRef = useRef<BundledSpriteInfo | null>(null);
 
   // Synchronize live mirrored reflection canvas on dark studio floor
   const syncReflectionCanvas = useCallback(() => {
@@ -307,10 +309,31 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
     const ctx = ctxRef.current;
     if (!ctx) return;
 
-    const frames = framesRef.current;
     // Guaranteed mathematical modulo for seamless infinite looping
     const normalized = ((angleProgress % 1) + 1) % 1;
 
+    // 1. FAST DIRECT HARDWARE SPRITE RENDERING (0ms slicing, 0 GPU memory overhead, 60fps on mobile & desktop)
+    if (spriteImageRef.current && spriteInfoRef.current) {
+      const img = spriteImageRef.current;
+      const info = spriteInfoRef.current;
+      const exactIndex = normalized * info.totalFrames;
+      const sharpIdx = Math.min(info.totalFrames - 1, Math.max(0, Math.floor(exactIndex) % info.totalFrames));
+
+      if (sharpIdx !== currentRenderedFrameIdx.current || forceRedraw) {
+        currentRenderedFrameIdx.current = sharpIdx;
+        const col = sharpIdx % info.cols;
+        const row = Math.floor(sharpIdx / info.cols);
+        const srcX = col * info.tileWidth;
+        const srcY = row * info.tileHeight;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, srcX, srcY, info.tileWidth, info.tileHeight, 0, 0, canvas.width, canvas.height);
+        syncReflectionCanvas();
+      }
+      return;
+    }
+
+    const frames = framesRef.current;
     if (frames && frames.length > 0) {
       const exactIndex = normalized * frames.length;
 
@@ -344,7 +367,7 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
         }
       }
     }
-  }, [videoUrl, enableInterpolation, syncReflectionCanvas]);
+  }, [videoUrl, syncReflectionCanvas]);
 
   // Frame extraction from video with strict aspect ratio preservation, fast 32-bit pixel pipeline and global memory caching
   const extractFramesFromVideo = useCallback(async (
@@ -418,18 +441,33 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
     async function init() {
       // 0. Instant sync cache hit check (0.00s instant switch)
       const cached = getCachedFrames(varietyId);
-      if (cached && cached.bitmaps.length > 0 && isMounted) {
-        framesRef.current = cached.bitmaps;
-        setFrameDimensions(cached.dimensions);
-        setDetectedAspect(cached.detectedAspect);
-        setIsUserVideoLoaded(true);
-        setVideoFileName(cached.fileName);
-        setVideoUrl(cached.url);
-        activeVideoUrlRef.current = cached.url;
-        currentRenderedFrameIdx.current = -1;
-        setIsExtracting(false);
-        drawActiveFrame(currentAngleProgressRef.current, true);
-        return;
+      if (cached && isMounted) {
+        if (cached.spriteImage && cached.spriteInfo) {
+          spriteImageRef.current = cached.spriteImage;
+          spriteInfoRef.current = cached.spriteInfo;
+          setFrameDimensions(cached.dimensions);
+          setDetectedAspect(cached.detectedAspect);
+          setIsUserVideoLoaded(true);
+          setVideoFileName(cached.fileName);
+          setVideoUrl(cached.url);
+          activeVideoUrlRef.current = cached.url;
+          currentRenderedFrameIdx.current = -1;
+          setIsExtracting(false);
+          drawActiveFrame(currentAngleProgressRef.current, true);
+          return;
+        } else if (cached.bitmaps.length > 0) {
+          framesRef.current = cached.bitmaps;
+          setFrameDimensions(cached.dimensions);
+          setDetectedAspect(cached.detectedAspect);
+          setIsUserVideoLoaded(true);
+          setVideoFileName(cached.fileName);
+          setVideoUrl(cached.url);
+          activeVideoUrlRef.current = cached.url;
+          currentRenderedFrameIdx.current = -1;
+          setIsExtracting(false);
+          drawActiveFrame(currentAngleProgressRef.current, true);
+          return;
+        }
       }
 
       // 1. Load high-precision 180-frame sprite sheet for bundled honey varieties (0ms freeze-proof 360° turn)
@@ -442,32 +480,38 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
             spriteInfo: bundledSprite,
             chromaMode: 'none',
             chromaTolerance: 0,
-            onFirstFrame: (firstBmp, dims) => {
-              if (isMounted && framesRef.current.length === 0) {
-                framesRef.current = [firstBmp];
-                setFrameDimensions(dims);
-                setDetectedAspect('1:1');
-                currentRenderedFrameIdx.current = -1;
-                drawActiveFrame(currentAngleProgressRef.current, true);
-              }
-            },
             onProgress: (pct) => {
               if (isMounted) setExtractionProgress(pct);
             },
           });
 
-          if (spriteResult && spriteResult.bitmaps.length > 0 && isMounted) {
-            framesRef.current = spriteResult.bitmaps;
-            setFrameDimensions(spriteResult.dimensions);
-            setDetectedAspect(spriteResult.detectedAspect);
-            setIsUserVideoLoaded(true);
-            setVideoFileName(bundledSprite.fileName);
-            setVideoUrl(bundledSprite.videoUrl);
-            activeVideoUrlRef.current = bundledSprite.videoUrl;
-            currentRenderedFrameIdx.current = -1;
-            setIsExtracting(false);
-            drawActiveFrame(currentAngleProgressRef.current, true);
-            return;
+          if (spriteResult && isMounted) {
+            if (spriteResult.spriteImage && spriteResult.spriteInfo) {
+              spriteImageRef.current = spriteResult.spriteImage;
+              spriteInfoRef.current = spriteResult.spriteInfo;
+              setFrameDimensions(spriteResult.dimensions);
+              setDetectedAspect('1:1');
+              setIsUserVideoLoaded(true);
+              setVideoFileName(bundledSprite.fileName);
+              setVideoUrl(bundledSprite.videoUrl);
+              activeVideoUrlRef.current = bundledSprite.videoUrl;
+              currentRenderedFrameIdx.current = -1;
+              setIsExtracting(false);
+              drawActiveFrame(currentAngleProgressRef.current, true);
+              return;
+            } else if (spriteResult.bitmaps.length > 0) {
+              framesRef.current = spriteResult.bitmaps;
+              setFrameDimensions(spriteResult.dimensions);
+              setDetectedAspect(spriteResult.detectedAspect);
+              setIsUserVideoLoaded(true);
+              setVideoFileName(bundledSprite.fileName);
+              setVideoUrl(bundledSprite.videoUrl);
+              activeVideoUrlRef.current = bundledSprite.videoUrl;
+              currentRenderedFrameIdx.current = -1;
+              setIsExtracting(false);
+              drawActiveFrame(currentAngleProgressRef.current, true);
+              return;
+            }
           }
         } catch (err) {
           console.warn('Could not load bundled sprite sheet:', err);
@@ -499,7 +543,7 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
       }
 
       // 4. Procedural fallback with natural 1:1 aspect ratio (96 discrete frames for ultra-smooth rotation without ghosting)
-      if (isMounted && framesRef.current.length === 0) {
+      if (isMounted && framesRef.current.length === 0 && !spriteImageRef.current) {
         try {
           const defaultFrames = await generateTransparent360JarFrames(96, 640, 640);
           if (isMounted && defaultFrames.length > 0) {
@@ -534,18 +578,31 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
     isCarouselVisibleRef.current = isCarouselVisible;
     if (isCarouselVisible) {
       // 1. If frames are not yet in framesRef, check cache or initiate load immediately
-      if (framesRef.current.length === 0) {
+      if (framesRef.current.length === 0 && !spriteImageRef.current) {
         const cached = getCachedFrames(varietyId);
-        if (cached && cached.bitmaps.length > 0) {
-          framesRef.current = cached.bitmaps;
-          setFrameDimensions(cached.dimensions);
-          setDetectedAspect(cached.detectedAspect);
-          setIsUserVideoLoaded(true);
-          setVideoFileName(cached.fileName);
-          setVideoUrl(cached.url);
-          activeVideoUrlRef.current = cached.url;
-          currentRenderedFrameIdx.current = -1;
-          drawActiveFrame(currentAngleProgressRef.current, true);
+        if (cached) {
+          if (cached.spriteImage && cached.spriteInfo) {
+            spriteImageRef.current = cached.spriteImage;
+            spriteInfoRef.current = cached.spriteInfo;
+            setFrameDimensions(cached.dimensions);
+            setDetectedAspect(cached.detectedAspect);
+            setIsUserVideoLoaded(true);
+            setVideoFileName(cached.fileName);
+            setVideoUrl(cached.url);
+            activeVideoUrlRef.current = cached.url;
+            currentRenderedFrameIdx.current = -1;
+            drawActiveFrame(currentAngleProgressRef.current, true);
+          } else if (cached.bitmaps.length > 0) {
+            framesRef.current = cached.bitmaps;
+            setFrameDimensions(cached.dimensions);
+            setDetectedAspect(cached.detectedAspect);
+            setIsUserVideoLoaded(true);
+            setVideoFileName(cached.fileName);
+            setVideoUrl(cached.url);
+            activeVideoUrlRef.current = cached.url;
+            currentRenderedFrameIdx.current = -1;
+            drawActiveFrame(currentAngleProgressRef.current, true);
+          }
         } else {
           const bundledSprite = BUNDLED_VARIETY_SPRITES[varietyId] || BUNDLED_VARIETY_SPRITES[varietyId.toLowerCase()];
           if (bundledSprite) {
@@ -555,16 +612,29 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
               chromaMode: 'none',
               chromaTolerance: 0,
             }).then((res) => {
-              if (res && res.bitmaps.length > 0) {
-                framesRef.current = res.bitmaps;
-                setFrameDimensions(res.dimensions);
-                setDetectedAspect(res.detectedAspect);
-                setIsUserVideoLoaded(true);
-                setVideoFileName(bundledSprite.fileName);
-                setVideoUrl(bundledSprite.videoUrl);
-                activeVideoUrlRef.current = bundledSprite.videoUrl;
-                currentRenderedFrameIdx.current = -1;
-                drawActiveFrame(currentAngleProgressRef.current, true);
+              if (res) {
+                if (res.spriteImage && res.spriteInfo) {
+                  spriteImageRef.current = res.spriteImage;
+                  spriteInfoRef.current = res.spriteInfo;
+                  setFrameDimensions(res.dimensions);
+                  setDetectedAspect(res.detectedAspect);
+                  setIsUserVideoLoaded(true);
+                  setVideoFileName(bundledSprite.fileName);
+                  setVideoUrl(bundledSprite.videoUrl);
+                  activeVideoUrlRef.current = bundledSprite.videoUrl;
+                  currentRenderedFrameIdx.current = -1;
+                  drawActiveFrame(currentAngleProgressRef.current, true);
+                } else if (res.bitmaps.length > 0) {
+                  framesRef.current = res.bitmaps;
+                  setFrameDimensions(res.dimensions);
+                  setDetectedAspect(res.detectedAspect);
+                  setIsUserVideoLoaded(true);
+                  setVideoFileName(bundledSprite.fileName);
+                  setVideoUrl(bundledSprite.videoUrl);
+                  activeVideoUrlRef.current = bundledSprite.videoUrl;
+                  currentRenderedFrameIdx.current = -1;
+                  drawActiveFrame(currentAngleProgressRef.current, true);
+                }
               }
             });
           }

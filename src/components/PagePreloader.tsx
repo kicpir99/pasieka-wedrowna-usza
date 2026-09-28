@@ -20,118 +20,85 @@ export const PagePreloader: React.FC<PagePreloaderProps> = ({ onComplete }) => {
   useEffect(() => {
     let isMounted = true;
     const startTime = performance.now();
-    const minDisplayTimeMs = 1200; // Minimalny czas dla zachowania płynnej estetyki powitania
+    const minDisplayTimeMs = 600; // Płynna, dynamiczna animacja powitania
+    const maxSafetyTimeoutMs = 2500; // Failsafe: maksymalnie 2.5s - preloader ZAWSZE płynnie odsłania stronę
     let finished = false;
 
     let spritePct = 0;
     let spriteDone = false;
     let ribbonsDone = false;
-    let sec2Pct = 0;
-    let sec2Done = false;
-    let targetP = 5;
+    let targetP = 15;
 
     const checkProgress = () => {
       if (!isMounted || finished) return;
       const computed = Math.min(
         100,
-        Math.round((spritePct * 0.55) + (ribbonsDone ? 15 : 0) + (sec2Pct * 0.30))
+        Math.round((spritePct * 0.70) + (ribbonsDone ? 30 : 0))
       );
       targetP = Math.max(targetP, computed);
     };
 
-    // 1. Prawdziwe ładowanie i rozcinanie sprajtów 360° dla 3 PIERWSZYCH widocznych w karuzeli odmian:
-    // Lipowy (centrum), Gryczany (prawa strona), Spadziowy (lewa strona)
-    // Pozostałe 3 odmiany (rzepakowy, akacja, wrzosowy) ładują się cicho w tle (idle queue)
-    const priorityVarietyIds = ['lipowy', 'gryczany', 'spadziowy'];
-    const backgroundVarietyIds = ['rzepakowy', 'akacja', 'wrzosowy'];
+    // 1. Priorytetowe, błyskawiczne załadowanie pierwszego widocznego w karuzeli słoika (Lipowy)
+    // Pozostałe odmiany ładują się cicho w tle (idle queue) po odsłonięciu strony
+    const priorityVarietyId = 'lipowy';
+    const backgroundVarietyIds = ['gryczany', 'spadziowy', 'rzepakowy', 'akacja', 'wrzosowy'];
 
-    let totalSpritesPct = 0;
-    const spritesCount = priorityVarietyIds.filter(id => BUNDLED_VARIETY_SPRITES[id]).length;
-    let spritesCompleted = 0;
-
-    const priorityPromises = priorityVarietyIds.map(id => {
-      const spriteInfo = BUNDLED_VARIETY_SPRITES[id];
-      if (!spriteInfo) {
-        spritesCompleted++;
-        return Promise.resolve();
-      }
-      return loadFramesFromSpriteSheet({
-        varietyId: id,
-        spriteInfo,
+    const initialSpriteInfo = BUNDLED_VARIETY_SPRITES[priorityVarietyId];
+    if (initialSpriteInfo) {
+      loadFramesFromSpriteSheet({
+        varietyId: priorityVarietyId,
+        spriteInfo: initialSpriteInfo,
         onProgress: (pct) => {
-          totalSpritesPct = Math.round(((spritesCompleted * 100 + pct) / spritesCount));
-          spritePct = Math.min(100, totalSpritesPct);
+          spritePct = pct;
           checkProgress();
         }
       }).then(() => {
-        spritesCompleted++;
-        spritePct = Math.round((spritesCompleted / spritesCount) * 100);
+        spriteDone = true;
+        spritePct = 100;
         checkProgress();
       }).catch(() => {
-        spritesCompleted++;
-        spritePct = Math.round((spritesCompleted / spritesCount) * 100);
+        spriteDone = true;
+        spritePct = 100;
         checkProgress();
       });
-    });
-
-    Promise.all(priorityPromises).then(() => {
+    } else {
       spriteDone = true;
       spritePct = 100;
       checkProgress();
+    }
 
-      // Po odsłonięciu strony cicho w tle dogrywamy pozostałe 3 odmiany (jedna po drugiej, bez obciążania wątku)
-      const loadBackgroundQueue = async () => {
-        // Ciche wczytanie wstęg miodowych w tle
-        const bgRibbons = [
-          getAssetUrl('assets/akacjowy-front.webp'),
-          getAssetUrl('assets/akacjowy-back.webp'),
-          getAssetUrl('assets/rzepakowy-front.webp'),
-          getAssetUrl('assets/rzepakowy-back.webp'),
-          getAssetUrl('assets/wrzosowy-front.webp'),
-          getAssetUrl('assets/wrzosowy-back.webp'),
-        ];
-        for (const rUrl of bgRibbons) {
-          const img = new Image();
-          img.src = rUrl;
-        }
-
-        for (const bgId of backgroundVarietyIds) {
-          const bgSprite = BUNDLED_VARIETY_SPRITES[bgId];
-          if (bgSprite) {
-            try {
-              await new Promise(r => setTimeout(r, 600));
-              await loadFramesFromSpriteSheet({
-                varietyId: bgId,
-                spriteInfo: bgSprite,
-              });
-            } catch (err) {
-              console.warn(`Background preload for ${bgId} skipped:`, err);
-            }
+    // Po odsłonięciu strony cicho w tle dogrywamy pozostałe odmiany (jedna po drugiej, bez obciążania wątku)
+    const loadBackgroundQueue = async () => {
+      for (const bgId of backgroundVarietyIds) {
+        const bgSprite = BUNDLED_VARIETY_SPRITES[bgId];
+        if (bgSprite) {
+          try {
+            await new Promise(r => setTimeout(r, 400));
+            await loadFramesFromSpriteSheet({
+              varietyId: bgId,
+              spriteInfo: bgSprite,
+            });
+          } catch (err) {
+            console.warn(`Background preload for ${bgId} skipped:`, err);
           }
         }
-      };
-
-      if (typeof window !== 'undefined') {
-        if ('requestIdleCallback' in window) {
-          (window as any).requestIdleCallback(() => {
-            setTimeout(loadBackgroundQueue, 1000);
-          }, { timeout: 3000 });
-        } else {
-          setTimeout(loadBackgroundQueue, 1200);
-        }
       }
-    });
+    };
 
-    // 2. Prawdziwe ładowanie i dekodowanie wstęg miodowych dla startowych odmian
+    if (typeof window !== 'undefined') {
+      if ('requestIdleCallback' in window) {
+        (window as any).requestIdleCallback(() => {
+          setTimeout(loadBackgroundQueue, 1000);
+        }, { timeout: 3000 });
+      } else {
+        setTimeout(loadBackgroundQueue, 1200);
+      }
+    }
+
+    // 2. Błyskawiczne ładowanie wstęgi miodowej (wstęga ogólna używana na stronie głównej)
     const ribbonUrls = [
       getAssetUrl('assets/wstega-ogolna-front.webp'),
       getAssetUrl('assets/wstega-ogolna-back.webp'),
-      getAssetUrl('assets/wstega-lipowy-front.webp'),
-      getAssetUrl('assets/wstega-lipowy-back.webp'),
-      getAssetUrl('assets/gryczany-front.webp'),
-      getAssetUrl('assets/gryczany-back.webp'),
-      getAssetUrl('assets/spadziowy-front.webp'),
-      getAssetUrl('assets/spadziowy-back.webp'),
     ];
     Promise.all(ribbonUrls.map(url => new Promise(res => {
       const img = new Image();
@@ -148,36 +115,13 @@ export const PagePreloader: React.FC<PagePreloaderProps> = ({ onComplete }) => {
       checkProgress();
     });
 
-    // 3. Prawdziwe ładowanie pierwszych 25 klatek sekcji 2 (3D scrolling wideo)
-    const initialSection2Indices = Array.from({ length: 25 }, (_, i) => i);
-    let sec2Count = 0;
-    Promise.all(initialSection2Indices.map(idx => new Promise(res => {
-      const frameNum = (idx + 1).toString().padStart(3, '0');
-      const img = new Image();
-      img.src = getAssetUrl(`frames/wyrob/${frameNum}.webp`);
-      img.onload = async () => {
-        try {
-          if ('decode' in img) await img.decode();
-        } catch {}
-        sec2Count++;
-        sec2Pct = Math.round((sec2Count / 25) * 100);
-        checkProgress();
-        res(true);
-      };
-      img.onerror = () => res(false);
-    }))).then(() => {
-      sec2Done = true;
-      sec2Pct = 100;
-      checkProgress();
-    });
-
     let currentVisualP = 0;
 
     const interval = setInterval(() => {
       if (!isMounted || finished) return;
 
       const elapsed = performance.now() - startTime;
-      const isReadyToComplete = (spriteDone && ribbonsDone && sec2Done && elapsed >= minDisplayTimeMs) || elapsed > 6000;
+      const isReadyToComplete = (spriteDone && ribbonsDone && elapsed >= minDisplayTimeMs) || elapsed >= maxSafetyTimeoutMs;
 
       if (isReadyToComplete) {
         targetP = 100;
