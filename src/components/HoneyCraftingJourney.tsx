@@ -66,22 +66,12 @@ export const HoneyCraftingJourney: React.FC = () => {
 
     if (!imgWidth || !imgHeight) return;
 
-    // Responsive scaling:
-    // On Mobile (vertical screens): cover so it fills the screen vertically
-    // On Desktop: contain (Math.min) so 100% of the 16:9 frame is completely visible without any cropping of jar, lid, or table!
-    const isMobile = canvasWidth < 768 || canvasWidth / canvasHeight < 1.0;
-    const scale = isMobile 
-      ? Math.max(canvasWidth / imgWidth, canvasHeight / imgHeight)
-      : Math.min(canvasWidth / imgWidth, canvasHeight / imgHeight);
-
+    // Fullscreen edge-to-edge cover on both desktop and mobile (zero black bars, 100% immersive)
+    const scale = Math.max(canvasWidth / imgWidth, canvasHeight / imgHeight);
     const drawWidth = imgWidth * scale;
     const drawHeight = imgHeight * scale;
     const offsetX = (canvasWidth - drawWidth) / 2;
     const offsetY = (canvasHeight - drawHeight) / 2;
-
-    // Clear background with theme color
-    ctx.fillStyle = '#141B14';
-    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
     ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
   }, []);
