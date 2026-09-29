@@ -38,6 +38,7 @@ import {
 } from 'lucide-react';
 
 import { useProducts } from '../context/ProductContext';
+import { useAuth } from '../context/AuthContext';
 
 interface ProductPageProps {
   onAddToCart: (product: HoneyProduct, weightGrams: number, pricePln: number, subscriptionInterval?: number) => void;
@@ -49,8 +50,10 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
   const navigate = useNavigate();
   const lenis = useLenis();
   const { getProductById, honeyVarieties, hiveTreasures } = useProducts();
+  const { isLoggedIn, toggleFavorite, isFavorite } = useAuth();
 
   const rawProduct = getProductById(id || '') || HONEY_PRODUCTS.find((p) => p.id === id);
+  const isFav = rawProduct ? isFavorite(rawProduct.id) : false;
 
   useLayoutEffect(() => {
     setActiveTab('opis');
@@ -1239,6 +1242,23 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
           </div>
 
           <div className="flex items-center gap-2">
+            {isLoggedIn && rawProduct && (
+              <button
+                type="button"
+                onClick={() => toggleFavorite(rawProduct.id)}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl border transition-all cursor-pointer shadow-xs ${
+                  isFav
+                    ? 'bg-rose-50 border-rose-300 text-rose-600'
+                    : 'bg-white border-[#D9821E]/20 text-[#594D42] hover:text-rose-600 hover:border-rose-300'
+                }`}
+                title={isFav ? "Usuń z ulubionych miodów" : "Dodaj ten miód do ulubionych"}
+                id="btn-ulubione-naglowek"
+              >
+                <Heart className={`w-3.5 h-3.5 transition-transform active:scale-125 ${isFav ? 'fill-rose-500 text-rose-500' : ''}`} />
+                <span>{isFav ? 'W ulubionych' : 'Do ulubionych'}</span>
+              </button>
+            )}
+
             {!isTreasure && onOpenCompare && (
               <button
                 type="button"
@@ -1830,24 +1850,43 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
 
                 {/* Primary Action Buttons */}
                 <div className="space-y-2.5">
-                  <button
-                    ref={mainBuyButtonRef}
-                    onClick={handleAddToCart}
-                    className="w-full py-3.5 sm:py-4 px-6 rounded-2xl font-bold text-base text-white bg-[#1B4332] hover:bg-[#143326] transition-all shadow-md flex items-center justify-center gap-2.5 cursor-pointer transform hover:-translate-y-0.5 active:translate-y-0"
-                    id="btn-dodaj-koszyk-glowny"
-                  >
-                    {addedAnimation ? (
-                      <>
-                        <Check className="w-5 h-5 text-[#E6C065]" />
-                        <span>Dodano do koszyka!</span>
-                      </>
-                    ) : (
-                      <>
-                        <ShoppingBag className="w-5 h-5" />
-                        <span>Dodaj do koszyka • {((currentSize?.price || 0) * quantity).toFixed(2)} zł</span>
-                      </>
+                  <div className="flex gap-2.5 items-stretch">
+                    <button
+                      ref={mainBuyButtonRef}
+                      onClick={handleAddToCart}
+                      className="flex-1 py-3.5 sm:py-4 px-6 rounded-2xl font-bold text-base text-white bg-[#1B4332] hover:bg-[#143326] transition-all shadow-md flex items-center justify-center gap-2.5 cursor-pointer transform hover:-translate-y-0.5 active:translate-y-0"
+                      id="btn-dodaj-koszyk-glowny"
+                    >
+                      {addedAnimation ? (
+                        <>
+                          <Check className="w-5 h-5 text-[#E6C065]" />
+                          <span>Dodano do koszyka!</span>
+                        </>
+                      ) : (
+                        <>
+                          <ShoppingBag className="w-5 h-5" />
+                          <span>Dodaj do koszyka • {((currentSize?.price || 0) * quantity).toFixed(2)} zł</span>
+                        </>
+                      )}
+                    </button>
+
+                    {isLoggedIn && rawProduct && (
+                      <button
+                        type="button"
+                        onClick={() => toggleFavorite(rawProduct.id)}
+                        className={`px-4 sm:px-5 rounded-2xl border transition-all cursor-pointer flex items-center justify-center shrink-0 ${
+                          isFav
+                            ? 'bg-rose-50 border-rose-300 text-rose-600 shadow-xs'
+                            : 'bg-[#FAF6EE] border-[#D9821E]/30 text-[#594D42] hover:text-rose-600 hover:border-rose-300 hover:bg-rose-50/50'
+                        }`}
+                        title={isFav ? "Usuń z ulubionych miodów" : "Dodaj ten miód do ulubionych"}
+                        aria-label="Ulubione"
+                        id="btn-ulubione-obok-koszyka"
+                      >
+                        <Heart className={`w-5 h-5 transition-transform active:scale-125 ${isFav ? 'fill-rose-500 text-rose-500' : ''}`} />
+                      </button>
                     )}
-                  </button>
+                  </div>
 
                   <div className="flex items-center justify-between text-xs text-[#594D42] pt-2 px-1">
                     <span className="flex items-center gap-1.5 font-semibold text-[#1B4332]">
@@ -2913,6 +2952,22 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                 +
               </button>
             </div>
+
+            {/* Ulubione w sticky bar (tylko zalogowani) */}
+            {isLoggedIn && rawProduct && (
+              <button
+                type="button"
+                onClick={() => toggleFavorite(rawProduct.id)}
+                className={`p-2.5 rounded-xl border transition-all cursor-pointer flex items-center justify-center shrink-0 ${
+                  isFav
+                    ? 'bg-rose-50 border-rose-300 text-rose-600 shadow-2xs'
+                    : 'bg-white border-[#D9821E]/30 text-[#594D42] hover:text-rose-500 hover:border-rose-300'
+                }`}
+                title={isFav ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
+              >
+                <Heart className={`w-4 h-4 transition-transform active:scale-125 ${isFav ? 'fill-rose-500 text-rose-500' : ''}`} />
+              </button>
+            )}
 
             {/* Główny przycisk dodania do koszyka */}
             <button

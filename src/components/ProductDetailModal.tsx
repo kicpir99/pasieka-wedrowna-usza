@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { HoneyProduct } from '../types';
 import { getEnrichedProduct, CATEGORY_METADATA } from '../utils/honeyHelpers';
+import { useAuth } from '../context/AuthContext';
 import { 
   X, 
   Star, 
@@ -45,6 +46,8 @@ const ProductDetailModalContent: React.FC<ProductDetailModalContentProps> = ({
   onSelectFlavorNote,
 }) => {
   const navigate = useNavigate();
+  const { isLoggedIn, toggleFavorite, isFavorite } = useAuth();
+  const isFav = isFavorite(rawProduct.id);
   const product = getEnrichedProduct(rawProduct);
   const [selectedSizeIndex, setSelectedSizeIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
@@ -101,15 +104,34 @@ const ProductDetailModalContent: React.FC<ProductDetailModalContentProps> = ({
         onClick={(e) => e.stopPropagation()}
         onWheel={(e) => e.stopPropagation()}
       >
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 z-20 p-2.5 rounded-full bg-[#FAF6EE]/80 hover:bg-[#EADBCA] text-[#594D42] hover:text-[#241D17] transition-colors cursor-pointer shadow-sm border border-[#D9821E]/15"
-          title="Zamknij podgląd"
-          aria-label="Zamknij"
-        >
-          <X className="w-5 h-5" />
-        </button>
+        {/* Top Actions: Favorite (if logged in) + Close */}
+        <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
+          {isLoggedIn && (
+            <button
+              type="button"
+              onClick={() => toggleFavorite(rawProduct.id)}
+              className={`p-2.5 rounded-full transition-all cursor-pointer shadow-sm border ${
+                isFav
+                  ? 'bg-rose-50 border-rose-300 text-rose-600'
+                  : 'bg-[#FAF6EE]/80 hover:bg-[#EADBCA] text-[#594D42] hover:text-rose-500 border-[#D9821E]/15'
+              }`}
+              title={isFav ? "Usuń z ulubionych miodów" : "Dodaj do ulubionych miodów"}
+              aria-label="Ulubione"
+              id="modal-quick-fav-top-btn"
+            >
+              <Heart className={`w-4 h-4 transition-transform active:scale-125 ${isFav ? 'fill-rose-500 text-rose-500' : ''}`} />
+            </button>
+          )}
+
+          <button
+            onClick={onClose}
+            className="p-2.5 rounded-full bg-[#FAF6EE]/80 hover:bg-[#EADBCA] text-[#594D42] hover:text-[#241D17] transition-colors cursor-pointer shadow-sm border border-[#D9821E]/15"
+            title="Zamknij podgląd"
+            aria-label="Zamknij"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
 
         <div 
           ref={scrollRef}
@@ -701,6 +723,23 @@ const ProductDetailModalContent: React.FC<ProductDetailModalContentProps> = ({
                   +
                 </button>
               </div>
+
+              {isLoggedIn && (
+                <button
+                  type="button"
+                  onClick={() => toggleFavorite(rawProduct.id)}
+                  className={`p-2 sm:p-2.5 rounded-xl border transition-all cursor-pointer flex items-center justify-center shrink-0 ${
+                    isFav
+                      ? 'bg-rose-50 border-rose-300 text-rose-600 shadow-2xs'
+                      : 'bg-[#FAF6EE] border-[#D9821E]/30 text-[#594D42] hover:text-rose-500 hover:border-rose-300'
+                  }`}
+                  title={isFav ? "Usuń z ulubionych miodów" : "Dodaj do ulubionych miodów"}
+                  aria-label="Ulubione"
+                  id="modal-quick-fav-bottom-btn"
+                >
+                  <Heart className={`w-4 h-4 sm:w-5 sm:h-5 transition-transform active:scale-125 ${isFav ? 'fill-rose-500 text-rose-500' : ''}`} />
+                </button>
+              )}
 
               <button
                 type="button"

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { HoneyProduct } from '../types';
 import { Link } from 'react-router-dom';
-import { ShoppingBag, Star, Droplet, Sparkles, MapPin, Scale, Flame, Clock, Leaf } from 'lucide-react';
+import { ShoppingBag, Star, Droplet, Sparkles, MapPin, Scale, Flame, Clock, Leaf, Heart } from 'lucide-react';
 import { HIVE_TREASURE_IDS } from '../data/honeyProducts';
 import { getProductBadges } from '../utils/honeyHelpers';
+import { useAuth } from '../context/AuthContext';
 
 interface ProductCardProps {
   product: HoneyProduct;
@@ -26,6 +27,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   onSelectFlavorNote,
   activeFlavorNote,
 }) => {
+  const { isLoggedIn, toggleFavorite, isFavorite } = useAuth();
+  const isFav = isFavorite(product.id);
   const [selectedWeight, setSelectedWeight] = useState<number>(
     product.sizes[0]?.weightGrams || 400
   );
@@ -86,24 +89,48 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           ))}
         </div>
 
-        {/* Compare Button */}
-        {onToggleCompare && !HIVE_TREASURE_IDS.includes(product.id) && (
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              onToggleCompare(product);
-            }}
-            className={`absolute top-12 right-3 p-2 rounded-full backdrop-blur-md transition-all shadow-sm ${
-              isCompared 
-                ? 'bg-[#1B4332] text-white border border-[#1B4332]' 
-                : 'bg-white/80 text-[#4A4033] border border-white/40 hover:bg-white hover:text-[#1B4332]'
-            }`}
-            title={isCompared ? "Usuń z porównania" : "Porównaj ten miód (waga)"}
-          >
-            <Scale className="w-4 h-4" />
-          </button>
-        )}
+        {/* Top-Right Action Controls (Favorite & Compare) */}
+        <div className="absolute top-12 right-3 flex flex-col gap-2 z-10">
+          {/* Favorite Heart Button (Only visible when logged in) */}
+          {isLoggedIn && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleFavorite(product.id);
+              }}
+              className={`p-2 rounded-full backdrop-blur-md transition-all shadow-sm cursor-pointer ${
+                isFav
+                  ? 'bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 shadow-md'
+                  : 'bg-white/85 text-[#6D604F] border border-white/50 hover:bg-white hover:text-red-500'
+              }`}
+              title={isFav ? "Usuń z ulubionych miodów" : "Dodaj do ulubionych miodów"}
+              aria-label={isFav ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
+            >
+              <Heart className={`w-4 h-4 transition-transform active:scale-125 ${isFav ? 'fill-red-600 text-red-600' : ''}`} />
+            </button>
+          )}
+
+          {/* Compare Button */}
+          {onToggleCompare && !HIVE_TREASURE_IDS.includes(product.id) && (
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onToggleCompare(product);
+              }}
+              className={`p-2 rounded-full backdrop-blur-md transition-all shadow-sm ${
+                isCompared 
+                  ? 'bg-[#1B4332] text-white border border-[#1B4332]' 
+                  : 'bg-white/80 text-[#4A4033] border border-white/40 hover:bg-white hover:text-[#1B4332]'
+              }`}
+              title={isCompared ? "Usuń z porównania" : "Porównaj ten miód (waga)"}
+            >
+              <Scale className="w-4 h-4" />
+            </button>
+          )}
+        </div>
 
         {/* Color preview pill */}
         <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/95 text-[11px] text-[#4A4033] shadow-sm font-semibold border border-black/5 backdrop-blur-[2px]">
