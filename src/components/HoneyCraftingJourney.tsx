@@ -13,11 +13,17 @@ ScrollTrigger.config({
   ignoreMobileResize: true,
 });
 
-const TOTAL_FRAMES = 254;
+const TOTAL_FRAMES = 289;
+
+const getIsMobile = () => {
+  if (typeof window === 'undefined') return false;
+  return window.innerWidth < 768 || (window.innerHeight > window.innerWidth && window.innerWidth < 1024);
+};
 
 export const HoneyCraftingJourney: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const isMobileRef = useRef<boolean>(getIsMobile());
   const loadedImagesRef = useRef<(HTMLImageElement | null)[]>(new Array(TOTAL_FRAMES).fill(null));
   const [loadProgress, setLoadProgress] = useState<number>(0);
   const [isInitialReady, setIsInitialReady] = useState<boolean>(false);
@@ -30,14 +36,16 @@ export const HoneyCraftingJourney: React.FC = () => {
   const step4Ref = useRef<HTMLDivElement>(null);
 
   // Helper to get image path for frame (1-based, padded to 3 digits)
-  const getFramePath = (index: number) => {
+  // Dynamically selects 16:9 desktop or 9:16 mobile frames
+  const getFramePath = useCallback((index: number) => {
     const frameNum = (index + 1).toString().padStart(3, '0');
-    return getAssetUrl(`frames/wyrob/${frameNum}.webp`);
-  };
+    const folder = isMobileRef.current ? 'frames/wyrob-mobile' : 'frames/wyrob-desktop';
+    return getAssetUrl(`${folder}/${frameNum}.webp`);
+  }, []);
 
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
 
-  // Draw a frame onto canvas: full cover on desktop, crisp uncropped 1080p presentation on mobile
+  // Draw a frame onto canvas: seamless full cover on both desktop (16:9) and mobile (9:16)
   const drawImageToCanvas = useCallback((img: HTMLImageElement) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -58,34 +66,15 @@ export const HoneyCraftingJourney: React.FC = () => {
 
     if (!imgWidth || !imgHeight) return;
 
-    // Check if viewport is in mobile / portrait orientation
-    const isMobilePortrait = canvasWidth / canvasHeight < 1.2 || window.innerWidth < 640;
+    // Both desktop (16:9) and mobile (9:16) native aspect ratios:
+    // Scale to full cover viewport with center alignment (zero letterboxing, edge-to-edge immersion)
+    const scale = Math.max(canvasWidth / imgWidth, canvasHeight / imgHeight);
+    const drawWidth = imgWidth * scale;
+    const drawHeight = imgHeight * scale;
+    const offsetX = (canvasWidth - drawWidth) / 2;
+    const offsetY = (canvasHeight - drawHeight) / 2;
 
-    if (!isMobilePortrait) {
-      // DESKTOP LANDSCAPE: Fullscreen Cover with crisp centering
-      const scale = Math.max(canvasWidth / imgWidth, canvasHeight / imgHeight);
-      const drawWidth = imgWidth * scale;
-      const drawHeight = imgHeight * scale;
-      const offsetX = (canvasWidth - drawWidth) / 2;
-      const offsetY = (canvasHeight - drawHeight) / 2;
-
-      ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
-    } else {
-      // MOBILE PORTRAIT: 100% UNCROPPED 16:9 FRAME
-      const drawWidth = canvasWidth;
-      const drawHeight = (imgHeight / imgWidth) * canvasWidth;
-      const offsetX = 0;
-      const offsetY = (canvasHeight - drawHeight) / 2;
-
-      // Fill letterbox bands only if needed
-      ctx.fillStyle = '#141B14';
-      if (offsetY > 0) {
-        ctx.fillRect(0, 0, canvasWidth, offsetY);
-        ctx.fillRect(0, offsetY + drawHeight, canvasWidth, canvasHeight - (offsetY + drawHeight));
-      }
-
-      ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
-    }
+    ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
   }, []);
 
   // Find the nearest loaded frame with cached fast lookup
@@ -133,7 +122,7 @@ export const HoneyCraftingJourney: React.FC = () => {
   }, [getNearestLoadedFrame, drawImageToCanvas]);
 
   // Load image helper with off-thread asynchronous decoding
-  const loadImage = (index: number): Promise<HTMLImageElement> => {
+  const loadImage = useCallback((index: number): Promise<HTMLImageElement> => {
     return new Promise((resolve) => {
       if (loadedImagesRef.current[index]) {
         resolve(loadedImagesRef.current[index]!);
@@ -156,7 +145,7 @@ export const HoneyCraftingJourney: React.FC = () => {
         resolve(img); // Continue gracefully on error
       };
     });
-  };
+  }, [getFramePath]);
 
   // Preload frames progressively: start immediately in the background so frames are ready before user reaches section 2
   useEffect(() => {
@@ -241,9 +230,9 @@ export const HoneyCraftingJourney: React.FC = () => {
         observer.disconnect();
       }
     };
-  }, [drawImageToCanvas, renderFrame]);
+  }, [loadImage, drawImageToCanvas, renderFrame]);
 
-  // Handle Resize: ignore address bar vertical jitter on mobile phones and clamp DPR for maximum fillrate performance
+  // Handle Resize: responsive device orientation detection and canvas sizing
   useEffect(() => {
     let lastWidth = 0;
     const handleResize = () => {
@@ -253,6 +242,19 @@ export const HoneyCraftingJourney: React.FC = () => {
         return;
       }
       lastWidth = window.innerWidth;
+
+      const currentIsMobile = getIsMobile();
+      if (currentIsMobile !== isMobileRef.current) {
+        isMobileRef.current = currentIsMobile;
+        // Swap frame cache on orientation/device change
+        loadedImagesRef.current = new Array(TOTAL_FRAMES).fill(null);
+        lastFoundFrameRef.current = null;
+        lastDrawnImageRef.current = null;
+        loadImage(currentFrameRef.current).then((img) => {
+          drawImageToCanvas(img);
+        });
+      }
+
       const isMobile = window.innerWidth < 640;
       const dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 2);
       canvas.width = Math.round(window.innerWidth * dpr);
@@ -270,28 +272,26 @@ export const HoneyCraftingJourney: React.FC = () => {
     handleResize();
 
     return () => window.removeEventListener('resize', handleResize);
-  }, [renderFrame]);
+  }, [loadImage, drawImageToCanvas, renderFrame]);
 
-  // GSAP ScrollTrigger Setup with Direct 1:1 Scrubbing (no artificial lagging or hesitation on stopping)
+  // GSAP ScrollTrigger Setup with Direct 1:1 Scrubbing
   useEffect(() => {
     if (!containerRef.current) return;
 
     const ctx = gsap.context(() => {
       const frameState = { frame: 0 };
 
-      // scrub: 2.5 provides ~2.5s of GSAP-side interpolation for silky smooth deceleration
-      // This masks Lenis's micro-position updates during momentum decay and creates
-      // a cinematic ease-out when the user lifts their finger or stops the scroll wheel
+      // scrub: 2.5 provides silky smooth deceleration
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
           start: 'top top',
           end: 'bottom bottom',
-          scrub: 2.5,
+          scrub: 2.2,
         }
       });
 
-      // Frame scrubbing animation smoothly interpolating frameState.frame
+      // Frame scrubbing animation smoothly interpolating frameState.frame across 289 frames
       tl.to(frameState, {
         frame: TOTAL_FRAMES - 1,
         ease: 'none',
@@ -308,12 +308,12 @@ export const HoneyCraftingJourney: React.FC = () => {
       }, 0);
 
       const isMobile = window.innerWidth < 640;
-      const moveX = isMobile ? 20 : 140;
+      const moveX = isMobile ? 16 : 140;
       const moveY = isMobile ? 0 : 80;
-      const exitX = isMobile ? 16 : 90;
+      const exitX = isMobile ? 12 : 90;
       const exitY = isMobile ? 0 : 40;
 
-      // Pure GPU hardware-accelerated transforms (autoAlpha, translate3d, scale) without expensive CSS blur
+      // Pure GPU hardware-accelerated transforms (autoAlpha, translate3d, scale)
       // --- KROK 1: 0% - 24% ---
       tl.fromTo(step1Ref.current, 
         { autoAlpha: 0, x: -moveX, y: -moveY, scale: 0.94 }, 
@@ -369,12 +369,12 @@ export const HoneyCraftingJourney: React.FC = () => {
     <section 
       id="miodobranie"
       ref={containerRef}
-      className="relative w-full h-[280vh] sm:h-[450vh] bg-[#141B14] text-[#FAF7F2] select-none"
+      className="relative w-full h-[320vh] sm:h-[450vh] bg-[#141B14] text-[#FAF7F2] select-none"
     >
       {/* Sticky Fullscreen Viewport */}
       <div className="sticky top-0 w-full h-screen h-[100dvh] overflow-hidden flex items-center justify-center">
         
-        {/* Canvas for ultra-smooth 60fps frame sequence rendering (block without object-cover for 1:1 pixel rendering) */}
+        {/* Canvas for ultra-smooth 60fps frame sequence rendering (full edge-to-edge cover on desktop and mobile) */}
         <canvas 
           ref={canvasRef} 
           className="absolute inset-0 w-full h-full block z-0 filter contrast-[1.03] saturate-[1.06]"
@@ -384,7 +384,7 @@ export const HoneyCraftingJourney: React.FC = () => {
         <div className="hidden sm:block absolute inset-0 bg-gradient-to-b from-[#111711]/90 via-transparent to-[#111711]/95 z-10 pointer-events-none" />
         <div className="hidden sm:block absolute inset-0 bg-radial-vignette from-transparent via-[#141B14]/25 to-[#0D120D]/90 z-10 pointer-events-none" />
         
-        {/* Soft atmospheric glow accents in the four corners to complement cards */}
+        {/* Soft atmospheric glow accents in the four corners */}
         <div className="absolute top-0 left-0 w-96 h-96 bg-[#141B14]/70 blur-3xl pointer-events-none z-10" />
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#141B14]/70 blur-3xl pointer-events-none z-10" />
         <div className="absolute top-0 right-0 w-96 h-96 bg-[#141B14]/70 blur-3xl pointer-events-none z-10" />
@@ -398,17 +398,17 @@ export const HoneyCraftingJourney: React.FC = () => {
           </div>
         )}
 
-        {/* --- DYNAMIC STORY OVERLAYS: BLENDED INTO VIDEO (NO BOXES) --- */}
+        {/* --- DYNAMIC STORY OVERLAYS: BLENDED INTO VIDEO --- */}
         <div className="absolute inset-0 z-30 pointer-events-none p-3 sm:p-10 md:p-14 lg:p-20">
 
-          {/* KROK 1 (0% - 24%): LEWA GÓRA (Na mobile z komfortowym odstępem nad nagraniem) */}
+          {/* KROK 1 (0% - 24%): LEWA GÓRA (Górny obszar na mobile nad ramką) */}
           <div 
             ref={step1Ref}
-            className="absolute bottom-[calc(50%+35vw)] sm:bottom-auto sm:top-32 md:top-36 lg:top-40 left-4 sm:left-12 md:left-16 lg:left-24 w-[calc(100%-2rem)] sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl opacity-0 z-30"
+            className="absolute top-20 sm:top-32 md:top-36 lg:top-40 left-4 sm:left-12 md:left-16 lg:left-24 w-[calc(100%-2rem)] sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl opacity-0 z-30"
           >
-            <div className="relative">
+            <div className="relative bg-black/25 sm:bg-transparent backdrop-blur-xs sm:backdrop-blur-none p-3.5 sm:p-0 rounded-2xl sm:rounded-none">
               {/* Seamless Cinematic Heading */}
-              <h2 className="text-xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-black text-[#FAF7F2] mb-1.5 sm:mb-3 tracking-tight leading-[1.15] [text-shadow:0_4px_24px_rgba(0,0,0,0.95),0_2px_8px_rgba(0,0,0,0.8)]">
+              <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-black text-[#FAF7F2] mb-1.5 sm:mb-3 tracking-tight leading-[1.15] [text-shadow:0_4px_24px_rgba(0,0,0,0.95),0_2px_8px_rgba(0,0,0,0.8)]">
                 Prosto z <br className="hidden sm:inline" />
                 <span className="text-[#E0A94F] [text-shadow:0_4px_28px_rgba(224,169,79,0.5),0_2px_12px_rgba(0,0,0,0.9)]">
                   {' '}Naszej Pasieki
@@ -422,14 +422,14 @@ export const HoneyCraftingJourney: React.FC = () => {
             </div>
           </div>
 
-          {/* KROK 2 (25% - 49%): PRAWY DÓŁ (Na mobile z komfortowym odstępem pod nagraniem) */}
+          {/* KROK 2 (25% - 49%): PRAWY DÓŁ / PRAWY GÓRNY NA MOBILE */}
           <div 
             ref={step2Ref}
-            className="absolute top-[calc(50%+35vw)] sm:top-auto sm:bottom-28 md:bottom-32 right-4 sm:right-12 md:right-16 lg:right-24 w-[calc(100%-2rem)] sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl text-right opacity-0 z-30"
+            className="absolute top-20 sm:top-auto sm:bottom-28 md:bottom-32 right-4 sm:right-12 md:right-16 lg:right-24 w-[calc(100%-2rem)] sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl text-right opacity-0 z-30"
           >
-            <div className="relative flex flex-col items-end">
+            <div className="relative flex flex-col items-end bg-black/25 sm:bg-transparent backdrop-blur-xs sm:backdrop-blur-none p-3.5 sm:p-0 rounded-2xl sm:rounded-none">
               {/* Seamless Cinematic Heading */}
-              <h2 className="text-xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-black text-[#FAF7F2] mb-1.5 sm:mb-3 tracking-tight leading-[1.15] [text-shadow:0_4px_24px_rgba(0,0,0,0.95),0_2px_8px_rgba(0,0,0,0.8)]">
+              <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-black text-[#FAF7F2] mb-1.5 sm:mb-3 tracking-tight leading-[1.15] [text-shadow:0_4px_24px_rgba(0,0,0,0.95),0_2px_8px_rgba(0,0,0,0.8)]">
                 100% Surowy &amp; <br className="hidden sm:inline" />
                 <span className="text-[#E0A94F] [text-shadow:0_4px_28px_rgba(224,169,79,0.5),0_2px_12px_rgba(0,0,0,0.9)]">
                   {' '}Niefiltrowany
@@ -443,14 +443,14 @@ export const HoneyCraftingJourney: React.FC = () => {
             </div>
           </div>
 
-          {/* KROK 3 (50% - 74%): PRAWA GÓRA (Na mobile z komfortowym odstępem nad nagraniem) */}
+          {/* KROK 3 (50% - 74%): PRAWA GÓRA */}
           <div 
             ref={step3Ref}
-            className="absolute bottom-[calc(50%+35vw)] sm:bottom-auto sm:top-32 md:top-36 lg:top-40 right-4 sm:right-12 md:right-16 lg:right-24 w-[calc(100%-2rem)] sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl text-right opacity-0 z-30"
+            className="absolute top-20 sm:top-32 md:top-36 lg:top-40 right-4 sm:right-12 md:right-16 lg:right-24 w-[calc(100%-2rem)] sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl text-right opacity-0 z-30"
           >
-            <div className="relative flex flex-col items-end">
+            <div className="relative flex flex-col items-end bg-black/25 sm:bg-transparent backdrop-blur-xs sm:backdrop-blur-none p-3.5 sm:p-0 rounded-2xl sm:rounded-none">
               {/* Seamless Cinematic Heading */}
-              <h2 className="text-xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-black text-[#FAF7F2] mb-1.5 sm:mb-3 tracking-tight leading-[1.15] [text-shadow:0_4px_24px_rgba(0,0,0,0.95),0_2px_8px_rgba(0,0,0,0.8)]">
+              <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-black text-[#FAF7F2] mb-1.5 sm:mb-3 tracking-tight leading-[1.15] [text-shadow:0_4px_24px_rgba(0,0,0,0.95),0_2px_8px_rgba(0,0,0,0.8)]">
                 Zbiór z <br className="hidden sm:inline" />
                 <span className="text-[#E0A94F] [text-shadow:0_4px_28px_rgba(224,169,79,0.5),0_2px_12px_rgba(0,0,0,0.9)]">
                   {' '}Dzikich Łąk
@@ -459,19 +459,19 @@ export const HoneyCraftingJourney: React.FC = () => {
 
               {/* Seamless Body Text */}
               <p className="text-xs sm:text-base md:text-lg text-[#E8E0D2] font-normal leading-relaxed max-w-lg [text-shadow:0_2px_16px_rgba(0,0,0,0.95),0_1px_4px_rgba(0,0,0,0.9)]">
-                Nasze ule stoją pośród rezerwatów i czystych lasów Świętej Lipki, z dala od autostrad, smogu i zanieczyszczeń przemysłowych.
+                Nasze ule wędrują pośród czystych lasów i łąk Dolnego Śląska, z dala od autostrad, smogu i zanieczyszczeń przemysłowych.
               </p>
             </div>
           </div>
 
-          {/* KROK 4 (75% - 100%): LEWY DÓŁ (Na mobile z komfortowym odstępem pod nagraniem) */}
+          {/* KROK 4 (75% - 100%): LEWY DÓŁ / LEWA GÓRA NA MOBILE (nad słoikiem) */}
           <div 
             ref={step4Ref}
-            className="absolute top-[calc(50%+35vw)] sm:top-auto sm:bottom-28 md:bottom-32 left-4 sm:left-12 md:left-16 lg:left-24 w-[calc(100%-2rem)] sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl opacity-0 z-30"
+            className="absolute top-20 sm:top-auto sm:bottom-28 md:bottom-32 left-4 sm:left-12 md:left-16 lg:left-24 w-[calc(100%-2rem)] sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl opacity-0 z-30"
           >
-            <div className="relative">
+            <div className="relative bg-black/25 sm:bg-transparent backdrop-blur-xs sm:backdrop-blur-none p-3.5 sm:p-0 rounded-2xl sm:rounded-none">
               {/* Seamless Cinematic Heading */}
-              <h2 className="text-xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-black text-[#FAF7F2] mb-1.5 sm:mb-3 tracking-tight leading-[1.15] [text-shadow:0_4px_24px_rgba(0,0,0,0.95),0_2px_8px_rgba(0,0,0,0.8)]">
+              <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-black text-[#FAF7F2] mb-1.5 sm:mb-3 tracking-tight leading-[1.15] [text-shadow:0_4px_24px_rgba(0,0,0,0.95),0_2px_8px_rgba(0,0,0,0.8)]">
                 Smak, Który <br className="hidden sm:inline" />
                 <span className="text-[#E0A94F] [text-shadow:0_4px_28px_rgba(224,169,79,0.5),0_2px_12px_rgba(0,0,0,0.9)]">
                   {' '}Pamiętasz
