@@ -83,24 +83,16 @@ export const HoneyCraftingJourney: React.FC = () => {
   const getNearestLoadedFrame = useCallback((targetIndex: number): HTMLImageElement | null => {
     const images = loadedImagesRef.current;
     if (images[targetIndex]) {
-      lastFoundFrameRef.current = { index: targetIndex, img: images[targetIndex]! };
       return images[targetIndex];
     }
 
-    if (lastFoundFrameRef.current && Math.abs(lastFoundFrameRef.current.index - targetIndex) <= 2) {
-      return lastFoundFrameRef.current.img;
-    }
-
+    // Outward search for nearest loaded frame
     for (let offset = 1; offset < TOTAL_FRAMES; offset++) {
       if (targetIndex - offset >= 0 && images[targetIndex - offset]) {
-        const found = images[targetIndex - offset]!;
-        lastFoundFrameRef.current = { index: targetIndex - offset, img: found };
-        return found;
+        return images[targetIndex - offset]!;
       }
       if (targetIndex + offset < TOTAL_FRAMES && images[targetIndex + offset]) {
-        const found = images[targetIndex + offset]!;
-        lastFoundFrameRef.current = { index: targetIndex + offset, img: found };
-        return found;
+        return images[targetIndex + offset]!;
       }
     }
     return null;
@@ -140,7 +132,7 @@ export const HoneyCraftingJourney: React.FC = () => {
     });
   }, [getFramePath]);
 
-  // Preload frames progressively: fast milestone pass + parallel background pass
+  // Preload frames progressively: load in sequential batches of 12 for gap-free continuous playback
   useEffect(() => {
     let isCancelled = false;
 
@@ -157,47 +149,29 @@ export const HoneyCraftingJourney: React.FC = () => {
       if (hasStartedFullPreload || isCancelled) return;
       hasStartedFullPreload = true;
 
-      // 2. High-density priority pass: every 2 frames for instant smooth coverage
-      const priorityIndices: number[] = [];
-      for (let i = 0; i < TOTAL_FRAMES; i += 2) {
-        priorityIndices.push(i);
-      }
-
-      const PRIORITY_BATCH = 6;
+      // Sequential batch loading ensures that every single consecutive frame is ready
+      const BATCH_SIZE = 12;
       let loadedCount = 1;
-      for (let i = 0; i < priorityIndices.length; i += PRIORITY_BATCH) {
-        if (isCancelled) return;
-        const batch = priorityIndices.slice(i, i + PRIORITY_BATCH);
-        await Promise.all(batch.map(loadImage));
-        loadedCount += batch.length;
-        setLoadProgress(Math.round((loadedCount / (priorityIndices.length + 20)) * 100));
-        renderFrame(currentFrameRef.current);
-      }
 
-      // 3. Fast parallel pass for all remaining in-between frames
-      const remainingIndices: number[] = [];
-      for (let i = 0; i < TOTAL_FRAMES; i++) {
-        if (!loadedImagesRef.current[i]) {
-          remainingIndices.push(i);
+      for (let i = 0; i < TOTAL_FRAMES; i += BATCH_SIZE) {
+        if (isCancelled) return;
+        const batch: Promise<HTMLImageElement>[] = [];
+        for (let j = i; j < Math.min(TOTAL_FRAMES, i + BATCH_SIZE); j++) {
+          if (!loadedImagesRef.current[j]) {
+            batch.push(loadImage(j));
+          }
         }
-      }
-
-      const BATCH_SIZE = 8;
-      for (let i = 0; i < remainingIndices.length; i += BATCH_SIZE) {
-        if (isCancelled) return;
-        const batch = remainingIndices.slice(i, i + BATCH_SIZE);
-        await Promise.all(batch.map(loadImage));
+        await Promise.all(batch);
         loadedCount += batch.length;
         setLoadProgress(Math.min(100, Math.round((loadedCount / TOTAL_FRAMES) * 100)));
-        // Tiny yield to keep UI responsive
-        await new Promise((r) => setTimeout(r, 8));
+        renderFrame(currentFrameRef.current);
       }
     };
 
-    // Start background preloading after a tiny 150ms delay
+    // Start background preloading after a tiny 100ms delay
     const autoTimer = setTimeout(() => {
       startFullPreload();
-    }, 150);
+    }, 100);
 
     // Also observe intersection to ensure section visibility flag is accurate
     let observer: IntersectionObserver | null = null;
@@ -241,7 +215,6 @@ export const HoneyCraftingJourney: React.FC = () => {
         isMobileRef.current = currentIsMobile;
         // Swap frame cache on orientation/device change
         loadedImagesRef.current = new Array(TOTAL_FRAMES).fill(null);
-        lastFoundFrameRef.current = null;
         lastDrawnImageRef.current = null;
         loadImage(currentFrameRef.current).then((img) => {
           drawImageToCanvas(img);
@@ -275,9 +248,8 @@ export const HoneyCraftingJourney: React.FC = () => {
       const frameState = { frame: 0 };
       const isMobile = window.innerWidth < 768;
 
-      // Responsive scrub: tight 0.35s on mobile touch devices prevents trailing momentum stutter,
-      // while 1.2s on desktop mousewheel creates buttery inertia
-      const scrubDuration = isMobile ? 0.35 : 1.2;
+      // Natural cinematic momentum: 0.9s on mobile provides that rich Apple-style deceleration glide after releasing thumb
+      const scrubDuration = isMobile ? 0.9 : 1.3;
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -285,7 +257,6 @@ export const HoneyCraftingJourney: React.FC = () => {
           start: 'top top',
           end: 'bottom bottom',
           scrub: scrubDuration,
-          fastScrollEnd: true,
         }
       });
 

@@ -247,9 +247,10 @@ function App() {
 
   const lenis = useLenis();
 
-  // Synchronize Lenis smooth scroll with GSAP ScrollTrigger ticker
+  // Synchronize Lenis smooth scroll with GSAP ScrollTrigger ticker and eliminate mobile jitter
   useEffect(() => {
     if (!lenis) return;
+    gsap.ticker.lagSmoothing(0);
     const handleScroll = () => {
       ScrollTrigger.update();
     };
