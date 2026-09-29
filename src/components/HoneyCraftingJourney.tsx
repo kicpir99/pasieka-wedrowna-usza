@@ -366,46 +366,46 @@ export const HoneyCraftingJourney: React.FC = () => {
           </div>
         )}
 
-        {/* --- DYNAMIC STORY OVERLAYS: BLENDED INTO VIDEO --- */}
-        <div className="absolute inset-0 z-30 pointer-events-none p-3 sm:p-10 md:p-14 lg:p-20">
+        {/* --- DYNAMIC STORY OVERLAYS: BLENDED INTO VIDEO (NO BOXES) --- */}
+        <div className="absolute inset-0 z-30 pointer-events-none p-4 sm:p-10 md:p-14 lg:p-20">
 
-          {/* KROK 1 (0% - 24%): LEWA GÓRA (Górny obszar na mobile nad ramką) */}
+          {/* KROK 1 (0% - 24%): LEWA STRONA (Komfortowy odstęp top-28 na mobile, z dala od górnej krawędzi) */}
           <div 
             ref={step1Ref}
-            className="absolute top-20 sm:top-32 md:top-36 lg:top-40 left-4 sm:left-12 md:left-16 lg:left-24 w-[calc(100%-2rem)] sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl opacity-0 z-30"
+            className="absolute top-28 sm:top-36 md:top-40 left-5 sm:left-12 md:left-16 lg:left-24 w-[calc(100%-2.5rem)] sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl opacity-0 z-30"
           >
-            <div className="relative bg-black/25 sm:bg-transparent backdrop-blur-xs sm:backdrop-blur-none p-3.5 sm:p-0 rounded-2xl sm:rounded-none">
+            <div className="relative">
               {/* Seamless Cinematic Heading */}
-              <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-black text-[#FAF7F2] mb-1.5 sm:mb-3 tracking-tight leading-[1.15] [text-shadow:0_4px_24px_rgba(0,0,0,0.95),0_2px_8px_rgba(0,0,0,0.8)]">
+              <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-black text-[#FAF7F2] mb-2 sm:mb-3 tracking-tight leading-[1.15] [text-shadow:0_2px_12px_rgba(0,0,0,0.95),0_4px_28px_rgba(0,0,0,0.8)]">
                 Prosto z <br className="hidden sm:inline" />
-                <span className="text-[#E0A94F] [text-shadow:0_4px_28px_rgba(224,169,79,0.5),0_2px_12px_rgba(0,0,0,0.9)]">
+                <span className="text-[#E0A94F] [text-shadow:0_2px_16px_rgba(224,169,79,0.5),0_2px_8px_rgba(0,0,0,0.95)]">
                   {' '}Naszej Pasieki
                 </span>
               </h2>
 
               {/* Seamless Body Text */}
-              <p className="text-xs sm:text-base md:text-lg text-[#E8E0D2] font-normal leading-relaxed max-w-lg [text-shadow:0_2px_16px_rgba(0,0,0,0.95),0_1px_4px_rgba(0,0,0,0.9)]">
+              <p className="text-xs sm:text-base md:text-lg text-[#E8E0D2] font-normal leading-relaxed max-w-lg [text-shadow:0_2px_12px_rgba(0,0,0,0.95),0_1px_4px_rgba(0,0,0,0.95)]">
                 Prawdziwy, tradycyjny miód z dzikich łąk. Niezmienny od stuleci, zrodzony w harmonii z przyrodą Dolnego Śląska.
               </p>
             </div>
           </div>
 
-          {/* KROK 2 (25% - 49%): PRAWY DÓŁ / PRAWY GÓRNY NA MOBILE */}
+          {/* KROK 2 (25% - 49%): PRAWA STRONA */}
           <div 
             ref={step2Ref}
-            className="absolute top-20 sm:top-auto sm:bottom-28 md:bottom-32 right-4 sm:right-12 md:right-16 lg:right-24 w-[calc(100%-2rem)] sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl text-right opacity-0 z-30"
+            className="absolute top-28 sm:top-auto sm:bottom-28 md:bottom-32 right-5 sm:right-12 md:right-16 lg:right-24 w-[calc(100%-2.5rem)] sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl text-right opacity-0 z-30"
           >
-            <div className="relative flex flex-col items-end bg-black/25 sm:bg-transparent backdrop-blur-xs sm:backdrop-blur-none p-3.5 sm:p-0 rounded-2xl sm:rounded-none">
+            <div className="relative flex flex-col items-end">
               {/* Seamless Cinematic Heading */}
-              <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-black text-[#FAF7F2] mb-1.5 sm:mb-3 tracking-tight leading-[1.15] [text-shadow:0_4px_24px_rgba(0,0,0,0.95),0_2px_8px_rgba(0,0,0,0.8)]">
+              <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-black text-[#FAF7F2] mb-2 sm:mb-3 tracking-tight leading-[1.15] [text-shadow:0_2px_12px_rgba(0,0,0,0.95),0_4px_28px_rgba(0,0,0,0.8)]">
                 100% Surowy &amp; <br className="hidden sm:inline" />
-                <span className="text-[#E0A94F] [text-shadow:0_4px_28px_rgba(224,169,79,0.5),0_2px_12px_rgba(0,0,0,0.9)]">
+                <span className="text-[#E0A94F] [text-shadow:0_2px_16px_rgba(224,169,79,0.5),0_2px_8px_rgba(0,0,0,0.95)]">
                   {' '}Niefiltrowany
                 </span>
               </h2>
 
               {/* Seamless Body Text */}
-              <p className="text-xs sm:text-base md:text-lg text-[#E8E0D2] font-normal leading-relaxed max-w-lg [text-shadow:0_2px_16px_rgba(0,0,0,0.95),0_1px_4px_rgba(0,0,0,0.9)]">
+              <p className="text-xs sm:text-base md:text-lg text-[#E8E0D2] font-normal leading-relaxed max-w-lg [text-shadow:0_2px_12px_rgba(0,0,0,0.95),0_1px_4px_rgba(0,0,0,0.95)]">
                 Nigdy nie podgrzewamy ani nie pasteryzujemy miodu. Zachowujemy pełnię aktywnych enzymów pszczelich, mikroskładników i bioflawonoidów.
               </p>
             </div>
@@ -414,40 +414,40 @@ export const HoneyCraftingJourney: React.FC = () => {
           {/* KROK 3 (50% - 74%): PRAWA GÓRA */}
           <div 
             ref={step3Ref}
-            className="absolute top-20 sm:top-32 md:top-36 lg:top-40 right-4 sm:right-12 md:right-16 lg:right-24 w-[calc(100%-2rem)] sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl text-right opacity-0 z-30"
+            className="absolute top-28 sm:top-36 md:top-40 right-5 sm:right-12 md:right-16 lg:right-24 w-[calc(100%-2.5rem)] sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl text-right opacity-0 z-30"
           >
-            <div className="relative flex flex-col items-end bg-black/25 sm:bg-transparent backdrop-blur-xs sm:backdrop-blur-none p-3.5 sm:p-0 rounded-2xl sm:rounded-none">
+            <div className="relative flex flex-col items-end">
               {/* Seamless Cinematic Heading */}
-              <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-black text-[#FAF7F2] mb-1.5 sm:mb-3 tracking-tight leading-[1.15] [text-shadow:0_4px_24px_rgba(0,0,0,0.95),0_2px_8px_rgba(0,0,0,0.8)]">
+              <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-black text-[#FAF7F2] mb-2 sm:mb-3 tracking-tight leading-[1.15] [text-shadow:0_2px_12px_rgba(0,0,0,0.95),0_4px_28px_rgba(0,0,0,0.8)]">
                 Zbiór z <br className="hidden sm:inline" />
-                <span className="text-[#E0A94F] [text-shadow:0_4px_28px_rgba(224,169,79,0.5),0_2px_12px_rgba(0,0,0,0.9)]">
+                <span className="text-[#E0A94F] [text-shadow:0_2px_16px_rgba(224,169,79,0.5),0_2px_8px_rgba(0,0,0,0.95)]">
                   {' '}Dzikich Łąk
                 </span>
               </h2>
 
               {/* Seamless Body Text */}
-              <p className="text-xs sm:text-base md:text-lg text-[#E8E0D2] font-normal leading-relaxed max-w-lg [text-shadow:0_2px_16px_rgba(0,0,0,0.95),0_1px_4px_rgba(0,0,0,0.9)]">
+              <p className="text-xs sm:text-base md:text-lg text-[#E8E0D2] font-normal leading-relaxed max-w-lg [text-shadow:0_2px_12px_rgba(0,0,0,0.95),0_1px_4px_rgba(0,0,0,0.95)]">
                 Nasze ule wędrują pośród czystych lasów i łąk Dolnego Śląska, z dala od autostrad, smogu i zanieczyszczeń przemysłowych.
               </p>
             </div>
           </div>
 
-          {/* KROK 4 (75% - 100%): LEWY DÓŁ / LEWA GÓRA NA MOBILE (nad słoikiem) */}
+          {/* KROK 4 (75% - 100%): LEWA STRONA (Komfortowo nad słoikiem na mobile) */}
           <div 
             ref={step4Ref}
-            className="absolute top-20 sm:top-auto sm:bottom-28 md:bottom-32 left-4 sm:left-12 md:left-16 lg:left-24 w-[calc(100%-2rem)] sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl opacity-0 z-30"
+            className="absolute top-24 sm:top-auto sm:bottom-28 md:bottom-32 left-5 sm:left-12 md:left-16 lg:left-24 w-[calc(100%-2.5rem)] sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl opacity-0 z-30"
           >
-            <div className="relative bg-black/25 sm:bg-transparent backdrop-blur-xs sm:backdrop-blur-none p-3.5 sm:p-0 rounded-2xl sm:rounded-none">
+            <div className="relative">
               {/* Seamless Cinematic Heading */}
-              <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-black text-[#FAF7F2] mb-1.5 sm:mb-3 tracking-tight leading-[1.15] [text-shadow:0_4px_24px_rgba(0,0,0,0.95),0_2px_8px_rgba(0,0,0,0.8)]">
+              <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-black text-[#FAF7F2] mb-2 sm:mb-3 tracking-tight leading-[1.15] [text-shadow:0_2px_12px_rgba(0,0,0,0.95),0_4px_28px_rgba(0,0,0,0.8)]">
                 Smak, Który <br className="hidden sm:inline" />
-                <span className="text-[#E0A94F] [text-shadow:0_4px_28px_rgba(224,169,79,0.5),0_2px_12px_rgba(0,0,0,0.9)]">
+                <span className="text-[#E0A94F] [text-shadow:0_2px_16px_rgba(224,169,79,0.5),0_2px_8px_rgba(0,0,0,0.95)]">
                   {' '}Pamiętasz
                 </span>
               </h2>
 
               {/* Seamless Body Text */}
-              <p className="text-xs sm:text-base md:text-lg text-[#E8E0D2] font-normal leading-relaxed max-w-lg mb-2.5 sm:mb-5 [text-shadow:0_2px_16px_rgba(0,0,0,0.95),0_1px_4px_rgba(0,0,0,0.9)]">
+              <p className="text-xs sm:text-base md:text-lg text-[#E8E0D2] font-normal leading-relaxed max-w-lg mb-3 sm:mb-5 [text-shadow:0_2px_12px_rgba(0,0,0,0.95),0_1px_4px_rgba(0,0,0,0.95)]">
                 Zamknęliśmy dzikie łąki w szklanym słoju. Poczuj aromat prawdziwej pasieki na swoim stole.
               </p>
 
@@ -455,7 +455,7 @@ export const HoneyCraftingJourney: React.FC = () => {
               <div className="flex flex-wrap items-center gap-3 pointer-events-auto">
                 <Link 
                   to="/sklep" 
-                  className="px-5 py-2 sm:px-6 sm:py-2.5 rounded-full bg-[#E0A94F] text-[#161D16] font-bold text-xs uppercase tracking-wider hover:bg-[#F2BC66] transition-all shadow-[0_4px_20px_rgba(224,169,79,0.35)] hover:scale-105 active:scale-95 flex items-center gap-1.5 cursor-pointer"
+                  className="px-5 py-2.5 sm:px-6 sm:py-2.5 rounded-full bg-[#E0A94F] text-[#161D16] font-bold text-xs uppercase tracking-wider hover:bg-[#F2BC66] transition-all shadow-[0_4px_20px_rgba(224,169,79,0.35)] hover:scale-105 active:scale-95 flex items-center gap-1.5 cursor-pointer"
                   id="btn-wybierz-miod-3d"
                   title="Przejdź do sklepu z miodami"
                 >
@@ -465,7 +465,7 @@ export const HoneyCraftingJourney: React.FC = () => {
 
                 <Link 
                   to="/skarby-ula" 
-                  className="px-4 py-2 sm:px-5 sm:py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-[#FAF7F2] font-semibold text-xs uppercase tracking-wider border border-white/20 backdrop-blur-md transition-all hover:scale-105 active:scale-95 flex items-center gap-1.5 cursor-pointer shadow-md"
+                  className="px-4 py-2.5 sm:px-5 sm:py-2.5 rounded-full bg-black/40 hover:bg-black/60 text-[#FAF7F2] font-semibold text-xs uppercase tracking-wider border border-white/20 backdrop-blur-md transition-all hover:scale-105 active:scale-95 flex items-center gap-1.5 cursor-pointer shadow-md"
                   id="btn-skarby-ula-3d"
                   title="Zobacz produkty pszczelego pochodzenia (pyłek, pierzga, propolis)"
                 >
