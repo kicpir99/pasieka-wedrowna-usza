@@ -66,13 +66,22 @@ export const HoneyCraftingJourney: React.FC = () => {
 
     if (!imgWidth || !imgHeight) return;
 
-    // Both desktop (16:9) and mobile (9:16) native aspect ratios:
-    // Scale to full cover viewport with center alignment (zero letterboxing, edge-to-edge immersion)
-    const scale = Math.max(canvasWidth / imgWidth, canvasHeight / imgHeight);
+    // Responsive scaling:
+    // On Mobile (vertical screens): cover so it fills the screen vertically
+    // On Desktop: contain (Math.min) so 100% of the 16:9 frame is completely visible without any cropping of jar, lid, or table!
+    const isMobile = canvasWidth < 768 || canvasWidth / canvasHeight < 1.0;
+    const scale = isMobile 
+      ? Math.max(canvasWidth / imgWidth, canvasHeight / imgHeight)
+      : Math.min(canvasWidth / imgWidth, canvasHeight / imgHeight);
+
     const drawWidth = imgWidth * scale;
     const drawHeight = imgHeight * scale;
     const offsetX = (canvasWidth - drawWidth) / 2;
     const offsetY = (canvasHeight - drawHeight) / 2;
+
+    // Clear background with theme color
+    ctx.fillStyle = '#141B14';
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
     ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
   }, []);
@@ -348,15 +357,8 @@ export const HoneyCraftingJourney: React.FC = () => {
           className="absolute inset-0 w-full h-full block z-0 filter contrast-[1.03] saturate-[1.06]"
         />
 
-        {/* Cinematic Vignette & Atmospheric Contrast Gradients (Subtle on mobile, deep on desktop) */}
-        <div className="hidden sm:block absolute inset-0 bg-gradient-to-b from-[#111711]/90 via-transparent to-[#111711]/95 z-10 pointer-events-none" />
-        <div className="hidden sm:block absolute inset-0 bg-radial-vignette from-transparent via-[#141B14]/25 to-[#0D120D]/90 z-10 pointer-events-none" />
-        
-        {/* Soft atmospheric glow accents in the four corners */}
-        <div className="absolute top-0 left-0 w-96 h-96 bg-[#141B14]/70 blur-3xl pointer-events-none z-10" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#141B14]/70 blur-3xl pointer-events-none z-10" />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-[#141B14]/70 blur-3xl pointer-events-none z-10" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#141B14]/70 blur-3xl pointer-events-none z-10" />
+        {/* Clean atmospheric base with zero obstructive overlays over the video */}
+        <div className="absolute inset-0 bg-radial-vignette from-transparent via-transparent to-[#0D120D]/30 z-10 pointer-events-none" />
 
         {/* Loading Pill indicator (subtle) */}
         {!isInitialReady && (
