@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import gsap from 'gsap';
 import { Link } from 'react-router-dom';
 import { getAssetUrl } from '../utils/assets';
 import { 
@@ -311,6 +312,194 @@ const renderBadgeIcon = (badgeIcon: VarietyItem['cardBadgeIcon']) => {
   }
 };
 
+// ─── HeroTextPanel ──────────────────────────────────────────────────────────
+// Isolated sub-component so that `selectedIdx` changes trigger a clean
+// GSAP stagger reveal without touching the 3D carousel or ambient layers.
+interface HeroTextPanelProps {
+  selectedIdx: number;
+  currentItem: VarietyItem;
+  currentProduct: HoneyProduct;
+  selectedSizeIdx: number;
+  setSelectedSizeIdx: (idx: number) => void;
+  selectedSize: { weightGrams: number; pricePln: number };
+  onAddToCart?: (product: HoneyProduct, weightGrams: number, pricePln: number) => void;
+  onOpenProductDetail?: (product: HoneyProduct) => void;
+  onScrollToProducts: () => void;
+}
+
+const HeroTextPanel: React.FC<HeroTextPanelProps> = ({
+  selectedIdx,
+  currentItem,
+  currentProduct,
+  selectedSizeIdx,
+  setSelectedSizeIdx,
+  selectedSize,
+  onAddToCart,
+  onOpenProductDetail,
+  onScrollToProducts,
+}) => {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const isFirstRender = useRef(true);
+
+  useEffect(() => {
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
+    const children = Array.from(wrapper.children) as HTMLElement[];
+    if (children.length === 0) return;
+    gsap.killTweensOf(children);
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      gsap.fromTo(
+        children,
+        { autoAlpha: 0, y: 18 },
+        { autoAlpha: 1, y: 0, duration: 0.55, ease: 'power3.out', stagger: 0.08, delay: 0.15 }
+      );
+    } else {
+      gsap.fromTo(
+        children,
+        { autoAlpha: 0, y: 10 },
+        { autoAlpha: 1, y: 0, duration: 0.38, ease: 'power2.out', stagger: 0.06 }
+      );
+    }
+  }, [selectedIdx]);
+
+  return (
+    <div
+      ref={wrapperRef}
+      className="order-2 lg:order-1 lg:col-span-5 xl:col-span-5 text-center lg:text-left space-y-3 sm:space-y-4 md:space-y-5"
+    >
+      {/* Badges row */}
+      <div className="flex flex-wrap items-center justify-center lg:justify-start gap-1.5 sm:gap-2">
+        <div
+          className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-semibold border shadow-sm bg-[#261E17]/80 backdrop-blur-sm"
+          style={{
+            borderColor: `${currentItem.ambientToneHex}45`,
+            color: currentItem.ambientToneHex
+          }}
+        >
+          <Sparkles className="w-3 sm:w-3.5 h-3 sm:h-3.5" style={{ color: currentItem.ambientToneHex }} />
+          <span>{currentItem.badge}</span>
+        </div>
+        <span className="text-[11px] sm:text-xs text-[#C5BCAD] font-sans px-2.5 py-1 rounded-full bg-[#2A221A]/80 border border-[#44362A]">
+          {currentItem.vintageYear} • Zbiór Dolnośląski
+        </span>
+      </div>
+
+      {/* Title & tagline */}
+      <div className="space-y-1.5 sm:space-y-2">
+        <Link
+          to={`/produkt/${currentProduct.id}`}
+          className="group inline-block text-left"
+          title={`Przejdź do dedykowanej podstrony: ${currentProduct.name}`}
+        >
+          <h1 className="font-serif text-2xl sm:text-4xl lg:text-5xl font-black text-[#FAF7F2] group-hover:text-[#E0A94F] transition-colors tracking-tight leading-[1.1] flex items-center justify-center lg:justify-start gap-2 sm:gap-2.5">
+            <span>{currentProduct.name}</span>
+            <ArrowRight className="w-4 sm:w-5 h-4 sm:h-5 text-[#E0A94F] opacity-0 group-hover:opacity-100 group-hover:translate-x-1.5 transition-all inline-block shrink-0" />
+          </h1>
+        </Link>
+        <p className="text-xs sm:text-sm text-[#D5CCBE] font-light leading-relaxed max-w-lg mx-auto lg:mx-0">
+          {currentItem.tagline}
+        </p>
+      </div>
+
+      {/* Wybór wielkości słoika */}
+      <div className="space-y-1.5 max-w-md mx-auto lg:mx-0 pt-1">
+        <div className="flex items-center justify-between text-[11px] text-[#B8AEA0]">
+          <span>Wybierz pojemność słoika:</span>
+          <span className="text-[#E0A94F] font-semibold">{selectedSize.weightGrams}g ({selectedSize.pricePln} zł)</span>
+        </div>
+        <div className="grid grid-cols-2 gap-2 sm:gap-2.5">
+          {currentProduct.sizes.map((s, idx) => {
+            const isSizeActive = idx === selectedSizeIdx;
+            const isLarge = s.weightGrams >= 900;
+            return (
+              <button
+                key={s.weightGrams}
+                onClick={() => setSelectedSizeIdx(idx)}
+                className={`py-2 sm:py-2.5 px-2.5 sm:px-3 rounded-xl text-xs font-semibold flex flex-col items-start justify-between gap-1 transition-all border text-left cursor-pointer ${
+                  isSizeActive
+                    ? 'bg-[#E0A94F]/20 border-[#E0A94F] text-[#FAF7F2] shadow-md shadow-black/40 ring-1 ring-[#E0A94F]/40'
+                    : 'bg-[#261E17]/80 border-[#3E3024] text-[#D8CEBF] hover:border-[#6B533E] hover:bg-[#33281F]'
+                }`}
+              >
+                <div className="flex items-center justify-between w-full">
+                  <span className="font-bold text-xs sm:text-sm">{s.weightGrams}g</span>
+                  <span className={`font-mono text-[11px] sm:text-xs ${isSizeActive ? 'text-[#E0A94F] font-bold' : 'text-[#A3998C]'}`}>
+                    {s.pricePln} zł
+                  </span>
+                </div>
+                <span className="text-[9.5px] sm:text-[10px] text-[#A3998C] font-normal leading-none">
+                  {isLarge ? 'Duży spiżarniany' : 'Poręczny stołowy'}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Akcje zakupu */}
+      <div className="space-y-2 max-w-md mx-auto lg:mx-0 pt-0.5 sm:pt-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-2.5">
+          {onAddToCart && (
+            <button
+              onClick={() => onAddToCart(currentProduct, selectedSize.weightGrams, selectedSize.pricePln)}
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 sm:py-3.5 rounded-2xl bg-[#E0A94F] hover:bg-[#E8B663] text-[#1A1511] font-bold text-xs sm:text-sm shadow-lg shadow-black/30 transition-all active:scale-98 cursor-pointer"
+              id="hero-btn-dodaj-koszyk"
+            >
+              <ShoppingBag className="w-4 h-4" />
+              <span>Kup teraz • {selectedSize.pricePln} zł</span>
+            </button>
+          )}
+          <Link
+            to={`/produkt/${currentProduct.id}`}
+            onClick={() => {
+              try {
+                sessionStorage.setItem('pasieka_last_product_id', currentProduct.id);
+                sessionStorage.setItem('pasieka_home_scroll_y', '0');
+                sessionStorage.setItem('pasieka_from_hero', 'true');
+              } catch {}
+            }}
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 sm:py-3.5 rounded-2xl bg-[#282018]/90 hover:bg-[#382C22] border border-[#4A3B2D] hover:border-[#E0A94F]/70 text-[#FAF7F2] font-bold text-xs sm:text-sm shadow-md transition-all group cursor-pointer"
+            id="hero-btn-karta-miodu"
+            title={`Otwórz pełną podstronę miodu: ${currentProduct.name}`}
+          >
+            <span>Karta miodu &amp; badania</span>
+            <ArrowRight className="w-4 h-4 text-[#E0A94F] group-hover:translate-x-1 transition-transform" />
+          </Link>
+        </div>
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-1.5 sm:gap-2 pt-0.5 text-[11px] sm:text-[11.5px] text-[#9E9485]">
+          <div className="flex items-center gap-1.5">
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+            <span>Wysyłka w 24h prosto z pasieki</span>
+          </div>
+          {onOpenProductDetail && (
+            <button
+              onClick={() => onOpenProductDetail(currentProduct)}
+              className="font-medium flex items-center gap-1 hover:underline transition-colors cursor-pointer text-[#E0A94F]"
+            >
+              <FileText className="w-3.5 h-3.5" />
+              <span>Szybki podgląd ({currentProduct.batchNumber})</span>
+            </button>
+          )}
+        </div>
+        {onScrollToProducts && (
+          <div className="flex sm:hidden items-center justify-center pt-2">
+            <button
+              onClick={onScrollToProducts}
+              className="flex items-center gap-1.5 text-xs font-medium text-[#E0A94F] hover:underline cursor-pointer"
+            >
+              <span>Zobacz całą domową spiżarnię miodów</span>
+              <ChevronDown className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// ─── Hero ────────────────────────────────────────────────────────────────────
+
 interface HeroProps {
   onScrollToProducts: () => void;
   onOpenQuiz: () => void;
@@ -425,144 +614,17 @@ export const Hero: React.FC<HeroProps> = ({
         </div>
 
         {/* LEFT COLUMN: Opowieść o miodzie, wybór słoika i zamówienie */}
-        <div className="order-2 lg:order-1 lg:col-span-5 xl:col-span-5 text-center lg:text-left space-y-3 sm:space-y-4 md:space-y-5">
-          <div className="flex flex-wrap items-center justify-center lg:justify-start gap-1.5 sm:gap-2">
-            <div 
-              className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-semibold border shadow-sm bg-[#261E17]/80 backdrop-blur-sm"
-              style={{
-                borderColor: `${currentItem.ambientToneHex}45`,
-                color: currentItem.ambientToneHex
-              }}
-            >
-              <Sparkles className="w-3 sm:w-3.5 h-3 sm:h-3.5" style={{ color: currentItem.ambientToneHex }} />
-              <span>{currentItem.badge}</span>
-            </div>
-
-            <span className="text-[11px] sm:text-xs text-[#C5BCAD] font-sans px-2.5 py-1 rounded-full bg-[#2A221A]/80 border border-[#44362A]">
-              {currentItem.vintageYear} • Zbiór Dolnośląski
-            </span>
-          </div>
-
-          <div className="space-y-1.5 sm:space-y-2">
-            <Link
-              to={`/produkt/${currentProduct.id}`}
-              className="group inline-block text-left"
-              title={`Przejdź do dedykowanej podstrony: ${currentProduct.name}`}
-            >
-              <h1 className="font-serif text-2xl sm:text-4xl lg:text-5xl font-black text-[#FAF7F2] group-hover:text-[#E0A94F] transition-colors tracking-tight leading-[1.1] flex items-center justify-center lg:justify-start gap-2 sm:gap-2.5">
-                <span>{currentProduct.name}</span>
-                <ArrowRight className="w-4 sm:w-5 h-4 sm:h-5 text-[#E0A94F] opacity-0 group-hover:opacity-100 group-hover:translate-x-1.5 transition-all inline-block shrink-0" />
-              </h1>
-            </Link>
-            <p className="text-xs sm:text-sm text-[#D5CCBE] font-light leading-relaxed max-w-lg mx-auto lg:mx-0">
-              {currentItem.tagline}
-            </p>
-          </div>
-
-          {/* Wybór wielkości słoika */}
-          <div className="space-y-1.5 max-w-md mx-auto lg:mx-0 pt-1">
-            <div className="flex items-center justify-between text-[11px] text-[#B8AEA0]">
-              <span>Wybierz pojemność słoika:</span>
-              <span className="text-[#E0A94F] font-semibold">{selectedSize.weightGrams}g ({selectedSize.pricePln} zł)</span>
-            </div>
-            <div className="grid grid-cols-2 gap-2 sm:gap-2.5">
-              {currentProduct.sizes.map((s, idx) => {
-                const isSizeActive = idx === selectedSizeIdx;
-                const isLarge = s.weightGrams >= 900;
-                return (
-                  <button
-                    key={s.weightGrams}
-                    onClick={() => setSelectedSizeIdx(idx)}
-                    className={`py-2 sm:py-2.5 px-2.5 sm:px-3 rounded-xl text-xs font-semibold flex flex-col items-start justify-between gap-1 transition-all border text-left cursor-pointer ${
-                      isSizeActive
-                        ? 'bg-[#E0A94F]/20 border-[#E0A94F] text-[#FAF7F2] shadow-md shadow-black/40 ring-1 ring-[#E0A94F]/40'
-                        : 'bg-[#261E17]/80 border-[#3E3024] text-[#D8CEBF] hover:border-[#6B533E] hover:bg-[#33281F]'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between w-full">
-                      <span className="font-bold text-xs sm:text-sm">{s.weightGrams}g</span>
-                      <span className={`font-mono text-[11px] sm:text-xs ${isSizeActive ? 'text-[#E0A94F] font-bold' : 'text-[#A3998C]'}`}>
-                        {s.pricePln} zł
-                      </span>
-                    </div>
-                    <span className="text-[9.5px] sm:text-[10px] text-[#A3998C] font-normal leading-none">
-                      {isLarge ? 'Duży spiżarniany' : 'Poręczny stołowy'}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Akcje zakupu oraz bezpośredniego przejścia do podstrony miodu */}
-          <div className="space-y-2 max-w-md mx-auto lg:mx-0 pt-0.5 sm:pt-1">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-2.5">
-              {onAddToCart && (
-                <button
-                  onClick={() =>
-                    onAddToCart(
-                      currentProduct,
-                      selectedSize.weightGrams,
-                      selectedSize.pricePln
-                    )
-                  }
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 sm:py-3.5 rounded-2xl bg-[#E0A94F] hover:bg-[#E8B663] text-[#1A1511] font-bold text-xs sm:text-sm shadow-lg shadow-black/30 transition-all active:scale-98 cursor-pointer"
-                  id="hero-btn-dodaj-koszyk"
-                >
-                  <ShoppingBag className="w-4 h-4" />
-                  <span>Kup teraz • {selectedSize.pricePln} zł</span>
-                </button>
-              )}
-
-              <Link
-                to={`/produkt/${currentProduct.id}`}
-                onClick={() => {
-                  try {
-                    sessionStorage.setItem('pasieka_last_product_id', currentProduct.id);
-                    sessionStorage.setItem('pasieka_home_scroll_y', '0');
-                    sessionStorage.setItem('pasieka_from_hero', 'true');
-                  } catch {}
-                }}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 sm:py-3.5 rounded-2xl bg-[#282018]/90 hover:bg-[#382C22] border border-[#4A3B2D] hover:border-[#E0A94F]/70 text-[#FAF7F2] font-bold text-xs sm:text-sm shadow-md transition-all group cursor-pointer"
-                id="hero-btn-karta-miodu"
-                title={`Otwórz pełną podstronę miodu: ${currentProduct.name}`}
-              >
-                <span>Karta miodu & badania</span>
-                <ArrowRight className="w-4 h-4 text-[#E0A94F] group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </div>
-
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-1.5 sm:gap-2 pt-0.5 text-[11px] sm:text-[11.5px] text-[#9E9485]">
-              <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span>Wysyłka w 24h prosto z pasieki</span>
-              </div>
-              
-              {onOpenProductDetail && (
-                <button
-                  onClick={() => onOpenProductDetail(currentProduct)}
-                  className="font-medium flex items-center gap-1 hover:underline transition-colors cursor-pointer text-[#E0A94F]"
-                >
-                  <FileText className="w-3.5 h-3.5" />
-                  <span>Szybki podgląd ({currentProduct.batchNumber})</span>
-                </button>
-              )}
-            </div>
-
-            {/* Na telefonach: Subtelny odnośnik do domowej spiżarni pod opisem */}
-            {onScrollToProducts && (
-              <div className="flex sm:hidden items-center justify-center pt-2">
-                <button
-                  onClick={onScrollToProducts}
-                  className="flex items-center gap-1.5 text-xs font-medium text-[#E0A94F] hover:underline cursor-pointer"
-                >
-                  <span>Zobacz całą domową spiżarnię miodów</span>
-                  <ChevronDown className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
+        <HeroTextPanel
+          selectedIdx={selectedIdx}
+          currentItem={currentItem}
+          currentProduct={currentProduct}
+          selectedSizeIdx={selectedSizeIdx}
+          setSelectedSizeIdx={setSelectedSizeIdx}
+          selectedSize={selectedSize}
+          onAddToCart={onAddToCart}
+          onOpenProductDetail={onOpenProductDetail}
+          onScrollToProducts={onScrollToProducts}
+        />
 
       </div>
 

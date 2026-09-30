@@ -1073,97 +1073,105 @@ export const FramelessJar360Viewer: React.FC<FramelessJar360ViewerProps> = ({
         {/* INTERACTIVE ROTATION-BASED POPUPS */}
         {/* Rendered via portal into #jar-popups-portal-target (z-index: 60) so they always remain completely in front of the honey ribbon */}
         {isActive && (() => {
+          // Helper: returns the CSS transition classes for a popup based on whether it is the active one.
+          // Active  → slides in and fades in (with a tiny delay so the previous one finishes first)
+          // Inactive→ slides out and fades out immediately
+          const popupCls = (key: 'h0' | 'h120' | 'h240', side: 'left' | 'right' | 'down') => {
+            const isVisible = activeHotspotKey === key;
+            const translateFrom = side === 'left' ? '-10px, 4px' : side === 'right' ? '10px, 4px' : '0px, -8px';
+            return {
+              opacity: isVisible ? 1 : 0,
+              transform: isVisible ? 'translate3d(0,0,0)' : `translate3d(${translateFrom},0)`,
+              filter: isVisible ? 'blur(0px)' : 'blur(2px)',
+              transition: isVisible
+                ? 'opacity 0.36s cubic-bezier(0.16,1,0.3,1) 0.12s, transform 0.36s cubic-bezier(0.16,1,0.3,1) 0.12s, filter 0.36s cubic-bezier(0.16,1,0.3,1) 0.12s'
+                : 'opacity 0.22s cubic-bezier(0.4,0,1,1), transform 0.22s cubic-bezier(0.4,0,1,1), filter 0.22s cubic-bezier(0.4,0,1,1)',
+              pointerEvents: 'none' as const,
+            };
+          };
+
           const popupsContent = (
             <div className="absolute inset-0 pointer-events-none">
-              {activeHotspotKey === 'h0' && (
-                <div
-                  key="h0-hotspot"
-                  className="animate-hotspot-left absolute z-50 -top-7 sm:-top-6 lg:-top-8 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-3.5 md:left-3 lg:left-[52px] xl:left-[48px] w-[92%] max-w-[290px] sm:w-[280px] pointer-events-none"
-                >
-                  <div className="relative flex flex-col items-center sm:items-start text-center sm:text-left py-1">
-                    {/* Subtelna winieta w tle dla idealnej czytelności bez twardych krawędzi */}
-                    <div className="absolute inset-0 bg-[#0A0705]/65 blur-[26px] -m-6 sm:-m-10 rounded-full -z-10 pointer-events-none" />
-                    
-                    <div className="flex items-center justify-center sm:justify-start gap-2 mb-1 sm:mb-1.5">
-                      <span 
-                        className="flex items-center gap-1.5 text-[10px] sm:text-xs font-bold uppercase tracking-widest [text-shadow:0_2px_8px_rgba(0,0,0,0.8)]"
-                        style={{ color: ambientToneHex }}
-                      >
-                        {renderHotspotIcon(h0Hotspot.iconName, ambientToneHex)} {h0Hotspot.badge}
-                      </span>
-                      <span className="text-[9px] sm:text-[10px] text-[#E8E0D2]/80 uppercase tracking-widest border-l border-white/20 pl-2">
-                        {h0Hotspot.category}
-                      </span>
-                    </div>
-                    <h3 className="text-base sm:text-3xl font-serif font-black text-[#FAF7F2] leading-[1.15] mb-1 sm:mb-2.5 [text-shadow:0_4px_24px_rgba(0,0,0,0.95),0_2px_8px_rgba(0,0,0,0.8)]">
-                      {h0Hotspot.title}
-                    </h3>
-                    <p className="text-[11px] sm:text-[13px] text-[#E8E0D2] font-normal leading-relaxed line-clamp-2 sm:line-clamp-none [text-shadow:0_2px_16px_rgba(0,0,0,0.95),0_1px_4px_rgba(0,0,0,0.9)]">
-                      {h0Hotspot.description}
-                    </p>
+              {/* h0 — lewa strona */}
+              <div
+                className="absolute z-50 -top-7 sm:-top-6 lg:-top-8 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-3.5 md:left-3 lg:left-[52px] xl:left-[48px] w-[92%] max-w-[290px] sm:w-[280px] will-change-[opacity,transform,filter]"
+                style={popupCls('h0', 'left')}
+              >
+                <div className="relative flex flex-col items-center sm:items-start text-center sm:text-left py-1">
+                  <div className="absolute inset-0 bg-[#0A0705]/65 blur-[26px] -m-6 sm:-m-10 rounded-full -z-10 pointer-events-none" />
+                  <div className="flex items-center justify-center sm:justify-start gap-2 mb-1 sm:mb-1.5">
+                    <span
+                      className="flex items-center gap-1.5 text-[10px] sm:text-xs font-bold uppercase tracking-widest [text-shadow:0_2px_8px_rgba(0,0,0,0.8)]"
+                      style={{ color: ambientToneHex }}
+                    >
+                      {renderHotspotIcon(h0Hotspot.iconName, ambientToneHex)} {h0Hotspot.badge}
+                    </span>
+                    <span className="text-[9px] sm:text-[10px] text-[#E8E0D2]/80 uppercase tracking-widest border-l border-white/20 pl-2">
+                      {h0Hotspot.category}
+                    </span>
                   </div>
+                  <h3 className="text-base sm:text-3xl font-serif font-black text-[#FAF7F2] leading-[1.15] mb-1 sm:mb-2.5 [text-shadow:0_4px_24px_rgba(0,0,0,0.95),0_2px_8px_rgba(0,0,0,0.8)]">
+                    {h0Hotspot.title}
+                  </h3>
+                  <p className="text-[11px] sm:text-[13px] text-[#E8E0D2] font-normal leading-relaxed line-clamp-2 sm:line-clamp-none [text-shadow:0_2px_16px_rgba(0,0,0,0.95),0_1px_4px_rgba(0,0,0,0.9)]">
+                    {h0Hotspot.description}
+                  </p>
                 </div>
-              )}
+              </div>
 
-              {activeHotspotKey === 'h120' && (
-                <div
-                  key="h120-hotspot"
-                  className="animate-hotspot-right absolute z-50 -top-7 sm:top-auto sm:-bottom-5 lg:-bottom-7 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-auto right-auto sm:right-3.5 md:right-3 lg:right-[52px] xl:right-[48px] w-[92%] max-w-[290px] sm:w-[280px] pointer-events-none flex flex-col items-center sm:items-end text-center sm:text-right"
-                >
-                  <div className="relative flex flex-col items-center sm:items-end text-center sm:text-right py-1">
-                    {/* Subtelna winieta w tle dla idealnej czytelności bez twardych krawędzi */}
-                    <div className="absolute inset-0 bg-[#0A0705]/65 blur-[26px] -m-6 sm:-m-10 rounded-full -z-10 pointer-events-none" />
-
-                    <div className="flex items-center justify-center sm:justify-end gap-2 mb-1 sm:mb-1.5">
-                      <span className="text-[9px] sm:text-[10px] text-[#E8E0D2]/80 uppercase tracking-widest border-r border-white/20 pr-2">
-                        {h120Hotspot.category}
-                      </span>
-                      <span 
-                        className="flex items-center gap-1.5 text-[10px] sm:text-xs font-bold uppercase tracking-widest [text-shadow:0_2px_8px_rgba(0,0,0,0.8)]"
-                        style={{ color: ambientToneHex }}
-                      >
-                        {renderHotspotIcon(h120Hotspot.iconName, ambientToneHex)} {h120Hotspot.badge}
-                      </span>
-                    </div>
-                    <h3 className="text-base sm:text-3xl font-serif font-black text-[#FAF7F2] leading-[1.15] mb-1 sm:mb-2.5 [text-shadow:0_4px_24px_rgba(0,0,0,0.95),0_2px_8px_rgba(0,0,0,0.8)]">
-                      {h120Hotspot.title}
-                    </h3>
-                    <p className="text-[11px] sm:text-[13px] text-[#E8E0D2] font-normal leading-relaxed line-clamp-2 sm:line-clamp-none [text-shadow:0_2px_16px_rgba(0,0,0,0.95),0_1px_4px_rgba(0,0,0,0.9)]">
-                      {h120Hotspot.description}
-                    </p>
+              {/* h120 — prawa dolna strona */}
+              <div
+                className="absolute z-50 -top-7 sm:top-auto sm:-bottom-5 lg:-bottom-7 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-auto right-auto sm:right-3.5 md:right-3 lg:right-[52px] xl:right-[48px] w-[92%] max-w-[290px] sm:w-[280px] flex flex-col items-center sm:items-end text-center sm:text-right will-change-[opacity,transform,filter]"
+                style={popupCls('h120', 'right')}
+              >
+                <div className="relative flex flex-col items-center sm:items-end text-center sm:text-right py-1">
+                  <div className="absolute inset-0 bg-[#0A0705]/65 blur-[26px] -m-6 sm:-m-10 rounded-full -z-10 pointer-events-none" />
+                  <div className="flex items-center justify-center sm:justify-end gap-2 mb-1 sm:mb-1.5">
+                    <span className="text-[9px] sm:text-[10px] text-[#E8E0D2]/80 uppercase tracking-widest border-r border-white/20 pr-2">
+                      {h120Hotspot.category}
+                    </span>
+                    <span
+                      className="flex items-center gap-1.5 text-[10px] sm:text-xs font-bold uppercase tracking-widest [text-shadow:0_2px_8px_rgba(0,0,0,0.8)]"
+                      style={{ color: ambientToneHex }}
+                    >
+                      {renderHotspotIcon(h120Hotspot.iconName, ambientToneHex)} {h120Hotspot.badge}
+                    </span>
                   </div>
+                  <h3 className="text-base sm:text-3xl font-serif font-black text-[#FAF7F2] leading-[1.15] mb-1 sm:mb-2.5 [text-shadow:0_4px_24px_rgba(0,0,0,0.95),0_2px_8px_rgba(0,0,0,0.8)]">
+                    {h120Hotspot.title}
+                  </h3>
+                  <p className="text-[11px] sm:text-[13px] text-[#E8E0D2] font-normal leading-relaxed line-clamp-2 sm:line-clamp-none [text-shadow:0_2px_16px_rgba(0,0,0,0.95),0_1px_4px_rgba(0,0,0,0.9)]">
+                    {h120Hotspot.description}
+                  </p>
                 </div>
-              )}
+              </div>
 
-              {activeHotspotKey === 'h240' && (
-                <div
-                  key="h240-hotspot"
-                  className="animate-hotspot-down absolute z-50 -top-7 sm:-top-6 lg:-top-8 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-auto right-auto sm:right-3.5 md:right-3 lg:right-[52px] xl:right-[48px] w-[92%] max-w-[290px] sm:w-[280px] pointer-events-none flex flex-col items-center sm:items-end text-center sm:text-right"
-                >
-                  <div className="relative flex flex-col items-center sm:items-end text-center sm:text-right py-1">
-                    {/* Subtelna winieta w tle dla idealnej czytelności bez twardych krawędzi */}
-                    <div className="absolute inset-0 bg-[#0A0705]/65 blur-[26px] -m-6 sm:-m-10 rounded-full -z-10 pointer-events-none" />
-
-                    <div className="flex items-center justify-center sm:justify-end gap-2 mb-1 sm:mb-1.5">
-                      <span className="text-[9px] sm:text-[10px] text-[#E8E0D2]/80 uppercase tracking-widest border-r border-white/20 pr-2">
-                        {h240Hotspot.category}
-                      </span>
-                      <span 
-                        className="flex items-center gap-1.5 text-[10px] sm:text-xs font-bold uppercase tracking-widest [text-shadow:0_2px_8px_rgba(0,0,0,0.8)]"
-                        style={{ color: ambientToneHex }}
-                      >
-                        {renderHotspotIcon(h240Hotspot.iconName, ambientToneHex)} {h240Hotspot.badge}
-                      </span>
-                    </div>
-                    <h3 className="text-base sm:text-3xl font-serif font-black text-[#FAF7F2] leading-[1.15] mb-1 sm:mb-2.5 [text-shadow:0_4px_24px_rgba(0,0,0,0.95),0_2px_8px_rgba(0,0,0,0.8)]">
-                      {h240Hotspot.title}
-                    </h3>
-                    <p className="text-[11px] sm:text-[13px] text-[#E8E0D2] font-normal leading-relaxed line-clamp-2 sm:line-clamp-none [text-shadow:0_2px_16px_rgba(0,0,0,0.95),0_1px_4px_rgba(0,0,0,0.9)]">
-                      {h240Hotspot.description}
-                    </p>
+              {/* h240 — prawa górna strona */}
+              <div
+                className="absolute z-50 -top-7 sm:-top-6 lg:-top-8 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-auto right-auto sm:right-3.5 md:right-3 lg:right-[52px] xl:right-[48px] w-[92%] max-w-[290px] sm:w-[280px] flex flex-col items-center sm:items-end text-center sm:text-right will-change-[opacity,transform,filter]"
+                style={popupCls('h240', 'right')}
+              >
+                <div className="relative flex flex-col items-center sm:items-end text-center sm:text-right py-1">
+                  <div className="absolute inset-0 bg-[#0A0705]/65 blur-[26px] -m-6 sm:-m-10 rounded-full -z-10 pointer-events-none" />
+                  <div className="flex items-center justify-center sm:justify-end gap-2 mb-1 sm:mb-1.5">
+                    <span className="text-[9px] sm:text-[10px] text-[#E8E0D2]/80 uppercase tracking-widest border-r border-white/20 pr-2">
+                      {h240Hotspot.category}
+                    </span>
+                    <span
+                      className="flex items-center gap-1.5 text-[10px] sm:text-xs font-bold uppercase tracking-widest [text-shadow:0_2px_8px_rgba(0,0,0,0.8)]"
+                      style={{ color: ambientToneHex }}
+                    >
+                      {renderHotspotIcon(h240Hotspot.iconName, ambientToneHex)} {h240Hotspot.badge}
+                    </span>
                   </div>
+                  <h3 className="text-base sm:text-3xl font-serif font-black text-[#FAF7F2] leading-[1.15] mb-1 sm:mb-2.5 [text-shadow:0_4px_24px_rgba(0,0,0,0.95),0_2px_8px_rgba(0,0,0,0.8)]">
+                    {h240Hotspot.title}
+                  </h3>
+                  <p className="text-[11px] sm:text-[13px] text-[#E8E0D2] font-normal leading-relaxed line-clamp-2 sm:line-clamp-none [text-shadow:0_2px_16px_rgba(0,0,0,0.95),0_1px_4px_rgba(0,0,0,0.9)]">
+                    {h240Hotspot.description}
+                  </p>
                 </div>
-              )}
+              </div>
             </div>
           );
 
