@@ -53,7 +53,7 @@ export const HoneyCraftingJourney: React.FC = () => {
       ctxRef.current = canvas.getContext('2d', { alpha: false, desynchronized: true }) || canvas.getContext('2d');
       if (ctxRef.current) {
         ctxRef.current.imageSmoothingEnabled = true;
-        ctxRef.current.imageSmoothingQuality = 'medium';
+        ctxRef.current.imageSmoothingQuality = 'high';
       }
     }
     const ctx = ctxRef.current;
@@ -226,7 +226,7 @@ export const HoneyCraftingJourney: React.FC = () => {
       canvas.height = Math.round(window.innerHeight * dpr);
       if (ctxRef.current) {
         ctxRef.current.imageSmoothingEnabled = true;
-        ctxRef.current.imageSmoothingQuality = 'medium';
+        ctxRef.current.imageSmoothingQuality = 'high';
       }
       // Force repaint with new canvas size
       lastDrawnImageRef.current = null;
