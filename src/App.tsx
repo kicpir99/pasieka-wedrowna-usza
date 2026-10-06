@@ -29,6 +29,7 @@ const OfferPage = React.lazy(() => import('./pages/OfferPage').then(m => ({ defa
 const BlogPage = React.lazy(() => import('./pages/BlogPage').then(m => ({ default: m.BlogPage })));
 const ContactPage = React.lazy(() => import('./pages/ContactPage').then(m => ({ default: m.ContactPage })));
 const AccountPage = React.lazy(() => import('./pages/AccountPage').then(m => ({ default: m.AccountPage })));
+const CheckoutPage = React.lazy(() => import('./pages/CheckoutPage').then(m => ({ default: m.CheckoutPage })));
 
 function GlobalQuizModal({
   isOpen,
@@ -401,6 +402,16 @@ function App() {
                     toggleCompare(p);
                     setIsCompareModalOpen(true);
                   }}
+                />
+              } 
+            />
+            <Route 
+              path="/zamowienie" 
+              element={
+                <CheckoutPage 
+                  items={cartItems}
+                  onClearCart={handleClearCart}
+                  displayResolution={displayResolution}
                 />
               } 
             />

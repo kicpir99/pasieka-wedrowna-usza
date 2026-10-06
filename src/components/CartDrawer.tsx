@@ -152,11 +152,8 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   }, [items, remainingForFreeShipping]);
 
   const handleCheckout = () => {
-    if (WOO_CONFIG.isConfigured && WOO_CONFIG.url) {
-      window.location.href = getWooCommerceCheckoutUrl(items);
-      return;
-    }
-    setOrderSubmitted(true);
+    onClose();
+    navigate('/zamowienie');
   };
 
   return (

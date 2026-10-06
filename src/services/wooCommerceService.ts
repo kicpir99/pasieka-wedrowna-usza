@@ -279,3 +279,136 @@ export function getWooCommerceCheckoutUrl(items: CartItem[]): string {
 
   return `${WOO_CONFIG.url}/zamowienie/`;
 }
+
+export interface CreateOrderParams {
+  items: CartItem[];
+  customer: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    street?: string;
+    city?: string;
+    postcode?: string;
+    isCompany?: boolean;
+    nip?: string;
+    companyName?: string;
+    notes?: string;
+  };
+  delivery: {
+    method: 'paczkomat' | 'kurier' | 'odbior';
+    methodTitle: string;
+    cost: number;
+    parcelLockerCode?: string;
+    parcelLockerAddress?: string;
+  };
+  paymentMethod: 'blik' | 'p24' | 'cod' | 'bacs';
+  paymentTitle: string;
+}
+
+export async function createWooCommerceOrder(params: CreateOrderParams): Promise<{
+  success: boolean;
+  orderId?: number;
+  paymentUrl?: string;
+  error?: string;
+}> {
+  if (!WOO_CONFIG.url || !WOO_CONFIG.consumerKey || !WOO_CONFIG.consumerSecret) {
+    // Tryb demonstracyjny bez API
+    return {
+      success: true,
+      orderId: Math.floor(1000 + Math.random() * 9000),
+    };
+  }
+
+  try {
+    const authHeader = 'Basic ' + btoa(`${WOO_CONFIG.consumerKey}:${WOO_CONFIG.consumerSecret}`);
+    const methodId =
+      params.paymentMethod === 'cod'
+        ? 'cod'
+        : params.paymentMethod === 'bacs'
+        ? 'bacs'
+        : 'p24-online-payments';
+
+    const orderData = {
+      payment_method: methodId,
+      payment_method_title: params.paymentTitle,
+      set_paid: false,
+      billing: {
+        first_name: params.customer.firstName,
+        last_name: params.customer.lastName,
+        address_1:
+          params.delivery.method === 'kurier'
+            ? params.customer.street || 'Adres dostawy'
+            : params.delivery.parcelLockerAddress || 'Paczkomat InPost',
+        city: params.delivery.method === 'kurier' ? params.customer.city || 'Polska' : 'Polska',
+        postcode: params.delivery.method === 'kurier' ? params.customer.postcode || '00-000' : '00-000',
+        country: 'PL',
+        email: params.customer.email,
+        phone: params.customer.phone,
+        company: params.customer.isCompany ? `${params.customer.companyName || ''} (NIP: ${params.customer.nip || ''})` : '',
+      },
+      shipping: {
+        first_name: params.customer.firstName,
+        last_name: params.customer.lastName,
+        address_1:
+          params.delivery.method === 'kurier'
+            ? params.customer.street || 'Adres dostawy'
+            : params.delivery.parcelLockerAddress || 'Paczkomat InPost',
+        city: params.delivery.method === 'kurier' ? params.customer.city || 'Polska' : 'Polska',
+        postcode: params.delivery.method === 'kurier' ? params.customer.postcode || '00-000' : '00-000',
+        country: 'PL',
+      },
+      line_items: params.items.map(item => ({
+        product_id: item.product.wooId || (item.product.id === 'miod-akacjowy' ? 37 : 37),
+        quantity: item.quantity,
+        meta_data: [
+          { key: 'Waga', value: `${item.weightGrams || item.selectedWeightGrams || 400}g` },
+          { key: 'Miód', value: item.product.name },
+        ],
+      })),
+      shipping_lines: [
+        {
+          method_id: params.delivery.method,
+          method_title: params.delivery.methodTitle,
+          total: String(params.delivery.cost),
+        },
+      ],
+      customer_note: [
+        params.customer.notes || '',
+        params.delivery.method === 'paczkomat'
+          ? `Paczkomat: ${params.delivery.parcelLockerCode || ''} (${params.delivery.parcelLockerAddress || ''})`
+          : '',
+      ]
+        .filter(Boolean)
+        .join(' | '),
+    };
+
+    const response = await fetch(`${WOO_CONFIG.url}/wp-json/wc/v3/orders`, {
+      method: 'POST',
+      headers: {
+        'Authorization': authHeader,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(orderData),
+    });
+
+    if (!response.ok) {
+      const errJson = await response.json().catch(() => null);
+      throw new Error(errJson?.message || `Błąd serwera: HTTP ${response.status}`);
+    }
+
+    const createdOrder = await response.json();
+    return {
+      success: true,
+      orderId: createdOrder.id,
+      paymentUrl: createdOrder.payment_url || undefined,
+    };
+  } catch (err: any) {
+    console.error('❌ [createWooCommerceOrder] Błąd tworzenia zamówienia:', err);
+    return {
+      success: false,
+      error: err.message || 'Wystąpił nieoczekiwany błąd przy tworzeniu zamówienia.',
+    };
+  }
+}
+
