@@ -71,7 +71,8 @@ const mapCategory = (cats: WooProductRaw['categories']): HoneyCategory => {
  * Przekształca atrybuty i warianty WooCommerce na tablicę opcji wagowych i cen
  */
 const mapSizes = (woo: WooProductRaw): HoneySizeOption[] => {
-  const basePrice = parseFloat(woo.price || woo.regular_price || '35');
+  const parsedPrice = parseFloat(woo.price || woo.regular_price || '');
+  const basePrice = !isNaN(parsedPrice) && parsedPrice > 0 ? parsedPrice : 40;
 
   // Sprawdzamy czy produkt ma atrybut "Gramatura" lub "Waga"
   const gramAttribute = woo.attributes.find(
@@ -225,10 +226,18 @@ export async function fetchWooCommerceProducts(): Promise<{
     }
 
     const mapped = rawList.map(mapWooProductToHoneyProduct);
+
+    // Inteligentne łączenie: produkty z WooCommerce nadpisują pozycje w katalogu,
+    // a pozostałe produkty lokalne są zachowane, dopóki klient nie doda wszystkich w WordPressie.
+    const mergedMap = new Map<string, HoneyProduct>();
+    HONEY_PRODUCTS.forEach(p => mergedMap.set(p.id, p));
+    mapped.forEach(p => mergedMap.set(p.id, p));
+    const mergedProducts = Array.from(mergedMap.values());
+
     console.info(`✅ [WooCommerce Service] Pomyślnie pobrano ${mapped.length} produktów na żywo z WordPress/WooCommerce!`);
 
     return {
-      products: mapped,
+      products: mergedProducts,
       isLiveWooCommerce: true,
     };
   } catch (err: any) {

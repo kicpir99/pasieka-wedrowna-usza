@@ -1,0 +1,205 @@
+[
+  {
+    "key": "group_parametry_miodu_usza",
+    "title": "Parametry Miodu i Pasieki (Pasieka Usza)",
+    "fields": [
+      {
+        "key": "field_botanical_name",
+        "label": "Nazwa botaniczna",
+        "name": "botanical_name",
+        "type": "text",
+        "instructions": "Np. Robinia pseudoacacia, Tilia cordata, Brassica napus",
+        "required": 0,
+        "default_value": "",
+        "placeholder": "Robinia pseudoacacia"
+      },
+      {
+        "key": "field_harvest_year",
+        "label": "Rocznik zbioru",
+        "name": "harvest_year",
+        "type": "number",
+        "instructions": "Rok miodobrania",
+        "required": 0,
+        "default_value": 2026,
+        "min": 2020,
+        "max": 2035
+      },
+      {
+        "key": "field_harvest_month",
+        "label": "Miesiąc miodobrania",
+        "name": "harvest_month",
+        "type": "text",
+        "instructions": "Np. Maj, Czerwiec, Lipiec, Sierpień",
+        "required": 0,
+        "default_value": "Czerwiec"
+      },
+      {
+        "key": "field_batch_number",
+        "label": "Numer partii / badania",
+        "name": "batch_number",
+        "type": "text",
+        "instructions": "Np. AKA-26/06 lub LIP-26/07",
+        "required": 0,
+        "default_value": "AKA-26/01"
+      },
+      {
+        "key": "field_apiary_location",
+        "label": "Lokalizacja pożytku / pasieki",
+        "name": "apiary_location",
+        "type": "text",
+        "instructions": "Np. Dolina Baryczy, Wzgórza Trzebnickie, Dolny Śląsk",
+        "required": 0,
+        "default_value": "Pasieka Wędrowna • Dolny Śląsk"
+      },
+      {
+        "key": "field_dominant_plant",
+        "label": "Roślina wiodąca",
+        "name": "dominant_plant",
+        "type": "text",
+        "instructions": "Np. Robinia akacjowa, Lipa drobnolistna, Gryka zwyczajna",
+        "required": 0,
+        "default_value": "Robinia akacjowa"
+      },
+      {
+        "key": "field_dominant_pollen_percentage",
+        "label": "Pyłek przewodni (%)",
+        "name": "dominant_pollen_percentage",
+        "type": "number",
+        "instructions": "Procent pyłku przewodniego z badania laboratoryjnego",
+        "required": 0,
+        "default_value": 75,
+        "min": 20,
+        "max": 100
+      },
+      {
+        "key": "field_water_content_percentage",
+        "label": "Zawartość wody (%)",
+        "name": "water_content_percentage",
+        "type": "text",
+        "instructions": "Pomiar refraktometrem (np. 16.8 lub 17.2 - norma to poniżej 20%)",
+        "required": 0,
+        "default_value": "17.2"
+      },
+      {
+        "key": "field_consistency",
+        "label": "Konsystencja",
+        "name": "consistency",
+        "type": "select",
+        "instructions": "Stan skupienia miodu",
+        "required": 0,
+        "choices": {
+          "patoka": "Patoka (płynny)",
+          "krupiec": "Krupiec (skrystalizowany)",
+          "kremowany": "Kremowany (aksamitny mus)"
+        },
+        "default_value": "patoka",
+        "return_format": "value"
+      },
+      {
+        "key": "field_flavor_intensity",
+        "label": "Intensywność smaku",
+        "name": "flavor_intensity",
+        "type": "select",
+        "instructions": "Odczucie na podniebieniu",
+        "required": 0,
+        "choices": {
+          "lagodny": "Łagodny",
+          "zrownowazony": "Zrównoważony",
+          "wyrazisty": "Wyrazisty",
+          "gleboki": "Głęboki / wytrawny"
+        },
+        "default_value": "lagodny",
+        "return_format": "value"
+      },
+      {
+        "key": "field_flavor_notes",
+        "label": "Nuty smakowe (oddzielone przecinkami)",
+        "name": "flavor_notes",
+        "type": "text",
+        "instructions": "Np. Kwiat akacji, Wanilia, Łagodny nektar",
+        "required": 0,
+        "default_value": "Kwiat akacji, Wanilia, Łagodny nektar"
+      },
+      {
+        "key": "field_recommended_use",
+        "label": "Rekomendowane zastosowanie",
+        "name": "recommended_use",
+        "type": "text",
+        "instructions": "Np. Do herbaty i naparów, Na tosty, Dla dzieci",
+        "required": 0,
+        "default_value": "Do herbaty i naparów, Dla dzieci, Na czczo z wodą"
+      },
+      {
+        "key": "field_sensory_sweetness",
+        "label": "Profil sensoryczny: Słodkość (1-5)",
+        "name": "sensory_sweetness",
+        "type": "number",
+        "instructions": "Skala 1 (niska) do 5 (bardzo wysoka)",
+        "required": 0,
+        "default_value": 4,
+        "min": 1,
+        "max": 5
+      },
+      {
+        "key": "field_sensory_acidity",
+        "label": "Profil sensoryczny: Kwasowość (1-5)",
+        "name": "sensory_acidity",
+        "type": "number",
+        "instructions": "Skala 1 (niewyczuwalna) do 5 (wyraźnie kwaskowaty)",
+        "required": 0,
+        "default_value": 2,
+        "min": 1,
+        "max": 5
+      },
+      {
+        "key": "field_sensory_intensity",
+        "label": "Profil sensoryczny: Moc aromatu (1-5)",
+        "name": "sensory_intensity",
+        "type": "number",
+        "instructions": "Skala 1 (subtelny) do 5 (bardzo intensywny)",
+        "required": 0,
+        "default_value": 3,
+        "min": 1,
+        "max": 5
+      },
+      {
+        "key": "field_sensory_crystallization",
+        "label": "Profil sensoryczny: Tempo krystalizacji (1-5)",
+        "name": "sensory_crystallization",
+        "type": "number",
+        "instructions": "Skala 1 (bardzo wolno - miesiące) do 5 (bardzo szybko - dni)",
+        "required": 0,
+        "default_value": 2,
+        "min": 1,
+        "max": 5
+      },
+      {
+        "key": "field_color_name",
+        "label": "Barwa miodu (nazwa)",
+        "name": "color_name",
+        "type": "text",
+        "instructions": "Np. Słomkowo-złocisty, Jasnobursztynowy, Ciemnoherbaciany",
+        "required": 0,
+        "default_value": "Słomkowo-złocisty"
+      }
+    ],
+    "location": [
+      [
+        {
+          "param": "post_type",
+          "operator": "==",
+          "value": "product"
+        }
+      ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "Parametry sensoryczne, fizykochemiczne i lokalizacyjne miodu Pasieki Usza",
+    "show_in_rest": true
+  }
+]
