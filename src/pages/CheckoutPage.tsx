@@ -45,7 +45,9 @@ const POPULAR_LOCKERS = [
 
 export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }) => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, register, addOrder } = useAuth();
+  const [createAccount, setCreateAccount] = useState(!user);
+  const [accountPassword, setAccountPassword] = useState('');
 
   // Stan formularza z automatycznym uzupełnieniem z profilu użytkownika
   const [firstName, setFirstName] = useState(() => user?.address?.firstName || user?.name || '');
@@ -192,6 +194,33 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
     // Sukces!
     onClearCart();
 
+    const newPastOrder = {
+      id: String(res.orderId),
+      date: new Date().toLocaleDateString('pl-PL'),
+      itemsSummary: items.map(i => `${i.product.name} (${i.weightGrams || i.selectedWeightGrams || 400}g x${i.quantity})`).join(', '),
+      totalPln: total,
+      status: 'Przygotowywana' as const,
+    };
+
+    if (user) {
+      addOrder(newPastOrder);
+    } else if (createAccount) {
+      register({
+        firstName,
+        lastName,
+        email,
+        password: accountPassword || undefined,
+        phone,
+        street: deliveryMethod === 'kurier' ? street : '',
+        city: deliveryMethod === 'kurier' ? city : '',
+        postalCode: deliveryMethod === 'kurier' ? postcode : '',
+        parcelLocker: deliveryMethod === 'paczkomat' ? selectedLocker?.code : '',
+      });
+      setTimeout(() => {
+        addOrder(newPastOrder);
+      }, 50);
+    }
+
     // Jeśli otrzymaliśmy link do opłacenia (np. Przelewy24 / BLIK)
     if (res.paymentUrl && (paymentMethod === 'p24' || paymentMethod === 'blik')) {
       window.location.href = res.paymentUrl;
@@ -259,6 +288,13 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
           </p>
 
           <div className="pt-4 flex flex-col sm:flex-row gap-3 justify-center">
+            <button
+              onClick={() => navigate('/moje-konto')}
+              className="px-6 py-3 rounded-xl bg-[#945209] hover:bg-[#784107] text-[#FAF5ED] font-semibold text-xs transition-all shadow-md inline-flex items-center justify-center gap-2"
+            >
+              <Package className="w-4 h-4" />
+              <span>Śledź status w panelu Moje Konto</span>
+            </button>
             <button
               onClick={() => navigate('/sklep')}
               className="px-6 py-3 rounded-xl bg-[#2D2821] hover:bg-[#433B31] text-[#FAF5ED] font-semibold text-xs transition-all shadow-md"
@@ -454,6 +490,45 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
                   </div>
                 )}
               </div>
+
+              {/* Checkbox Załóż konto (dla niezalogowanych) */}
+              {!user && (
+                <div className="pt-3 border-t border-[#F2E8DA]">
+                  <div className="p-3.5 rounded-2xl bg-[#FAF5EB] border border-[#EAE0D1] space-y-2.5">
+                    <label className="flex items-start gap-2.5 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={createAccount}
+                        onChange={e => setCreateAccount(e.target.checked)}
+                        className="w-4 h-4 mt-0.5 rounded text-[#945209] border-[#DCCEB9] focus:ring-[#945209]"
+                      />
+                      <div className="text-xs">
+                        <strong className="text-[#2D2821] block">
+                          Załóż konto w Pasiece Usza jednym kliknięciem
+                        </strong>
+                        <span className="text-[11px] text-[#7A6C5B] block mt-0.5">
+                          Śledź status przygotowania zamówienia, zapisz adres na przyszłość i zyskaj dostęp do Klubu Pasieki.
+                        </span>
+                      </div>
+                    </label>
+
+                    {createAccount && (
+                      <div className="pt-2 border-t border-[#E8DCB8] pl-6.5">
+                        <label className="block text-[11px] font-semibold text-[#5B4F3F] mb-1">
+                          Hasło do Twojego konta (opcjonalnie)
+                        </label>
+                        <input
+                          type="password"
+                          value={accountPassword}
+                          onChange={e => setAccountPassword(e.target.value)}
+                          placeholder="Wpisz hasło lub zostaw puste (wyślemy link aktywacyjny)"
+                          className="w-full px-3 py-2 rounded-xl bg-white border border-[#DCCEB9] text-xs outline-none focus:border-[#945209]"
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* SEKCJA 2: METODA DOSTAWY */}

@@ -93,6 +93,7 @@ interface AuthContextType {
   updateCard: (newCard: SavedCard) => void;
   toggleFavorite: (productId: string) => void;
   isFavorite: (productId: string) => boolean;
+  addOrder: (order: PastOrder) => void;
 }
 
 const STORAGE_KEY = 'pasieka_user_account_v1';
@@ -344,6 +345,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return Boolean(user?.favorites?.includes(productId));
   };
 
+  const addOrder = (order: PastOrder) => {
+    if (!user) return;
+    saveUser({
+      ...user,
+      orders: [order, ...(user.orders || [])],
+    });
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -361,6 +370,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         updateCard,
         toggleFavorite,
         isFavorite,
+        addOrder,
       }}
     >
       {children}
