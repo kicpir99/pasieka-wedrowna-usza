@@ -191,9 +191,6 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
       return;
     }
 
-    // Sukces!
-    onClearCart();
-
     const newPastOrder = {
       id: String(res.orderId),
       date: new Date().toLocaleDateString('pl-PL'),
@@ -221,17 +218,14 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
       }, 50);
     }
 
-    // Jeśli otrzymaliśmy link do opłacenia (np. Przelewy24 / BLIK)
-    if (res.paymentUrl && (paymentMethod === 'p24' || paymentMethod === 'blik')) {
-      window.location.href = res.paymentUrl;
-      return;
-    }
+    // 1. Najpierw ustawiamy stan sukcesu w React, aby ekran z podziękowaniem pojawił się natychmiast
+    setCompletedOrder({ id: res.orderId, total, paymentUrl: res.paymentUrl });
 
-    // Dla przelewu lub pobrania pokazujemy nasz luksusowy ekran sukcesu
-    setCompletedOrder({ id: res.orderId, total });
+    // 2. Czyścimy koszyk po ustawieniu ekranu sukcesu, bez mignięcia pustym koszykiem
+    onClearCart();
   };
 
-  // EKRAN SUKCESU ZAMÓWIENIA
+  // EKRAN SUKCESU ZAMÓWIENIA (Zawsze sprawdzany w pierwszej kolejności!)
   if (completedOrder) {
     return (
       <div className="min-h-screen bg-[#FAF8F5] pt-28 pb-20 px-4 sm:px-6">
@@ -272,6 +266,33 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
               </span>
             </div>
           </div>
+
+          {paymentMethod === 'blik' && (
+            <div className="p-4 rounded-xl bg-[#FAF5EB] border border-[#DFCAB0] text-xs text-[#5C4D3B] text-left space-y-1">
+              <div className="flex items-center gap-1.5 font-bold text-[#8C4609]">
+                <Smartphone className="w-4 h-4 text-[#8C4609]" />
+                <span>Płatność BLIK</span>
+              </div>
+              <p>Twoje zamówienie zostało pomyślnie zarejestrowane. Miody są pakowane w pracowni, a status przesyłki możesz śledzić w panelu Moje Konto.</p>
+            </div>
+          )}
+
+          {paymentMethod === 'p24' && (
+            <div className="p-4 rounded-xl bg-[#FAF5EB] border border-[#DFCAB0] text-xs text-[#5C4D3B] text-left space-y-1">
+              <div className="flex items-center gap-1.5 font-bold text-[#8C4609]">
+                <CreditCard className="w-4 h-4 text-[#8C4609]" />
+                <span>Szybki przelew Przelewy24</span>
+              </div>
+              <p>Zamówienie zostało zarejestrowane w systemie pasieki. Szczegóły wysłaliśmy na Twój e-mail.</p>
+            </div>
+          )}
+
+          {paymentMethod === 'cod' && (
+            <div className="p-4 rounded-xl bg-[#F4F9F2] border border-[#CDE1CA] text-xs text-[#2A5222] text-left space-y-1">
+              <p className="font-bold text-[#1F4218]">Płatność przy odbiorze (Za pobraniem):</p>
+              <p>Należność ({completedOrder.total} zł) uregulujesz wygodnie u kuriera lub przy odbiorze w automacie Paczkomat.</p>
+            </div>
+          )}
 
           {paymentMethod === 'bacs' && (
             <div className="p-4 rounded-xl bg-[#FFF9F2] border border-[#DFCBB5] text-xs text-[#5C4D3B] text-left space-y-1">
