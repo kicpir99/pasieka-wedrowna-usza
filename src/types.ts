@@ -61,6 +61,7 @@ export interface DetailedUsage {
 
 export interface HoneyProduct {
   id: string;
+  wooId?: number;
   name: string;
   botanicalName: string;
   subtitle: string;

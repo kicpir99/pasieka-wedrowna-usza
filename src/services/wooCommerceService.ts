@@ -144,6 +144,7 @@ export const mapWooProductToHoneyProduct = (woo: WooProductRaw): HoneyProduct =>
 
   return {
     id: woo.slug || String(woo.id),
+    wooId: woo.id,
     name: woo.name,
     botanicalName: getMetaValue(meta, 'botanical_name', getMetaValue(meta, 'botanicalSource', woo.name)),
     subtitle: woo.short_description ? woo.short_description.replace(/<[^>]*>/g, '').trim() : getMetaValue(meta, 'subtitle', 'Surowy miód prosto z pasieki wędrownej.'),
@@ -259,6 +260,22 @@ export function getWooCommerceCheckoutUrl(items: CartItem[]): string {
     return '/zamowienie';
   }
 
-  // Jeśli sklep działa na WooCommerce, kierujemy do kasy z parametrem lub bezpośrednio
+  // Wyciągamy ID produktów z WooCommerce
+  const validItems = items
+    .map(i => ({
+      id: i.product.wooId || (i.product.id === 'miod-akacjowy' ? 37 : null),
+      qty: i.quantity || 1,
+    }))
+    .filter((i): i is { id: number; qty: number } => i.id !== null);
+
+  if (validItems.length === 1) {
+    return `${WOO_CONFIG.url}/zamowienie/?add-to-cart=${validItems[0].id}&quantity=${validItems[0].qty}`;
+  }
+
+  if (validItems.length > 1) {
+    const query = validItems.map(i => `${i.id}:${i.qty}`).join(',');
+    return `${WOO_CONFIG.url}/zamowienie/?add-to-cart=${query}`;
+  }
+
   return `${WOO_CONFIG.url}/zamowienie/`;
 }

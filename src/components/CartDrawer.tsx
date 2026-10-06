@@ -64,8 +64,8 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
       : subtotal >= FREE_SHIPPING_THRESHOLD
       ? 0
       : deliveryMethod === 'paczkomat'
-      ? 14
-      : 17;
+      ? 15
+      : 18;
 
   const total = subtotal + deliveryCost;
   const remainingForFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
@@ -404,7 +404,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                     >
                       <span className="block font-bold">Paczkomat</span>
                       <span className="text-[10px] text-[#847461]">
-                        {subtotal >= FREE_SHIPPING_THRESHOLD ? 'Gratis' : '14 zł'}
+                        {subtotal >= FREE_SHIPPING_THRESHOLD ? 'Gratis' : '15 zł'}
                       </span>
                     </button>
 
@@ -416,9 +416,9 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                           : 'border-[#DFCBB5] bg-[#FAF8F5] text-[#695D4E]'
                       }`}
                     >
-                      <span className="block font-bold">Kurier DPD</span>
+                      <span className="block font-bold">Kurier InPost</span>
                       <span className="text-[10px] text-[#847461]">
-                        {subtotal >= FREE_SHIPPING_THRESHOLD ? 'Gratis' : '17 zł'}
+                        {subtotal >= FREE_SHIPPING_THRESHOLD ? 'Gratis' : '18 zł'}
                       </span>
                     </button>
 
