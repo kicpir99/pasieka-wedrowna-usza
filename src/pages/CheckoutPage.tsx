@@ -18,9 +18,12 @@ import {
   MapPin,
   Clock,
   Check,
-  AlertCircle
+  AlertCircle,
+  X
 } from 'lucide-react';
 import { createWooCommerceOrder } from '../services/wooCommerceService';
+
+import { useAuth } from '../context/AuthContext';
 
 interface CheckoutPageProps {
   items: CartItem[];
@@ -36,16 +39,19 @@ const POPULAR_LOCKERS = [
   { code: 'WAW22B', address: 'ul. Marszałkowska 104, 00-017 Warszawa', city: 'Warszawa' },
   { code: 'KRA14M', address: 'ul. Floriańska 25, 31-019 Kraków', city: 'Kraków' },
   { code: 'POZ08A', address: 'ul. Półwiejska 32, 61-888 Poznań', city: 'Poznań' },
+  { code: 'GDA04A', address: 'ul. Grunwaldzka 82, 80-244 Gdańsk', city: 'Gdańsk' },
+  { code: 'KAT03B', address: 'ul. Chorzowska 107, 40-101 Katowice', city: 'Katowice' },
 ];
 
 export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
-  // Stan formularza
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
+  // Stan formularza z automatycznym uzupełnieniem z profilu użytkownika
+  const [firstName, setFirstName] = useState(() => user?.address?.firstName || user?.name || '');
+  const [lastName, setLastName] = useState(() => user?.address?.lastName || '');
+  const [email, setEmail] = useState(() => user?.email || '');
+  const [phone, setPhone] = useState(() => user?.address?.phone || '');
 
   // Faktura na firmę
   const [isCompany, setIsCompany] = useState(false);
@@ -54,13 +60,23 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
 
   // Metoda dostawy
   const [deliveryMethod, setDeliveryMethod] = useState<'paczkomat' | 'kurier' | 'odbior'>('paczkomat');
-  const [street, setStreet] = useState('');
-  const [postcode, setPostcode] = useState('');
-  const [city, setCity] = useState('');
+  const [street, setStreet] = useState(() => user?.address?.street || '');
+  const [postcode, setPostcode] = useState(() => user?.address?.postalCode || '');
+  const [city, setCity] = useState(() => user?.address?.city || '');
 
   // Paczkomat
   const [lockerSearch, setLockerSearch] = useState('');
-  const [selectedLocker, setSelectedLocker] = useState<{ code: string; address: string; city: string } | null>(POPULAR_LOCKERS[0]);
+  const [selectedLocker, setSelectedLocker] = useState<{ code: string; address: string; city: string } | null>(() => {
+    if (user?.address?.parcelLocker) {
+      return {
+        code: user.address.parcelLocker,
+        address: 'Zapisany Paczkomat z profilu',
+        city: user.address.city || 'Polska',
+      };
+    }
+    return POPULAR_LOCKERS[0];
+  });
+  const [isMapModalOpen, setIsMapModalOpen] = useState(false);
 
   // Metoda płatności
   const [paymentMethod, setPaymentMethod] = useState<'blik' | 'p24' | 'cod' | 'bacs'>('blik');
@@ -511,14 +527,24 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
 
               {/* Szczegóły dla PACZKOMATU */}
               {deliveryMethod === 'paczkomat' && (
-                <div className="p-4 rounded-2xl bg-[#FAF6EE] border border-[#E3D4C0] space-y-3">
-                  <div className="flex items-center justify-between">
+                <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF6EE] border border-[#E3D4C0] space-y-3.5">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <span className="text-xs font-bold text-[#3B3226]">Wybierz Twój Paczkomat InPost:</span>
-                    {selectedLocker && (
-                      <span className="text-[11px] font-bold text-[#945209] bg-[#FAF0DC] px-2 py-0.5 rounded-md border border-[#DFC9AE]">
-                        Wybrany: {selectedLocker.code}
-                      </span>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {selectedLocker && (
+                        <span className="text-[11px] font-bold text-[#945209] bg-[#FAF0DC] px-2.5 py-0.5 rounded-lg border border-[#DFC9AE]">
+                          Wybrany: {lockerSearch.trim() && !filteredLockers.find(l => l.code === selectedLocker.code) ? selectedLocker.code : selectedLocker.code}
+                        </span>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => setIsMapModalOpen(true)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#2D2821] hover:bg-[#433B31] text-[#FAF5ED] text-[11px] font-bold shadow-xs transition-all active:scale-95 cursor-pointer"
+                      >
+                        <MapPin className="w-3.5 h-3.5 text-[#E5983A]" />
+                        <span>Wybierz na mapie</span>
+                      </button>
+                    </div>
                   </div>
 
                   {/* Wyszukiwarka paczkomatu */}
@@ -527,35 +553,51 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
                     <input
                       type="text"
                       value={lockerSearch}
-                      onChange={e => setLockerSearch(e.target.value)}
+                      onChange={e => {
+                        const val = e.target.value;
+                        setLockerSearch(val);
+                        // Jeśli wpisano kod paczkomatu (np. 6 znaków z dużej litery), automatycznie go przypisz
+                        if (val.trim().length >= 5 && /^[A-Z0-9]+$/i.test(val.trim())) {
+                          const codeUpper = val.trim().toUpperCase();
+                          setSelectedLocker({
+                            code: codeUpper,
+                            address: 'Wpisany paczkomat',
+                            city: 'Polska'
+                          });
+                        }
+                      }}
                       placeholder="Wpisz kod paczkomatu (np. WRO01A) lub miasto/ulicę..."
-                      className="w-full pl-9 pr-3.5 py-2 rounded-xl bg-white border border-[#DCCEB9] text-xs outline-none focus:border-[#945209]"
+                      className="w-full pl-9 pr-3.5 py-2.5 rounded-xl bg-white border border-[#DCCEB9] text-xs outline-none focus:border-[#945209] focus:ring-1 focus:ring-[#945209]/20"
                     />
                   </div>
 
-                  {/* Lista paczkomatów */}
-                  <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
+                  {/* Lista paczkomatów z luksusowym suwakiem i bezpiecznym marginesem pr-3.5 */}
+                  <div className="space-y-2 max-h-56 overflow-y-auto pr-3.5 pasieka-scrollbar">
                     {filteredLockers.map(locker => (
                       <div
                         key={locker.code}
                         onClick={() => setSelectedLocker(locker)}
-                        className={`p-2.5 rounded-xl border text-xs cursor-pointer flex items-center justify-between transition-all ${
+                        className={`p-3 rounded-xl border text-xs cursor-pointer flex items-center justify-between transition-all ${
                           selectedLocker?.code === locker.code
-                            ? 'bg-white border-[#945209] font-semibold text-[#2D2821] shadow-2xs'
-                            : 'bg-white/70 border-[#E8DECة] text-[#695D4E] hover:bg-white'
+                            ? 'bg-white border-[#945209] font-semibold text-[#2D2821] shadow-2xs ring-1 ring-[#945209]/15'
+                            : 'bg-white/80 border-[#E5DACB] text-[#695D4E] hover:bg-white hover:border-[#D0C0AB]'
                         }`}
                       >
-                        <div>
+                        <div className="min-w-0 pr-2">
                           <div className="flex items-center gap-1.5">
-                            <span className="font-mono font-bold text-[#8C4609]">{locker.code}</span>
-                            <span className="text-[11px] text-[#736553]">• {locker.city}</span>
+                            <span className="font-mono font-bold text-[#8C4609] text-xs">{locker.code}</span>
+                            <span className="text-[11px] text-[#736553] font-medium">• {locker.city}</span>
                           </div>
-                          <span className="text-[11px] text-[#857461] block">{locker.address}</span>
+                          <span className="text-[11px] text-[#857461] block truncate">{locker.address}</span>
                         </div>
-                        {selectedLocker?.code === locker.code && (
-                          <div className="w-5 h-5 rounded-full bg-[#945209] text-white flex items-center justify-center">
+                        {selectedLocker?.code === locker.code ? (
+                          <div className="w-5 h-5 rounded-full bg-[#945209] text-white flex items-center justify-center shrink-0">
                             <Check className="w-3 h-3" />
                           </div>
+                        ) : (
+                          <span className="text-[10px] text-[#9E8E7C] font-semibold shrink-0 hover:text-[#945209]">
+                            Wybierz
+                          </span>
                         )}
                       </div>
                     ))}
@@ -867,6 +909,89 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
           </div>
         </form>
       </div>
+
+      {/* Modal interaktywnej mapy Paczkomatów */}
+      {isMapModalOpen && (
+        <div className="fixed inset-0 z-50 overflow-hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl border border-[#E7DDCE] shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col overflow-hidden">
+            <div className="p-5 border-b border-[#E7DDCE] flex items-center justify-between bg-[#FAF8F5]">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-[#FAF0DC] text-[#8C4609] flex items-center justify-center">
+                  <MapPin className="w-4 h-4 text-[#8C4609]" />
+                </div>
+                <div>
+                  <h3 className="font-serif text-base sm:text-lg font-bold text-[#23201C]">
+                    Wybierz Paczkomat InPost 24/7
+                  </h3>
+                  <span className="text-[11px] text-[#7A6C5B] block">Wybierz automat z listy lub wpisz jego kod</span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsMapModalOpen(false)}
+                className="p-1.5 rounded-full text-[#6E6150] hover:bg-[#EFE5D6] transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-5 space-y-4 flex-1 overflow-y-auto pasieka-scrollbar">
+              <div className="p-3 rounded-xl bg-[#FAF6EE] border border-[#E2D2BC] text-xs text-[#5D4E3C] flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-[#D97706] shrink-0" />
+                <span>
+                  Kliknij automat poniżej lub wyszukaj na oficjalnej mapie InPost. Kod automatycznie wskoczy do Twojego zamówienia.
+                </span>
+              </div>
+
+              <div className="space-y-2">
+                <span className="text-[11px] font-bold text-[#736351] uppercase tracking-wider block">
+                  Popularne Paczkomaty:
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  {POPULAR_LOCKERS.map(l => (
+                    <div
+                      key={l.code}
+                      onClick={() => {
+                        setSelectedLocker(l);
+                        setLockerSearch(l.code);
+                        setIsMapModalOpen(false);
+                      }}
+                      className="p-3 rounded-xl border border-[#E5DACB] hover:border-[#945209] hover:bg-[#FAF6EF] cursor-pointer transition-all space-y-1 shadow-2xs"
+                    >
+                      <div className="flex justify-between items-center">
+                        <span className="font-mono font-bold text-xs text-[#8C4609]">{l.code}</span>
+                        <span className="text-[10px] bg-[#EFE3CF] text-[#733F07] px-2 py-0.5 rounded-md font-bold">
+                          {l.city}
+                        </span>
+                      </div>
+                      <span className="text-[11px] text-[#70614E] block">{l.address}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 bg-[#FAF8F5] border-t border-[#E7DDCE] flex justify-between items-center">
+              <a
+                href="https://inpost.pl/znajdz-paczkomat"
+                target="_blank"
+                rel="noreferrer"
+                className="text-xs font-bold text-[#945209] hover:underline inline-flex items-center gap-1"
+              >
+                <span>Otwórz oficjalną mapę InPost w nowej karcie</span>
+                <span>↗</span>
+              </a>
+              <button
+                type="button"
+                onClick={() => setIsMapModalOpen(false)}
+                className="px-5 py-2 rounded-xl bg-[#2D2821] text-[#FAF5ED] text-xs font-bold hover:bg-[#433B31] transition-all cursor-pointer"
+              >
+                Gotowe
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

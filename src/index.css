@@ -50,13 +50,28 @@ h1, h2, h3, .font-display {
   -webkit-overflow-scrolling: touch;
 }
 
-.custom-modal-scroll::-webkit-scrollbar {
-  width: 6px;
+.custom-modal-scroll::-webkit-scrollbar-thumb {
+  background: #D8C4AC;
+  border-radius: 9999px;
 }
 
-.custom-modal-scroll::-webkit-scrollbar-track {
-  background: #FAF6EE;
+/* Custom luxury scrollbar for list containers */
+.pasieka-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #D4C1A8 transparent;
+}
+.pasieka-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+.pasieka-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.pasieka-scrollbar::-webkit-scrollbar-thumb {
+  background: #D4C1A8;
   border-radius: 9999px;
+}
+.pasieka-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #945209;
 }
 
 .custom-modal-scroll::-webkit-scrollbar-thumb {
