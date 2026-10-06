@@ -31,6 +31,10 @@ jobs:
         run: npm ci
 
       - name: Build project
+        env:
+          VITE_WOOCOMMERCE_URL: https://sklep.pasiekausza.pl
+          VITE_WOOCOMMERCE_KEY: ${{ secrets.VITE_WOOCOMMERCE_KEY || 'ck_0f255ea2edcfdefd8b92d38745d26eb748ff9930' }}
+          VITE_WOOCOMMERCE_SECRET: ${{ secrets.VITE_WOOCOMMERCE_SECRET || 'cs_eac4c5ca089a58778f969d8756f0b4eba99d5c4c' }}
         run: npm run build
 
       - name: Upload GitHub Pages artifact
