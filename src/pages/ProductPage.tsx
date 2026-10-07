@@ -1922,7 +1922,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                 </div>
                 <div className="flex items-center justify-center gap-1.5 p-2 bg-[#FAF8F5] rounded-xl border border-[#E7DDCE]">
                   <Truck className="w-3.5 h-3.5 text-[#D9821E] shrink-0" />
-                  <span className="font-semibold">{prodType === 'bee-colony' ? 'Szkolenie przy ulu' : 'Paczkomat & DPD'}</span>
+                  <span className="font-semibold">{prodType === 'bee-colony' ? 'Szkolenie przy ulu' : 'Paczkomat & Kurier InPost'}</span>
                 </div>
               </div>
 
