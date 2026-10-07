@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { fetchWooCommerceOrdersByEmail } from '../services/wooCommerceService';
 
 export interface SubscriptionItem {
   id: string;
@@ -220,6 +221,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     } catch {}
   };
+
+  // Synchronizacja zamówień na żywo z bazy WooCommerce dla zalogowanego klienta
+  useEffect(() => {
+    if (!user?.email || user.email === DEMO_USER.email) return;
+
+    fetchWooCommerceOrdersByEmail(user.email).then((liveOrders) => {
+      if (liveOrders && liveOrders.length > 0) {
+        setUser((prev) => {
+          if (!prev) return null;
+          const existingIds = new Set(prev.orders.map(o => o.id));
+          const mergedOrders = [
+            ...liveOrders.filter(o => !existingIds.has(o.id)),
+            ...prev.orders
+          ];
+          const updated = { ...prev, orders: mergedOrders };
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+          } catch {}
+          return updated;
+        });
+      }
+    });
+  }, [user?.email]);
 
   const login = (email: string, _password?: string) => {
     // If there's an existing registered user in localStorage with this email, restore it, otherwise initialize

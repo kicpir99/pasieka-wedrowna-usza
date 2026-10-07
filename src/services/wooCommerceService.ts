@@ -480,3 +480,68 @@ export async function createWooCommerceOrder(params: CreateOrderParams): Promise
   }
 }
 
+/**
+ * Pobiera zamówienia powiązane z danym adresem e-mail z bazy WooCommerce
+ */
+export async function fetchWooCommerceOrdersByEmail(email: string): Promise<any[]> {
+  if (!WOO_CONFIG.url || !WOO_CONFIG.consumerKey || !email) {
+    return [];
+  }
+
+  try {
+    const authHeader = `Basic ${btoa(`${WOO_CONFIG.consumerKey}:${WOO_CONFIG.consumerSecret}`)}`;
+    const endpoint = `${WOO_CONFIG.url}/wp-json/wc/v3/orders?search=${encodeURIComponent(email)}&per_page=20`;
+
+    const response = await fetch(endpoint, {
+      method: 'GET',
+      headers: {
+        'Authorization': authHeader,
+        'Accept': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      return [];
+    }
+
+    const orders = await response.json();
+    if (!Array.isArray(orders)) return [];
+
+    return orders.map((o: any) => {
+      let mappedStatus: 'Doręczona' | 'W drodze' | 'Przygotowywana' = 'Przygotowywana';
+      if (o.status === 'completed') mappedStatus = 'Doręczona';
+      else if (o.status === 'processing') mappedStatus = 'W drodze';
+
+      const itemsSummary = (o.line_items || [])
+        .map((li: any) => `${li.name} (x${li.quantity})`)
+        .join(', ');
+
+      const items = (o.line_items || []).map((li: any) => ({
+        productId: String(li.product_id),
+        productName: li.name,
+        weightGrams: 400,
+        pricePln: parseFloat(li.total) || 0,
+        quantity: li.quantity || 1,
+      }));
+
+      const trackingMeta = (o.meta_data || []).find((m: any) => m.key?.includes('tracking') || m.key?.includes('inpost'));
+
+      return {
+        id: `USZ-${o.id}`,
+        date: o.date_created
+          ? new Date(o.date_created).toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' })
+          : new Date().toLocaleDateString('pl-PL'),
+        itemsSummary: itemsSummary || 'Zamówienie produktów pszczelich',
+        items,
+        totalPln: parseFloat(o.total) || 0,
+        status: mappedStatus,
+        trackingNumber: trackingMeta?.value || undefined,
+        invoiceNumber: `FV/USZ/${o.id}`,
+      };
+    });
+  } catch (err) {
+    console.error('❌ [fetchWooCommerceOrdersByEmail] Błąd pobierania zamówień:', err);
+    return [];
+  }
+}
+
