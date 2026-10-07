@@ -23,7 +23,14 @@
 5. [InPost — Umowa i automatyczne etykiety (Manager Paczek)](#5-inpost--umowa-i-automatyczne-etykiety-manager-paczek)
 6. [Dane formalne do Regulaminu i Polityki Prywatności (RODO / Weterynaria)](#6-dane-formalne-do-regulaminu-i-polityki-prywatności-rodo--weterynaria)
 7. [Weryfikacja cen, gramatur i stanów magazynowych](#7-weryfikacja-cen-gramatur-i-stanów-magazynowych)
-8. [📝 Szybki formularz do skopiowania i odesłania](#-szybki-formularz-do-skopiowania-i-odesłania)
+8. [Audyt treści sklepu — elementy testowe wymagające Waszej weryfikacji](#8-audyt-treści-sklepu--elementy-testowe-wymagające-waszej-weryfikacji)
+   * [8.1. Profile sensoryczne miodów (Słodycz, Kwasowość, Aromat, Krystalizacja)](#81-profile-sensoryczne-miodów-skala-1-5)
+   * [8.2. Bukiety i nuty smakowe (selekcja z 41 obecnych)](#82-bukiety-i-nuty-smakowe)
+   * [8.3. Badania laboratoryjne vs Certyfikat Weterynaryjny PIW](#83-badania-laboratoryjne-vs-certyfikat-weterynaryjny-piw)
+   * [8.4. Spójność historii pasieki i dane stacjonarne (Sekcja „O nas” i Kontakt)](#84-spójność-historii-pasieki-i-dane-stacjonarne)
+   * [8.5. Koszyki prezentowe B2B, Odkłady pszczele i Szkolenia](#85-oferta-specjalna-b2b-odkłady-i-szkolenia)
+   * [8.6. Koszty dostawy, darmowa wysyłka i opinie klientów](#86-koszty-dostawy-darmowa-wysyłka-i-opinie-klientów)
+9. [📝 Szybki formularz do skopiowania i odesłania](#-szybki-formularz-do-skopiowania-i-odesłania)
 
 ---
 
@@ -188,28 +195,109 @@ Poniżej znajduje się lista 17 produktów, które wprowadziliśmy do bazy sklep
 
 ---
 
+## 8. Audyt treści sklepu — elementy testowe wymagające Waszej weryfikacji
+
+Podczas budowy prototypu wprowadziliśmy szereg parametrów, które były niezbędne do zaprogramowania filtrów, porównywarki i kart produktów. **Poniżej zestawiliśmy wszystkie elementy, które wymagają Waszego autorskiego zatwierdzenia lub korekty:**
+
+---
+
+### 8.1. Profile sensoryczne miodów (skala 1-5)
+Każdy miód w sklepie posiada wizualną kartę smaku w 4 wymiarach (ocenianą od 1 do 5). Wpisaliśmy wartości według tradycyjnej wiedzy pszczelarskiej, ale **prosimy o weryfikację według Waszego podniebienia i specyfiki Waszych miodobrań**:
+
+| Miód | Słodycz (1-5) | Kwasowość (1-5) | Aromat (1-5) | Krystalizacja (1-5) | Konsystencja | Wasza korekta |
+| :--- | :---: | :---: | :---: | :---: | :---: | :--- |
+| **Lipa** | 4 | 3 | 4 | 3 | krupiec | [ ] OK / [ ] Zmień na: |
+| **Wrzos** | 3 | 4 | 5 | 3 | patoka / galaretka | [ ] OK / [ ] Zmień na: |
+| **Spadź iglasta** | 3 | 2 | 5 | 2 | patoka | [ ] OK / [ ] Zmień na: |
+| **Akacja** | 5 | 1 | 1 | 1 | płynna (długo nie krystalizuje) | [ ] OK / [ ] Zmień na: |
+| **Wielokwiat** | 4 | 2 | 2 | 4 | krupiec | [ ] OK / [ ] Zmień na: |
+| **Gryka** | 3 | 4 | 5 | 3 | krupiec | [ ] OK / [ ] Zmień na: |
+| **Rzepak** | 5 | 1 | 2 | 5 | kremowany | [ ] OK / [ ] Zmień na: |
+| **Mniszek** | 5 | 2 | 3 | 4 | krupiec | [ ] OK / [ ] Zmień na: |
+| **Leśny** | 4 | 2 | 4 | 3 | krupiec | [ ] OK / [ ] Zmień na: |
+| **Malina** | 4 | 2 | 3 | 3 | krupiec | [ ] OK / [ ] Zmień na: |
+| **Nawłoć** | 4 | 3 | 4 | 4 | krupiec | [ ] OK / [ ] Zmień na: |
+| **Facelia** | 4 | 2 | 2 | 3 | krupiec | [ ] OK / [ ] Zmień na: |
+
+*Gdzie: 1 = bardzo niska / delikatna, 5 = bardzo wysoka / dominująca.*
+
+---
+
+### 8.2. Bukiety i nuty smakowe
+Obecnie w kodzie filtrów i na kartach mamy aż **41 różnych nut smakowych**:  
+> *Kwiat lipy, Mięta leśna, Żywica jodłowa, Palony karmel, Melasa, Białe kwiaty, Kwiat akacji, Majowy mniszek, Owoce leśne, Kwas chlebowy, Ferment ulowy, Gorzka pomarańcza, Ciepły wosk, Nuta dębowa, Nuta marcepanowa, Cytrynowa rześkość...*
+
+* **Pytanie do Właścicieli:**  
+  Czy chcecie utrzymać tak bogaty bukiet (41 nut), czy **wolice, abyśmy uprościli listę do 12–15 najbardziej naturalnych i zrozumiałych dla każdego klienta** (np. *kwiatowy, lipowy, ziołowy, leśny, żywiczny, karmelowy, owocowy, cytrusowy, wytrawny, łagodny*)?
+
+---
+
+### 8.3. Badania laboratoryjne vs Certyfikat Weterynaryjny PIW
+Na karcie każdego miodu w sklepie zaprogramowaliśmy zakładkę **„Badania Laboratoryjne”**, gdzie obecnie wyświetlają się przykładowe parametry:
+* Zawartość wody (np. *16.4%* dla lipy, *19.2%* dla wrzosu),
+* Liczba diastazowa DN (np. *18.2 DN*, norma min. 8),
+* HMF i przewodność elektryczna,
+* Dla odkładów pszczelich wstawiono tymczasowy testowy wpis: *WNI 28143502 (PIW Ostróda)* — co wymaga zmiany na Wasz dolnośląski numer z PIW Środa Śląska!
+
+* **Pytanie do Właścicieli:**  
+  1. Czy zlecacie regularne badania fizykochemiczne każdej partii w laboratorium (np. Puławy, Instytut Pszczelnictwa, Eurofins) i chcecie publikować dokładne wyniki w sklepie?  
+  2. **Czy wolicie prostsze, bezpieczniejsze rozwiązanie:** zamienić tę zakładkę na oficjalne **„Świadectwo Jakości i Weterynaryjny Certyfikat Pasieki Usza”**, gdzie prezentujemy Wasz legalny numer WNI, potwierdzenie corocznych badań zdrowotności pasieki przez Powiatowego Lekarza Weterynarii i gwarancję 100% naturalnego miodu?
+
+---
+
+### 8.4. Spójność historii pasieki i dane stacjonarne
+Przeglądając teksty na podstronach wykryliśmy drobne rozbieżności, które warto ujednolicić:
+1. **Rok założenia pasieki:**
+   * W jednym miejscu na stronie głównej widnieje: *„Od 1984 r.”*, natomiast w zakładce O nas napisane jest: *„Po ponad 10 latach pracy z pszczołami”*.
+   * **Do ustalenia:** Jaki oficjalny rok założenia / tradycji pszczelarskiej mamy wpisać na stronie głównej?
+2. **Liczba rodzin pszczelich / uli:**
+   * Czy podajemy oficjalną liczbę pni wędrownych (np. *150 uli wędrownych*), czy ogólne sformułowanie *„kilkadziesiąt rodzin pszczelich prowadzonych wędrownie”*?
+3. **Dokładny adres stacjonarny:**
+   * W zakładce Kontakt wpisana jest *ul. Łąkowa 3, 55-300 Ciechów*, a w szablonie faktury pojawiła się *ul. Lipowa 12*.
+   * **Do ustalenia:** Jaki jest dokładny adres pocztowy i adres do ewentualnego odbioru słoików na miejscu?
+
+---
+
+### 8.5. Oferta specjalna B2B, Odkłady i Szkolenia
+1. **Zestawy prezentowe dla firm (B2B):**
+   * Na stronie Oferta prezentujemy kosze prezentowe, zestawy w drewnianych skrzynkach i ekotubach z miodem. Czy rzeczywiście realizujecie takie zamówienia dla lokalnych firm i urzędów?
+2. **Produkt #17: Odkład Pszczeli + Szkolenie (350 zł):**
+   * Czy w sezonie wiosennym 2027 planujecie faktycznie sprzedawać odkłady pszczele na ramce wielkopolskiej/dadant i prowadzić warsztaty, czy ten produkt na start sprzedaży miodów ukryć?
+
+---
+
+### 8.6. Koszty dostawy, darmowa wysyłka i opinie klientów
+1. **Próg darmowej dostawy:**
+   * W kasie ustawiliśmy: Paczkomat 15 zł, Kurier 18 zł, **Darmowa dostawa od 180 zł** (co oznacza zakup średnio 2 dużych słoików miodu lub 4–5 małych). Czy ten próg Wam odpowiada, czy wolicie go podnieść (np. 200 zł) lub obniżyć (np. 150 zł)?
+2. **Opinie i recenzje na stronie:**
+   * Na stronie głównej i przy miodach wyświetlają się obecnie przykładowe recenzje (Marek K. z Wrocławia, Barbara M. z Legnicy itp.).
+   * **Do ustalenia:** Czy macie kilka prawdziwych opinii od swoich stałych klientów (np. z Facebooka, wizytówki Google lub SMS-ów), które możemy tam wkleić, czy wolicie zacząć z czystym kontem opinii zbieranych przez sklep?
+3. **Klub Miodowy / Subskrypcja cykliczna:**
+   * W sklepie zaprogramowaliśmy opcję „Subskrybuj z dostawą co 30, 60 lub 90 dni z 10% rabatem”. Czy chcecie uruchomić tę opcję od razu, czy zostawić ją jako II etap rozwoju sklepu?
+
+---
+
 ## 📝 Szybki formularz do skopiowania i odesłania
 
 Możecie skopiować poniższy blok tekstu, uzupełnić brakujące dane i odesłać go nam w mailu lub komunikatorze:
 
 ```text
 ==================================================================
-PAKIET STARTOWY DLA PASIEKI USZA — FORMULARZ DANYCH
+PAKIET STARTOWY DLA PASIEKI USZA — FORMULARZ DANYCH I WERYFIKACJI
 ==================================================================
 
-1. DANE DO REGULAMINU I ETYKIET:
+1. DANE FORMALNE I WETERYNARYJNE:
    - Pełna nazwa pasieki/firmy: 
-   - Imię i nazwisko właścicieli: 
-   - Dokładny adres stacjonarny: 
+   - Imię i nazwisko właścicieli: Magdalena i Piotr Szymkowicz
+   - Dokładny adres pasieki (do odbioru i faktur): 
    - NIP (jeśli jest): 
    - Weterynaryjny Numer Identyfikacyjny (WNI): 
-   - Telefon kontaktowy dla klientów: 
-   - Godziny kontaktu (np. 8:00 - 18:00): 
+   - Telefon do kontaktu z klientami: 
+   - Godziny kontaktu i odbioru osobistego: 
 
-2. RACHUNEK BANKOWY DO PRZELEWÓW TRADYCYJNYCH:
-   - Numer konta IBAN (26 cyfr): 
-   - Nazwa banku: 
-   - Nazwa odbiorcy: 
+2. HISTORIA PASIEKI:
+   - Oficjalny rok założenia / tradycji (np. 1984 czy inny): 
+   - Liczba rodzin pszczelich / uli (podawać czy pominąć): 
 
 3. PODATKI, KSIĘGOWOŚĆ I FAKTURY (KSeF):
    - Forma opodatkowania: [ ] Rolnik ryczałtowy / RHD (zwolniony z VAT)
@@ -223,17 +311,28 @@ PAKIET STARTOWY DLA PASIEKI USZA — FORMULARZ DANYCH
    - Klucz CRC: 
    - Klucz API / Raportów: 
 
-5. INPOST (Manager Paczek):
+5. RACHUNEK BANKOWY (Do przelewów tradycyjnych):
+   - Numer konta IBAN (26 cyfr): 
+   - Nazwa banku: 
+   - Nazwa odbiorcy: 
+
+6. INPOST (Manager Paczek):
    - Status konta: [ ] Założone / [ ] Czeka na rejestrację
    - Token API: 
    - ID Organizacji: 
 
-6. POCZTA E-MAIL (SMTP):
+7. POCZTA E-MAIL (SMTP):
    - Preferowany adres (np. kontakt@pasiekausza.pl): 
    - Hasło do skrzynki (lub dostęp do hostingu): 
 
-7. UWAGI DO CEN / DOSTĘPNOŚCI MIODÓW:
-   - (wpisz jeśli któreś ceny z tabeli mają ulec zmianie)
+8. WERYFIKACJA OFERTY I PARAMETRÓW:
+   - Gramatury słoików: [ ] Potwierdzam 400g i 1200g / [ ] Zmień na:
+   - Próg darmowej dostawy: [ ] 180 zł jest OK / [ ] Zmień na: _____ zł
+   - Bukiety smakowe: [ ] Zostawić 41 szczegółowych / [ ] Uprościć do 12-15 głównych
+   - Badania lab: [ ] Podajemy parametry z badań / [ ] Jeden oficjalny Certyfikat PIW
+   - Odkłady pszczele i szkolenia: [ ] Zostawić w ofercie / [ ] Ukryć na start
+   - Subskrypcja miodowa (co miesiąc): [ ] Włączona od razu / [ ] Na później
+   - Zmiany w cenach z tabeli: (wpisz jeśli któreś ceny mają ulec zmianie)
 ==================================================================
 ```
 
