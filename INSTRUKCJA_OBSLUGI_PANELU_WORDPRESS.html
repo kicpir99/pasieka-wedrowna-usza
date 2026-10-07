@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instrukcja Obsługi Panelu WordPress — Pasieka Wędrowna „Usza”</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,400&display=swap');
+
+    :root {
+      --primary: #945209;
+      --primary-dark: #683603;
+      --primary-light: #FBF4EB;
+      --accent: #D9821E;
+      --bg: #FAF8F5;
+      --card-bg: #FFFFFF;
+      --text: #2D2821;
+      --text-muted: #5C5042;
+      --border: #E8DED1;
+      --success: #1B4332;
+      --success-bg: #E8F5E9;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 24px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #FFFFFF;
+      border-radius: 24px;
+      padding: 48px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+    }
+
+    /* NAGŁÓWEK */
+    .header {
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+      border: 1px solid rgba(148, 82, 9, 0.2);
+    }
+
+    h1 {
+      font-family: 'Fraunces', serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--primary-dark);
+      line-height: 1.25;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-size: 15px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      background: #FDFBF8;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 13px;
+    }
+
+    .meta-item strong {
+      color: var(--primary);
+    }
+
+    /* BANER STARTOWY */
+    .callout {
+      background: var(--success-bg);
+      border-left: 4px solid var(--success);
+      padding: 16px 20px;
+      border-radius: 12px;
+      font-size: 14px;
+      color: #1B4332;
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+
+    /* KARTY KROKÓW */
+    .step-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 28px;
+      margin-bottom: 28px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+      page-break-inside: avoid;
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid #F0E8DC;
+      padding-bottom: 14px;
+    }
+
+    .step-num {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--primary);
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 16px;
+      shrink: 0;
+    }
+
+    .step-title {
+      font-family: 'Fraunces', serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    .step-path {
+      background: #F4EBE0;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 12px;
+      color: #5A3508;
+      display: inline-block;
+      margin-bottom: 12px;
+      font-weight: bold;
+    }
+
+    p {
+      font-size: 14px;
+      color: var(--text);
+      margin-bottom: 12px;
+      line-height: 1.6;
+    }
+
+    ul, ol {
+      margin-left: 20px;
+      margin-bottom: 12px;
+      font-size: 13.5px;
+      color: var(--text);
+    }
+
+    li {
+      margin-bottom: 6px;
+    }
+
+    /* TABELA */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 12.5px;
+    }
+
+    th {
+      background: #FAF5EB;
+      color: #6C5E4E;
+      text-align: left;
+      padding: 10px 14px;
+      font-weight: 700;
+      border-bottom: 2px solid #EAE0D1;
+    }
+
+    td {
+      padding: 9px 14px;
+      border-bottom: 1px solid #EFE7DA;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    code {
+      background: #F4EFEA;
+      color: #8C4609;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-family: monospace;
+    }
+
+    /* DRUKOWANIE */
+    .print-btn-bar {
+      position: sticky;
+      top: 16px;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #2D2821;
+      color: #FFFFFF;
+      padding: 12px 24px;
+      border-radius: 14px;
+      margin-bottom: 24px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+
+    .print-btn {
+      background: var(--accent);
+      color: #FFFFFF;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .print-btn:hover {
+      background: #B86710;
+    }
+
+    @media print {
+      body {
+        background: #FFFFFF;
+        padding: 0;
+      }
+      .container {
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        max-width: 100%;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .step-card {
+        page-break-inside: avoid;
+        border: 1px solid #CCC;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PRZYCISK DRUKU -->
+  <div class="print-btn-bar no-print">
+    <div>
+      <strong>🍯 Pasieka Wędrowna „Usza”</strong> — Podręcznik Administratora WordPress
+    </div>
+    <button class="print-btn" onclick="window.print()">
+      🖨️ Zapisz jako PDF / Drukuj
+    </button>
+  </div>
+
+  <div class="container">
+    <div class="header">
+      <span class="badge">Instrukcja Obsługi Dla Właścicieli Pasieki</span>
+      <h1>Jak zarządzać sklepem w panelu WordPress?</h1>
+      <p class="subtitle">Przewodnik krok po kroku dla Magdaleny i Piotra Szymkowicz</p>
+      
+      <div class="meta-grid">
+        <div class="meta-item">📍 <strong>Adres logowania:</strong> sklep.pasiekausza.pl/wp-admin</div>
+        <div class="meta-item">⚙️ <strong>Status wtyczki:</strong> Aktywna w 100%</div>
+        <div class="meta-item">🐝 <strong>Dla kogo:</strong> Właściciele Pasieki Usza</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>✨ Bardzo dobra wiadomość:</strong><br>
+      Wtyczka łącząca sklep z WordPressem (<em>Pasieka Usza - Headless REST API Connector</em>) została <strong>pomyślnie zainstalowana i jest już aktywna</strong>!<br>
+      Oznacza to, że każda zmiana cen, dodanie nowego miodu, pytania FAQ czy artykułu na blogu wprowadzona w WordPressie od razu pojawia się w sklepie internetowym.
+    </div>
+
+    <!-- KROK 1 -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-num">1</div>
+        <div class="step-title">Zarządzanie Miodami i Cenami (WooCommerce)</div>
+      </div>
+      <div class="step-path">Ścieżka w menu: Produkty → Wszystkie produkty</div>
+      
+      <p><strong>Jak zmienić cenę lub wagę słoika:</strong></p>
+      <ol>
+        <li>W lewym menu kliknij <strong>Produkty → Wszystkie produkty</strong>.</li>
+        <li>Najedź na wybrany miód (np. <em>Miód Lipowy</em>) i kliknij <strong>Edytuj</strong>.</li>
+        <li>Przewiń stronę w dół do sekcji <strong>Dane produktu</strong>:
+          <ul>
+            <li>Jeśli produkt ma warianty wagowe (400g / 1200g): kliknij zakładkę <strong>Warianty</strong> po lewej stronie ramki danych produktu → rozwiń wariant i zmień cenę.</li>
+            <li>Jeśli produkt ma jedną wagę: zmień pole <strong>Cena podstawowa (zł)</strong>.</li>
+          </ul>
+        </li>
+        <li>Kliknij niebieski przycisk <strong>„Zaktualizuj”</strong> po prawej stronie na górze. Cena w sklepie zmieni się od razu!</li>
+      </ol>
+
+      <p style="margin-top: 14px;"><strong>Jak dodać nowy rodzaj miodu:</strong></p>
+      <ol>
+        <li>Kliknij <strong>Produkty → Dodaj nowy</strong>.</li>
+        <li>Wpisz nazwę (np. <em>Miód Koniczynowy RAW</em>) oraz 2–3 akapity opisu.</li>
+        <li>Po prawej stronie w sekcji <strong>Kategorie produktów</strong> zaznacz porę roku (np. <em>Wiosenne</em>, <em>Letnie</em> lub <em>Leśne</em>).</li>
+        <li>Wgraj zdjęcie słoika w sekcji <strong>Obrazek produktu</strong>.</li>
+        <li>Wpisz cenę i kliknij <strong>Opublikuj</strong>. Miód pojawi się w sklepie automatycznie.</li>
+      </ol>
+    </div>
+
+    <!-- KROK 2 -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-num">2</div>
+        <div class="step-title">Dodawanie produktów do „Skarbów Ula” (Oferta & Sklep)</div>
+      </div>
+      <div class="step-path">Ścieżka w menu: Produkty → Dodaj nowy (Kategoria: Skarby Ula)</div>
+      
+      <p>Poza tradycyjnym miodem sklep posiada dedykowaną podstronę <strong>Oferta („Skarby Ula”)</strong> na pierzgę, propolis, pyłek, wosk i odkład.</p>
+      
+      <p><strong>Jak dodać nowy skarb ula (np. Mydło z miodem, Maść propolisową, Eko-zestaw):</strong></p>
+      <ol>
+        <li>Wejdź w <strong>Produkty → Dodaj nowy</strong>.</li>
+        <li>Wpisz nazwę, cenę, wgraj zdjęcie i wpisz opis.</li>
+        <li>W ramce <strong>Kategorie produktów</strong> po prawej stronie <strong>zaznacz ptaszek: <code>Skarby Ula</code></strong> (lub <em>Apiterapia</em> / <em>Świece</em>).</li>
+        <li>Kliknij <strong>Opublikuj</strong>.</li>
+      </ol>
+      <div style="background: #FAF5EB; border: 1px dashed #D2A054; border-radius: 10px; padding: 12px; margin-top: 10px; font-size: 13px;">
+        💡 <strong>Magia techniczna:</strong> Sklep sam rozpozna tę kategorię i na podstronie <em>/oferta</em> <strong>automatycznie wygeneruje nowy, kolejny kafelek z Waszym zdjęciem, ceną i przyciskiem do zakupu</strong>!
+      </div>
+    </div>
+
+    <!-- KROK 3 -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-num">3</div>
+        <div class="step-title">Suwaki smaku, nuty i badania (Pola dedykowane)</div>
+      </div>
+      <div class="step-path">Ścieżka: Edycja produktu → Pola własne (pod opisem)</div>
+      
+      <p>W oknie edycji każdego miodu możecie precyzyjnie kontrolować suwaki smaku i parametry laboratoryjne partii:</p>
+      
+      <table>
+        <thead>
+          <tr>
+            <th>Nazwa pola w WordPressie</th>
+            <th>Wartość</th>
+            <th>Co to robi na stronie sklepu?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>sensory_sweetness</code></td>
+            <td>Cyfra 1–5</td>
+            <td>Ustawia suwak <strong>Słodycz</strong> (1 = delikatny, 5 = mocno słodki)</td>
+          </tr>
+          <tr>
+            <td><code>sensory_acidity</code></td>
+            <td>Cyfra 1–5</td>
+            <td>Ustawia suwak <strong>Kwasowość</strong> (1 = brak, 5 = wyczuwalny kwas)</td>
+          </tr>
+          <tr>
+            <td><code>sensory_intensity</code></td>
+            <td>Cyfra 1–5</td>
+            <td>Ustawia suwak <strong>Intensywność aromatu</strong></td>
+          </tr>
+          <tr>
+            <td><code>sensory_crystallization</code></td>
+            <td>Cyfra 1–5</td>
+            <td>Ustawia suwak <strong>Szybkość krystalizacji</strong> (1 = płynny, 5 = szybki)</td>
+          </tr>
+          <tr>
+            <td><code>flavor_notes</code></td>
+            <td>Tekst po przecinku</td>
+            <td>Wyświetla nuty bukietu, np. <em>Kwiat lipy, Mięta leśna</em></td>
+          </tr>
+          <tr>
+            <td><code>water_content_percentage</code></td>
+            <td>Liczba, np. 16.4</td>
+            <td>Wyświetla wilgotność w tabeli badań laboratoryjnych</td>
+          </tr>
+          <tr>
+            <td><code>batch_number</code></td>
+            <td>Tekst, np. LIP-26/07</td>
+            <td>Wyświetla oficjalny numer partii słoika</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="font-size: 12px; color: #7A6A5A;"><em>* Jeśli nie uzupełnicie tych pól, sklep przyjmie bezpieczne wartości domyślne dla danej odmiany miodu.</em></p>
+    </div>
+
+    <!-- KROK 4 -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-num">4</div>
+        <div class="step-title">Zarządzanie sekcją pytań i odpowiedzi FAQ</div>
+      </div>
+      <div class="step-path">Ścieżka w menu: Pytania FAQ → Dodaj nowe pytanie</div>
+      
+      <p>Dzięki naszej wtyczce w menu bocznym pojawiła się nowa dedykowana zakładka <strong>Pytania FAQ</strong>.</p>
+      <ol>
+        <li>Kliknij <strong>Pytania FAQ → Dodaj nowe pytanie</strong>.</li>
+        <li>W polu <strong>Tytuł</strong> wpisz pytanie klienta (np. <em>„W jakiej temperaturze rozpuszczać skrystalizowany miód?”</em>).</li>
+        <li>W głównym polu tekstowym poniżej wpisz odpowiedź z pasieki.</li>
+        <li>Kliknij <strong>Opublikuj</strong>.</li>
+        <li><strong>Efekt:</strong> Nowe pytanie automatycznie pojawia się w rozwijanym akordeonie na stronie głównej sklepu!</li>
+      </ol>
+    </div>
+
+    <!-- KROK 5 -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-num">5</div>
+        <div class="step-title">Prowadzenie Bloga i dodawanie filmów z YouTube</div>
+      </div>
+      <div class="step-path">Ścieżka w menu: Wpisy → Dodaj nowy</div>
+      
+      <ol>
+        <li>Kliknij <strong>Wpisy → Dodaj nowy</strong>.</li>
+        <li>Wpisz tytuł artykułu oraz jego treść.</li>
+        <li><strong>Dodawanie filmu wideo:</strong> Wklej w treść wpisu zwykły link do filmu z YouTube (np. <code>https://www.youtube.com/watch?v=af2qEqCfBTY</code>). System sam zamieni go w odtwarzacz wideo bez reklam!</li>
+        <li>Po prawej stronie w sekcji <strong>Obrazek wyróżniający</strong> wgraj zdjęcie z pasieki.</li>
+        <li>Kliknij <strong>Opublikuj</strong>. Artykuł natychmiast trafi na stronę bloga.</li>
+      </ol>
+    </div>
+
+    <!-- KROK 6 -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-num">6</div>
+        <div class="step-title">Formularz kontaktowy — gdzie trafiają wiadomości?</div>
+      </div>
+      <div class="step-path">Adres e-mail odbiorcy: kontakt@pasiekausza.pl</div>
+      
+      <p>Gdy klient na podstronie <em>/kontakt</em> wypełni formularz i kliknie „Wyślij zapytanie do pasieki”:</p>
+      <ul>
+        <li>WordPress natychmiast generuje e-mail i wysyła go na Waszą skrzynkę pocztową.</li>
+        <li>W wiadomości otrzymujecie imię, numer telefonu, e-mail i treść zapytania klienta.</li>
+        <li><strong>Jak odpisać?</strong> Wystarczy w swoim programie pocztowym kliknąć zwykłe <strong>„Odpowiedz” (Reply)</strong> — mail automatycznie poleci prosto do klienta!</li>
+      </ul>
+    </div>
+
+    <!-- KROK 7 -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-num">7</div>
+        <div class="step-title">Codzienna obsługa zamówień i etykiety InPost</div>
+      </div>
+      <div class="step-path">Ścieżka w menu: WooCommerce → Zamówienia</div>
+      
+      <ol>
+        <li>Gdy klient kupi miód, otrzymujecie natychmiast e-mail na telefon: <em>„Nowe zamówienie #1234: 2x Miód Lipowy 1200g, Paczkomat WRO01A”</em>.</li>
+        <li>Wchodzicie w: <strong>WooCommerce → Zamówienia</strong> i klikacie dane zamówienie.</li>
+        <li>Widzicie spakowane miody, telefon klienta oraz wybrany Paczkomat.</li>
+        <li>Klikacie przycisk <strong>„Generuj etykietę InPost”</strong>, drukujecie naklejkę i naklejacie na tubę z miodem.</li>
+        <li>Zmieniacie status na <strong>Zrealizowane</strong> — klient dostaje automatyczne podziękowanie i link do śledzenia przesyłki.</li>
+      </ol>
+    </div>
+
+    <div class="footer" style="text-align: center; border-top: 1px solid var(--border); padding-top: 20px; font-size: 12px; color: var(--text-muted); margin-top: 30px;">
+      Pasieka Wędrowna „Usza” • Ciechów, Dolny Śląsk • Podręcznik Administratora 2026
+    </div>
+  </div>
+
+</body>
+</html>
