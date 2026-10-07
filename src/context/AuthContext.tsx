@@ -96,6 +96,7 @@ interface AuthContextType {
   toggleFavorite: (productId: string) => void;
   isFavorite: (productId: string) => boolean;
   addOrder: (order: PastOrder) => void;
+  addReminders: (reminders: SubscriptionItem[]) => void;
 }
 
 const STORAGE_KEY = 'pasieka_user_account_v1';
@@ -380,6 +381,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   };
 
+  const addReminders = (reminders: SubscriptionItem[]) => {
+    if (!user || reminders.length === 0) return;
+    saveUser({
+      ...user,
+      subscriptions: [...reminders, ...(user.subscriptions || [])],
+    });
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -398,6 +407,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         toggleFavorite,
         isFavorite,
         addOrder,
+        addReminders,
       }}
     >
       {children}

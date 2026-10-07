@@ -66,7 +66,7 @@ const REAL_LOCKERS = [
 
 export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }) => {
   const navigate = useNavigate();
-  const { user, register, addOrder, updateInvoiceData } = useAuth();
+  const { user, register, addOrder, addReminders, updateInvoiceData } = useAuth();
   const [createAccount, setCreateAccount] = useState(false);
   const [accountPassword, setAccountPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -290,8 +290,30 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
       status: 'Przygotowywana' as const,
     };
 
+    const reminderItems = items
+      .filter(i => Boolean(i.subscriptionInterval))
+      .map(i => {
+        const days = (i.subscriptionInterval || 60) as 30 | 60 | 90;
+        const targetDate = new Date();
+        targetDate.setDate(targetDate.getDate() + days);
+        return {
+          id: `sub-${Date.now()}-${i.product.id}`,
+          productId: i.product.id,
+          productName: i.product.name,
+          weightLabel: `${i.weightGrams || i.selectedWeightGrams || 400} g`,
+          intervalDays: days,
+          pricePln: i.pricePln,
+          nextShipmentDate: targetDate.toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' }),
+          status: 'active' as const,
+          imageUrl: i.product.imageUrl,
+        };
+      });
+
     if (user) {
       addOrder(newPastOrder);
+      if (reminderItems.length > 0) {
+        addReminders(reminderItems);
+      }
       if (isCompany) {
         updateInvoiceData({
           isCompany: true,
@@ -326,6 +348,9 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
       });
       setTimeout(() => {
         addOrder(newPastOrder);
+        if (reminderItems.length > 0) {
+          addReminders(reminderItems);
+        }
       }, 50);
     }
 
