@@ -1,155 +1,242 @@
-# 🐝 Pasieka Wędrowna „Usza” — Raport Wdrożeniowy i Instrukcja dla Właścicieli
+# 🍯 Pasieka Wędrowna „Usza” — Co jest jeszcze potrzebne do startu sprzedaży?
+### Kompletny przewodnik i lista materiałów dla Właścicieli Pasieki
 
-**Wersja dokumentu:** 1.0 (Wersja Produkcyjna)  
-**Data:** Październik 2026  
-**Status projektu:** Frontend w 100% zintegrowany z WooCommerce API  
-
----
-
-## 📌 Podsumowanie Wykonanych Prac (Co jest w 100% gotowe)
-
-Sklep internetowy Pasieki Wędrownej „Usza” został zbudowany w nowoczesnej architekturze **Headless e-Commerce** (superszybki, luksusowy interfejs w React połączony w tle z panelem zarządzania WordPress/WooCommerce).
-
-### ✅ 1. Pełna baza 17 produktów w WooCommerce
-Wszystkie miody odmianowe oraz produkty pszczele zostały automatycznie zaimportowane przez API do bazy WooCommerce ze swoimi unikalnymi identyfikatorami:
-* **Miód Akacjowy** (`ID: 37`)
-* **Miód Lipowy** (`ID: 50`)
-* **Miód Wrzosowy** (`ID: 52`)
-* **Miód ze Spadzi Iglastej** (`ID: 54`)
-* **Miód Wielokwiatowy** (`ID: 56`)
-* **Miód Gryczany** (`ID: 58`)
-* **Miód Rzepakowy** (`ID: 60`)
-* **Miód Mniszkowy** (`ID: 62`)
-* **Miód Leśny** (`ID: 64`)
-* **Miód Malinowy** (`ID: 66`)
-* **Miód Nawłociowy** (`ID: 68`)
-* **Miód Faceliowy** (`ID: 70`)
-* **Pierzga Pszczela (Bee Bread)** (`ID: 72`)
-* **Propolis – Kit Pszczeli** (`ID: 74`)
-* **Pyłek Pszczeli Kwiatowy** (`ID: 76`)
-* **Świeca z Wosku Pszczelego** (`ID: 78`)
-* **Odkład Pszczeli + Szkolenie** (`ID: 80`)
-
-Każdy produkt posiada przypisaną kategorię, ceny, opisy oraz komplet parametrów rzemieślniczych (rok zbioru, lokalizacja pasieki, zawartość wody, profil sensoryczny).
-
-### ✅ 2. W pełni natywna kasa (Zero przeskakiwania na surowego WordPressa)
-* Klient przechodzi cały proces zakupu bezpośrednio w eleganckim, autorskim interfejsie.
-* Wybór metod dostawy: **Paczkomat InPost (15 zł / gratis od 180 zł)**, **Kurier InPost (18 zł / gratis od 180 zł)**, **Odbiór osobisty w pasiece (0 zł)**.
-* Metody płatności: **BLIK**, **Szybki przelew Przelewy24**, **Płatność przy odbiorze (Pobranie)** oraz **Tradycyjny przelew**.
-* Po złożeniu zamówienia klient otrzymuje dedykowany, luksusowy ekran z podziękowaniem i numerem zamówienia, a dane transakcji natychmiast trafiają do panelu WooCommerce.
-
-### ✅ 3. Autentyczna mapa i baza Paczkomatów InPost
-* Zintegrowano oficjalną bazę **14 901 prawdziwych Paczkomatów InPost** (cały Dolny Śląsk, Lubań, Wrocław z wszystkimi dzielnicami i ulicami, oraz wszystkie polskie miasta).
-* Wyszukiwarka z lupką pozwala wpisać dowolną ulicę (np. *Strzegomska*), miasto (*Lubań*) lub kod automatu (*WRO01A*).
-* Interaktywna mapa OpenStreetMap/Leaflet działa bezawaryjnie bez konieczności podawania tokenów czy NIP-u.
-
-### ✅ 4. Bezpieczeństwo i polityka kont użytkowników
-* Domyślnie zakup odbywa się jako **Gość** (najwyższa konwersja, klient nie jest zmuszany do rejestracji).
-* Opcjonalna rejestracja wymaga bezpiecznego hasła (min. 8 znaków z cyfrą lub wielką literą) z wizualnym wskaźnikiem siły hasła i przyciskiem podglądu (ikonka oka).
-* Przycisk śledzenia w panelu *Moje Konto* wyświetla się wyłącznie klientom posiadającym konto.
+**Dla kogo:** Magdalena i Piotr Szymkowicz (Właściciele Pasieki)  
+**Data opracowania:** Październik 2026  
+**Cel dokumentu:** Wskazanie krok po kroku elementów formalnych, technicznych i organizacyjnych, których potrzebujemy od Was, aby uruchomić oficjalną sprzedaż miodów online.
 
 ---
 
-## 📋 Lista Zadań dla Właścicieli Pasieki (Przed startem sprzedaży)
+> [!NOTE]
+> **Dobra wiadomość na start:**  
+> Cała techniczna strona sklepu — luksusowa szata graficzna, katalog 17 produktów pszczelich, koszyk, kasa, dobierak miodów oraz mapa z bazą 14 901 Paczkomatów InPost — **jest już w 100% gotowa i działa**.  
+> Poniższa lista to wyłącznie formalności i dane dostępowe, które musicie przekazać jako właściciele firmy/pasieki. Wszystko opisaliśmy prostym, nietechnicznym językiem.
 
-Poniżej znajduje się lista 5 kroków konfiguracyjnych, które właściciele pasieki muszą uzupełnić w panelu WordPress/WooCommerce:
+---
 
+## 📋 Spis Treści Checklisty
+
+1. [Status podatkowy, fakturowanie i KSeF](#1-status-podatkowy-fakturowanie-i-ksef)
+2. [Płatności online (BLIK / Szybkie przelewy Przelewy24 lub PayU)](#2-płatności-online-blik--przelewy24--payu)
+3. [Konto bankowe do tradycyjnych przelewów](#3-konto-bankowe-do-tradycyjnych-przelewów)
+4. [Firmowa poczta e-mail i powiadomienia (SMTP)](#4-firmowa-poczta-e-mail-i-powiadomienia-smtp)
+5. [InPost — Umowa i automatyczne etykiety (Manager Paczek)](#5-inpost--umowa-i-automatyczne-etykiety-manager-paczek)
+6. [Dane formalne do Regulaminu i Polityki Prywatności (RODO / Weterynaria)](#6-dane-formalne-do-regulaminu-i-polityki-prywatności-rodo--weterynaria)
+7. [Weryfikacja cen, gramatur i stanów magazynowych](#7-weryfikacja-cen-gramatur-i-stanów-magazynowych)
+8. [📝 Szybki formularz do skopiowania i odesłania](#-szybki-formularz-do-skopiowania-i-odesłania)
+
+---
+
+## 1. Status podatkowy, fakturowanie i KSeF
+
+### 📥 Co dokładnie musicie nam przekazać?
+1. **Informację o statusie podatkowym pasieki:**
+   * Czy działacie jako **Rolnik Ryczałtowy / Rolniczy Handel Detaliczny (RHD)** zwolniony podmiotowo z VAT?
+   * Czy jesteście **czynnym podatnikiem VAT** (np. jednoosobowa działalność gospodarcza / spółka)?
+2. **Nazwę programu do fakturowania / księgowości:**
+   * Z jakiego programu korzystacie do wystawiania faktur? (np. *Fakturownia.pl*, *wFirma*, *iFirma*, *InFakt*, *Subiekt*, itp.) lub namiary na Waszą księgową.
+
+### 💡 Po co to jest nam potrzebne?
+* **Prawidłowe stawki na paragonach i fakturach:** W formularzu zamówienia dodaliśmy opcję *„Chcę fakturę VAT na firmę (B2B)”*. Miód i produkty pszczele mają stawkę **5% VAT**, natomiast świece woskowe czy warsztaty **23% VAT** (lub zwolnienie ZW w przypadku rolnika ryczałtowego).
+* **Zgodność z KSeF (Krajowym Systemem e-Faktur):**  
+  Od 2026 r. transakcje między firmami (B2B) muszą trafiać do KSeF. Sklep internetowy nie powinien łączyć się bezpośrednio z serwerami rządowymi — zamiast tego łączymy WooCommerce z Waszym programem księgowym (np. Fakturownią), a to program księgowy sam, automatycznie wysyła e-fakturę do KSeF i generuje PDF dla klienta.
+* **Oszczędność Waszego czasu:** Dzięki spięciu sklepu z programem księgowym nie będziecie musieli ręcznie przepisywać faktur ani wypisywać papierków.
+
+### 🛠️ Jak to zrobić krok po kroku?
+1. Jeśli macie księgową / biuro rachunkowe: wyślijcie krótkie pytanie:  
+   *„Dzień dobry, uruchamiamy sklep internetowy z miodami. W jakim programie wystawiamy faktury i czy jesteśmy czynnym podatnikiem VAT, czy rolnikiem ryczałtowym?”*
+2. Jeśli nie korzystacie jeszcze z żadnego programu:  
+   Polecamy założyć konto na [Fakturownia.pl](https://fakturownia.pl) lub [wFirma.pl](https://wfirma.pl) — posiadają one bezpłatne/tanie wtyczki do WooCommerce, które zrobią wszystko automatycznie.
+
+---
+
+## 2. Płatności online (BLIK / Przelewy24 / PayU)
+
+### 📥 Co dokładnie musicie nam przekazać?
+* **Podpisanie umowy z operatorem płatności** (polecamy **Przelewy24** lub **PayU**) oraz przekazanie nam kluczy konfiguracyjnych z Waszego konta:
+  * **ID Sprzedawcy (Merchant ID)**
+  * **Klucz CRC**
+  * **Klucz Raportów / API**  
+  *(Alternatywnie: tymczasowy login i hasło do panelu Przelewy24, a my sami wkleimy klucze do sklepu).*
+
+### 💡 Po co to jest nam potrzebne?
+* Ponad **80% Polaków kupuje w internecie za pomocą BLIK-a** na telefonie lub szybkiego przelewu w swoim banku. Bez płatności online większość klientów zrezygnuje z zakupu.
+* Pieniądze od klientów trafiają **bezpośrednio na Wasze konto bankowe**.
+* Sklep po opłaceniu zamówienia automatycznie oznacza je jako *„Płatność przyjęta — przygotuj do wysyłki”*, więc od razu wiecie, które słoiki pakować.
+
+### 🛠️ Jak to zrobić krok po kroku?
+1. Wejdźcie na stronę **[www.przelewy24.pl](https://www.przelewy24.pl)** (lub [www.payu.pl](https://poland.payu.com)).
+2. Kliknijcie **Zarejestruj się** i wybierzcie rejestrację jako firma lub gospodarstwo rolne.
+3. Wypełnijcie krótki formularz z danymi pasieki i numerem konta bankowego.
+4. Wykonajcie przelew weryfikacyjny (zwykle 1 zł ze swojego konta, aby potwierdzić tożsamość).
+5. Po aktywacji konta (zwykle 1–2 dni robocze) wejdźcie w panelu Przelewy24 w:  
+   *Moje konto $\rightarrow$ Dane integracji* i skopiujcie wygenerowane klucze, a następnie prześlijcie je nam.
+
+---
+
+## 3. Konto bankowe do tradycyjnych przelewów
+
+### 📥 Co dokładnie musicie nam przekazać?
+* **Oficjalny numer rachunku bankowego (26 cyfr)**
+* **Pełną nazwę odbiorcy** (np. *Pasieka Wędrowna „Usza” Magdalena i Piotr Szymkowicz*)
+* **Nazwę banku** (np. *Santander Bank Polska / PKO BP / Bank Spółdzielczy*)
+
+### 💡 Po co to jest nam potrzebne?
+* Część starszych klientów lub osób zamawiających większe ilości woli wykonać tradycyjny przelew ze swojego banku lub na poczcie.
+* Obecnie w kasie wyświetla się przykładowy numer konta (`12 1090...`), który musimy zastąpić Waszym prawdziwym rachunkiem, aby pieniądze trafiły do Was.
+* Dane te pojawią się na ekranie po zakupie oraz w mailu z potwierdzeniem.
+
+### 🛠️ Jak to zrobić krok po kroku?
+* Wystarczy skopiować numer konta z Waszej bankowości internetowej lub umowy rachunku i wpisać go w formularzu na dole tego dokumentu.
+
+---
+
+## 4. Firmowa poczta e-mail i powiadomienia (SMTP)
+
+### 📥 Co dokładnie musicie nam przekazać?
+1. **Adres e-mail w domenie pasieki**, z którego sklep ma wysyłać wiadomości:
+   * **Wariant polecany (dwie skrzynki):**
+     * `kontakt@pasiekausza.pl` — do kontaktu z klientami, zapytań o miody i oferty.
+     * `zamowienia@pasiekausza.pl` — automat wysyłający potwierdzenia zakupów i faktury.
+   * **Wariant prosty (jedna skrzynka do wszystkiego):**
+     * np. `kontakt@pasiekausza.pl` lub `sklep@pasiekausza.pl`.
+2. **Dane dostępowe do serwera poczty (SMTP):**
+   * Serwer poczty wychodzącej (np. `mail.pasiekausza.pl`)
+   * Login (adres e-mail)
+   * Hasło do skrzynki pocztowej
+   * Port (zwykle 465 lub 587)
+
+### 💡 Po co to jest nam potrzebne?
+* **Prestiż i zaufanie:** Klient widząc maila z adresu `@pasiekausza.pl` wie, że kupuje z prawdziwej, profesjonalnej pasieki, a nie z przypadkowego adresu prywatnego (np. gmail czy wp.pl).
+* **Niezawodność (uniknięcie folderu SPAM):** Jeśli sklep wysyła maile bez konfiguracji SMTP, serwery pocztowe (Gmail, Onet, WP) wrzucają potwierdzenia zamówień do spamu. Dzięki oficjalnej konfiguracji SMTP maile dochodzą w 100%.
+* **Powiadomienia na Wasz telefon:** Przy każdym nowym zamówieniu natychmiast otrzymacie e-mail: *„Nowe zamówienie #1234: 2x Miód Lipowy 1200g, Paczkomat WRO01A”*.
+
+### 🛠️ Jak to zrobić krok po kroku?
+1. Zalogujcie się do panelu hostingu, gdzie zarejestrowana jest domena `pasiekausza.pl` (np. *Cyberfolks*, *LH.pl*, *OVH*, *dhosting*, itp.).
+2. Wejdźcie w zakładkę **Konta pocztowe / E-mail** i kliknijcie **Utwórz nową skrzynkę**.
+3. Utwórzcie skrzynkę (np. `kontakt@pasiekausza.pl`), ustawcie bezpieczne hasło i prześlijcie nam te dane.
+
+---
+
+## 5. InPost — Umowa i automatyczne etykiety (Manager Paczek)
+
+### 📥 Co dokładnie musicie nam przekazać?
+* **Założenie konta biznesowego w InPost Manager Paczek**
+* **Klucz API InPost** oraz **ID Organizacji**  
+  *(Zezwala on sklepowi na automatyczne generowanie listów przewozowych)*
+
+### 💡 Po co to jest nam potrzebne?
+* **Koniec z ręcznym wypisywaniem paczek:** Klienci wybierają swój Paczkomat na naszej mapie. Dzięki połączeniu z InPostem w panelu WordPress klikacie tylko **jeden przycisk: „Generuj etykietę InPost”**.
+* Drukujecie gotową naklejkę adresową, naklejacie na ekotubę i wrzucacie do dowolnego automatu InPost bez stania w kolejkach (lub kurier InPost odbiera je bezpośrednio z pasieki).
+* Klient automatycznie otrzymuje SMS i e-mail z kodem odbioru i linkiem do śledzenia przesyłki.
+
+### 🛠️ Jak to zrobić krok po kroku?
+1. Wejdźcie na **[manager.paczkomaty.pl](https://manager.paczkomaty.pl)** i załóżcie darmowe konto firmowe/biznesowe.
+2. Po zalogowaniu przejdźcie do zakładki: **Moje konto $\rightarrow$ API**.
+3. Kliknijcie **Wygeneruj token API** i skopiujcie:
+   * **Token (Klucz API)**
+   * **ID Organizacji (Organization ID)**
+4. Prześlijcie nam oba ciągi znaków — my wgramy je do wtyczki InPost w WordPressie.
+
+---
+
+## 6. Dane formalne do Regulaminu i Polityki Prywatności (RODO / Weterynaria)
+
+### 📥 Co dokładnie musicie nam przekazać?
+Zgodnie z polskim prawem konsumenckim i sanitarnym, w stopce sklepu oraz w Regulaminie muszą znaleźć się oficjalne dane sprzedawcy żywności:
+1. **Pełna nazwa podmiotu:** (np. *Gospodarstwo Pasieczne „Pasieka Wędrowna Usza” Magdalena i Piotr Szymkowicz*)
+2. **Forma działalności:** (np. *Rolniczy Handel Detaliczny (RHD)*, *Działy Specjalne Produkcji Rolnej*, lub *Działalność Gospodarcza*)
+3. **Numery rejestrowe:**
+   * **NIP** oraz **REGON** (jeśli nadano)
+   * **Weterynaryjny Numer Identyfikacyjny (WNI):** *(Bardzo ważny! Nadany przez Powiatowego Lekarza Weterynarii, potwierdza legalność i badania miodu).*
+4. **Adres stacjonarny:** Miejscowość, ulica, numer domu, kod pocztowy (gdzie mieści się pracownia pasieczna i punkt ewentualnego odbioru osobistego).
+5. **Numer telefonu do kontaktu z klientami** oraz godziny, w których klienci mogą dzwonić (np. *pon.-pt. 8:00 - 18:00*).
+
+### 💡 Po co to jest nam potrzebne?
+* **Wymóg prawny:** Każdy sklep internetowy w Polsce musi posiadać regulamin zgodny z ustawą o prawach konsumenta i RODO.
+* **Zaufanie kupujących:** Świadomi klienci sprawdzają, czy pasieka posiada WNI i legalny nadzór weterynaryjny. Dla miodów rzemieślniczych jest to kluczowy znak jakości.
+* **Ochrona pasieki:** Prawidłowy regulamin zabezpiecza Was w sprawach reklamacji, zwrotów żywności (miód jako produkt spożywczy w zapieczętowanym słoiku podlega specjalnym regułom zwrotu).
+
+---
+
+## 7. Weryfikacja cen, gramatur i stanów magazynowych
+
+### 📥 Co dokładnie musicie sprawdzić?
+Poniżej znajduje się lista 17 produktów, które wprowadziliśmy do bazy sklepu. Rzućcie okiem, czy podane ceny i dostępności odpowiadają aktualnemu stanowi w pracowni pasiecznej:
+
+| Lp. | Produkt | Gramatura | Wprowadzona Cena | Czy dostępny od ręki? |
+| :---: | :--- | :---: | :---: | :---: |
+| 1. | **Miód Akacjowy (RAW)** | 400g / 1200g | 36 zł / 75 zł | ✅ Dostępny |
+| 2. | **Miód Lipowy (RAW)** | 400g / 1200g | 35 zł / 75 zł | ✅ Dostępny |
+| 3. | **Miód Wrzosowy (Królewski)** | 400g / 1200g | 55 zł / 120 zł | ✅ Dostępny |
+| 4. | **Miód ze Spadzi Iglastej** | 400g / 1200g | 48 zł / 98 zł | ✅ Dostępny |
+| 5. | **Miód Wielokwiatowy Łąkowy** | 400g / 1200g | 30 zł / 65 zł | ✅ Dostępny |
+| 6. | **Miód Gryczany** | 400g / 1200g | 35 zł / 75 zł | ✅ Dostępny |
+| 7. | **Miód Rzepakowy Kremowany** | 400g / 1200g | 30 zł / 65 zł | ✅ Dostępny |
+| 8. | **Miód Mniszkowy Majowy** | 400g / 1200g | 38 zł / 80 zł | ✅ Dostępny |
+| 9. | **Miód Leśny z Maliną Leśną** | 400g / 1200g | 38 zł / 80 zł | ✅ Dostępny |
+| 10. | **Miód Malinowy Letni** | 400g / 1200g | 38 zł / 80 zł | ✅ Dostępny |
+| 11. | **Miód Nawłociowy (Jesienny)** | 400g / 1200g | 35 zł / 75 zł | ✅ Dostępny |
+| 12. | **Miód Faceliowy** | 400g / 1200g | 34 zł / 72 zł | ✅ Dostępny |
+| 13. | **Pierzga Pszczela (Bee Bread)** | 100g / 200g / 500g | 35 zł / 65 zł / 150 zł | ✅ Dostępny |
+| 14. | **Propolis – Kit Pszczeli 20%** | 50 ml | 29 zł | ✅ Dostępny |
+| 15. | **Pyłek Pszczeli Kwiatowy** | 200g / 500g | 28 zł / 60 zł | ✅ Dostępny |
+| 16. | **Świeca z Wosku Pszczelego** | 1 szt. | 22 zł | ✅ Dostępny |
+| 17. | **Odkład Pszczeli + Szkolenie** | 1 rodzina | 350 zł | ⏳ Przedsprzedaż wiosenna |
+
+*Jeśli któraś cena ma być inna lub któryś miód jest chwilowo wyprzedany — dajcie nam znać, zmienimy to od razu w panelu.*
+
+---
+
+## 📝 Szybki formularz do skopiowania i odesłania
+
+Możecie skopiować poniższy blok tekstu, uzupełnić brakujące dane i odesłać go nam w mailu lub komunikatorze:
+
+```text
+==================================================================
+PAKIET STARTOWY DLA PASIEKI USZA — FORMULARZ DANYCH
+==================================================================
+
+1. DANE DO REGULAMINU I ETYKIET:
+   - Pełna nazwa pasieki/firmy: 
+   - Imię i nazwisko właścicieli: 
+   - Dokładny adres stacjonarny: 
+   - NIP (jeśli jest): 
+   - Weterynaryjny Numer Identyfikacyjny (WNI): 
+   - Telefon kontaktowy dla klientów: 
+   - Godziny kontaktu (np. 8:00 - 18:00): 
+
+2. RACHUNEK BANKOWY DO PRZELEWÓW TRADYCYJNYCH:
+   - Numer konta IBAN (26 cyfr): 
+   - Nazwa banku: 
+   - Nazwa odbiorcy: 
+
+3. PODATKI, KSIĘGOWOŚĆ I FAKTURY (KSeF):
+   - Forma opodatkowania: [ ] Rolnik ryczałtowy / RHD (zwolniony z VAT)
+                         [ ] Czynny podatnik VAT
+   - Program do wystawiania faktur (np. Fakturownia / wFirma / inny): 
+   - Kontakt do księgowej (opcjonalnie): 
+
+4. PŁATNOŚCI ONLINE (Przelewy24 / PayU):
+   - Status umowy: [ ] Podpisana / [ ] W trakcie rejestracji
+   - ID Sprzedawcy (Merchant ID): 
+   - Klucz CRC: 
+   - Klucz API / Raportów: 
+
+5. INPOST (Manager Paczek):
+   - Status konta: [ ] Założone / [ ] Czeka na rejestrację
+   - Token API: 
+   - ID Organizacji: 
+
+6. POCZTA E-MAIL (SMTP):
+   - Preferowany adres (np. kontakt@pasiekausza.pl): 
+   - Hasło do skrzynki (lub dostęp do hostingu): 
+
+7. UWAGI DO CEN / DOSTĘPNOŚCI MIODÓW:
+   - (wpisz jeśli któreś ceny z tabeli mają ulec zmianie)
+==================================================================
 ```
-┌────────────────────────────────────────────────────────────────────────┐
-│                   CHECKLISTA WŁAŚCICIELI PASIEKI                       │
-├────┬──────────────────────────────────────────┬────────────────────────┤
-│ 1. │ Aktywacja produkcyjna Przelewy24 / PayU  │ Wymaga umowy z bramką  │
-│ 2. │ Podanie właściwego numeru konta pasieki  │ Wpisanie w kod / panel │
-│ 3. │ Konfiguracja wysyłki e-maili (SMTP)      │ Poczta ze sklepu       │
-│ 4. │ Podpięcie umowy InPost (Manager Paczek)  │ Generowanie etykiet    │
-│ 5. │ Weryfikacja Regulaminu i Polityki RODO   │ Podstawa prawna sklepu │
-└────┴──────────────────────────────────────────┴────────────────────────┘
-```
 
 ---
 
-### Krok 1: Produkcyjna Bramka Płatności (Przelewy24 / BLIK)
-Aby klienci mogli rzeczywiście opłacać zamówienia przez BLIK i karty:
-1. Właściciele pasieki podpisują umowę z operatorem płatności (np. **Przelewy24** lub **PayU**).
-2. Po aktywacji konta operator przekazuje dane dostępowe:
-   * **ID Sprzedawcy (Merchant ID)**
-   * **Klucz CRC**
-   * **Klucz API / Raportów**
-3. W panelu WordPress: przejdź do **WooCommerce $\rightarrow$ Ustawienia $\rightarrow$ Płatności $\rightarrow$ Przelewy24**.
-4. Wklej otrzymane klucze i **odznacz opcję „Tryb testowy / Sandbox”**.
-5. Zapisz zmiany.
-
----
-
-### Krok 2: Numer Konta do Tradycyjnego Przelewu
-Dla klientów wybierających tradycyjny przelew bankowy obecnie wyświetla się przykładowy numer konta:
-`12 1090 2398 0000 0001 4820 9123`
-
-* **Zadanie dla Właścicieli:**  
-  Przekazać oficjalny numer rachunku bankowego pasieki, nazwę odbiorcy oraz bank, aby zaktualizować go w kodzie kasy i w szablonie wiadomości e-mail w WooCommerce.
-
----
-
-### Krok 3: Poczta e-mail i powiadomienia (SMTP)
-Aby potwierdzenia zamówień do klientów i powiadomienia o nowym zakupie do pasieki dochodziły w 100% niezawodnie (i nie wpadały do spamu):
-1. W panelu WordPress wejdź w **Wtyczki $\rightarrow$ Dodaj nową** i zainstaluj **WP Mail SMTP** (darmowa wtyczka).
-2. Skonfiguruj wysyłkę z oficjalnego adresu e-mail pasieki (np. `kontakt@pasiekausza.pl` lub `sklep@pasiekausza.pl`).
-3. W **WooCommerce $\rightarrow$ Ustawienia $\rightarrow$ E-maile** upewnij się, że pole *„Adres odbiorcy powiadomień o nowym zamówieniu”* wskazuje adres mailowy właściciela pasieki.
-
----
-
-### Krok 4: Umowa z InPostem (Manager Paczek)
-Aby jednym kliknięciem generować etykiety nadawcze na paczkomaty i dla kuriera:
-1. Zarejestruj pasiekę w usłudze **InPost Manager Paczek** (dla firm lub klientów biznesowych).
-2. W WordPressie zainstaluj bezpłatną wtyczkę **InPost PL** (oficjalna wtyczka InPostu dla WooCommerce).
-3. Podaj w niej swój klucz API z Managera Paczek.
-4. **Efekt:** Przy każdym zamówieniu w panelu WordPress pojawi się przycisk *„Wygeneruj etykietę InPost”* — wystarczy kliknąć, wydrukować naklejkę i nakleić na ekotubę z miodem!
-
----
-
-### Krok 5: Dane Firmowe, Regulamin i RODO
-W zakładce **Regulamin** oraz **Polityka Prywatności** na stronie należy uzupełnić:
-* Pełną nazwę podmiotu (np. *Gospodarstwo Pasieczne / Rolniczy Handel Detaliczny (RHD) / NIP / Weterynaryjny Numer Identyfikacyjny WNI*),
-* Adres pasieki i dane do kontaktu telefonicznego,
-* Prawo odstąpienia od umowy i informacje o reklamacjach żywności.
-
----
-
-### Krok 6: Faktury VAT i Automatyczna Wysyłka PDF (B2B)
-W formularzu zamówienia (kasa) wprowadzono pełną obsługę zamówień na firmę (B2B) zgodną z art. 106e ustawy o VAT:
-* Klient zaznacza opcję *„Chcę fakturę VAT na firmę”* i podaje: **Nazwę firmy, NIP, Ulicę i numer, Kod pocztowy oraz Miejscowość**.
-* Dane te są natychmiast przekazywane do WooCommerce w sekcji `billing` oraz w metadanych zamówienia (`_billing_nip`, `vat_number`, `Faktura VAT: TAK`).
-* **Jak zautomatyzować generowanie i wysyłkę PDF w WordPress?**
-  1. W WordPressie zainstaluj wtyczkę **WooCommerce PDF Invoices & Packing Slips** (bezpłatna na wordpress.org) lub zintegruj pasiekę z systemem księgowym (**Fakturownia**, **wFirma**, **iFirma**).
-  2. W ustawieniach wtyczki wpisz dane sprzedawcy (Pasieka Usza, NIP, adres, numer rachunku bankowego).
-  3. **Efekt automatyzacji:**
-     * Gdy zamówienie zmieni status na *Zrealizowane*, wtyczka automatycznie wygeneruje plik PDF faktury i dołączy go do e-maila z potwierdzeniem wysłania paczki.
-     * Dodatkowo zarejestrowani klienci mają wgląd i możliwość pobrania e-Faktury bezpośrednio w panelu **Moje Konto $\rightarrow$ Historia zamówień $\rightarrow$ Faktura PDF**.
-
----
-
-### Krok 7: Kody Rabatowe i Kupony Promocyjne
-* WooCommerce posiada wbudowany moduł kuponów (**Marketing $\rightarrow$ Kupony**).
-* Właściciele mogą tworzyć kupony kwotowe (np. `USZA10` na -10 zł) lub procentowe (np. `WIOSNA15` na -15%), kupony na darmową dostawę, bądź kupony z ograniczeniem ważności do określonej daty.
-
----
-
-## 🍯 Jak zarządzać sklepem na co dzień (Dla Właścicieli Pasieki)
-
-### 1. Gdzie sprawdzam nowe zamówienia?
-* Zaloguj się na `https://sklep.pasiekausza.pl/wp-admin`.
-* W menu po lewej kliknij **WooCommerce $\rightarrow$ Zamówienia**.
-* Zobaczysz listę zamówień z numerami, nazwiskami klientów, wybranym paczkomatem i kwotą.
-* Po spakowaniu słoików zmień status z *W trakcie realizacji* na *Zrealizowane* — klient automatycznie otrzyma e-mail z informacją, że miód jest w drodze!
-
-### 2. Jak zmienić cenę miodu lub oznaczyć brak w magazynie?
-* W menu kliknij **Produkty $\rightarrow$ Wszystkie produkty**.
-* Kliknij np. *Miód Lipowy*.
-* W sekcji *Dane produktu*:
-  * Zmień **Cenę standardową** (np. z 35 na 38 zł).
-  * W zakładce *Magazyn* możesz zmienić stan na *Brak w magazynie* (wtedy na stronie głównej automatycznie pojawi się oznaczenie „Wyprzedany w tym sezonie”).
-* Kliknij niebieski przycisk **Zaktualizuj** po prawej stronie. Zmiana pojawi się w sklepie!
-
----
-
-*Dokument przygotowany dla zespołu Pasieki Wędrownej „Usza”. W razie pytań technicznych frontend i konfiguracja API są w pełni udokumentowane w repozytorium projektu.*
+*Dokument przygotowany z myślą o prostym i bezpiecznym wdrożeniu sklepu Pasieki Wędrownej „Usza”. W razie jakichkolwiek pytań służymy pomocą przy każdym z powyższych kroków!*
