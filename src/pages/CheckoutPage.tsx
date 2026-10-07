@@ -24,8 +24,8 @@ import {
   EyeOff
 } from 'lucide-react';
 import { createWooCommerceOrder } from '../services/wooCommerceService';
-
 import { useAuth } from '../context/AuthContext';
+import { InPostLockerMapModal } from '../components/InPostLockerMapModal';
 
 interface CheckoutPageProps {
   items: CartItem[];
@@ -1097,120 +1097,16 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
       </div>
 
       {/* Modal interaktywnej mapy Paczkomatów */}
-      {isMapModalOpen && (
-        <div className="fixed inset-0 z-50 overflow-hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
-          <div className="bg-white rounded-3xl border border-[#E7DDCE] shadow-2xl max-w-2xl w-full max-h-[88vh] flex flex-col overflow-hidden">
-            <div className="p-5 border-b border-[#E7DDCE] flex items-center justify-between bg-[#FAF8F5]">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-[#FAF0DC] text-[#8C4609] flex items-center justify-center">
-                  <MapPin className="w-4 h-4 text-[#8C4609]" />
-                </div>
-                <div>
-                  <h3 className="font-serif text-base sm:text-lg font-bold text-[#23201C]">
-                    Wybierz Paczkomat InPost 24/7
-                  </h3>
-                  <span className="text-[11px] text-[#7A6C5B] block">Kliknij automat na liście poniżej, aby wybrać</span>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsMapModalOpen(false)}
-                className="p-1.5 rounded-full text-[#6E6150] hover:bg-[#EFE5D6] transition-colors cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="p-5 space-y-4 flex-1 overflow-y-auto pasieka-scrollbar">
-              {/* Wyszukiwarka wewnątrz modalu */}
-              <div className="relative">
-                <Search className="w-4 h-4 text-[#8C7B68] absolute left-3 top-1/2 -translate-y-1/2" />
-                <input
-                  type="text"
-                  value={lockerSearch}
-                  onChange={e => setLockerSearch(e.target.value)}
-                  placeholder="Filtruj automaty: wpisz miasto, ulicę lub kod (np. WRO, Trzebnica, Legnicka)..."
-                  className="w-full pl-9 pr-3.5 py-2.5 rounded-xl bg-[#FAF8F5] border border-[#DCCEB9] text-xs outline-none focus:bg-white focus:border-[#945209] focus:ring-1 focus:ring-[#945209]/20"
-                />
-              </div>
-
-              {/* Szybkie filtry miast */}
-              <div className="flex flex-wrap gap-1.5 items-center">
-                <span className="text-[10px] font-bold text-[#8C7B68] uppercase tracking-wider mr-1">Miasta:</span>
-                {['Wrocław', 'Trzebnica', 'Milicz', 'Warszawa', 'Kraków', 'Poznań', 'Gdańsk', 'Katowice'].map(city => (
-                  <button
-                    key={city}
-                    type="button"
-                    onClick={() => setLockerSearch(city)}
-                    className={`px-2.5 py-1 rounded-lg text-[10px] font-semibold border transition-all cursor-pointer ${
-                      lockerSearch.toLowerCase() === city.toLowerCase()
-                        ? 'bg-[#945209] text-white border-[#945209]'
-                        : 'bg-[#FAF6EF] text-[#635342] border-[#E8DEC8] hover:bg-[#F2E5D4]'
-                    }`}
-                  >
-                    {city}
-                  </button>
-                ))}
-                {lockerSearch && (
-                  <button
-                    type="button"
-                    onClick={() => setLockerSearch('')}
-                    className="text-[10px] text-[#A63A26] hover:underline font-semibold ml-1 cursor-pointer"
-                  >
-                    Wyczyść filtr
-                  </button>
-                )}
-              </div>
-
-              {/* Wyniki paczkomatów */}
-              <div className="space-y-2 pt-1">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  {filteredLockers.map(l => (
-                    <div
-                      key={l.code}
-                      onClick={() => {
-                        setSelectedLocker(l);
-                        setLockerSearch(l.code);
-                        setIsMapModalOpen(false);
-                      }}
-                      className={`p-3.5 rounded-xl border cursor-pointer transition-all space-y-1 shadow-2xs group ${
-                        selectedLocker?.code === l.code
-                          ? 'border-[#945209] bg-[#FAF3E8] ring-1 ring-[#945209]/20'
-                          : 'border-[#E5DACB] hover:border-[#945209] hover:bg-[#FAF6EF] bg-white'
-                      }`}
-                    >
-                      <div className="flex justify-between items-center">
-                        <span className="font-mono font-bold text-xs text-[#8C4609] group-hover:text-[#703A07]">{l.code}</span>
-                        <span className="text-[10px] bg-[#EFE3CF] text-[#733F07] px-2 py-0.5 rounded-md font-bold">
-                          {l.city}
-                        </span>
-                      </div>
-                      <span className="text-[11px] text-[#554737] block font-medium leading-tight">{l.address}</span>
-                      <div className="pt-1 flex items-center justify-between text-[10px] text-[#8C7B68]">
-                        <span>Dostępny 24/7</span>
-                        <span className="text-[#945209] font-bold group-hover:underline">Wybierz ten automat →</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="p-4 bg-[#FAF8F5] border-t border-[#E7DDCE] flex justify-between items-center">
-              <span className="text-xs text-[#706250]">
-                Wybrany: <strong className="font-mono text-[#8C4609]">{selectedLocker?.code}</strong> ({selectedLocker?.city})
-              </span>
-              <button
-                type="button"
-                onClick={() => setIsMapModalOpen(false)}
-                className="px-6 py-2 rounded-xl bg-[#2D2821] hover:bg-[#433B31] text-[#FAF5ED] text-xs font-bold transition-all cursor-pointer shadow-xs"
-              >
-                Zatwierdź wybór
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Prawdziwa interaktywna mapa Paczkomatów (Leaflet & OpenStreetMap) */}
+      <InPostLockerMapModal
+        isOpen={isMapModalOpen}
+        onClose={() => setIsMapModalOpen(false)}
+        selectedCode={selectedLocker?.code}
+        onSelect={locker => {
+          setSelectedLocker(locker);
+          setLockerSearch(locker.code);
+        }}
+      />
     </div>
   );
 };
