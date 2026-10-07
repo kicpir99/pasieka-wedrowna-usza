@@ -422,16 +422,27 @@ export async function createWooCommerceOrder(params: CreateOrderParams): Promise
         { key: 'vat_number', value: params.customer.nip || '' },
         { key: '_vat_number', value: params.customer.nip || '' },
         { key: 'Faktura VAT', value: params.customer.isCompany ? `TAK (NIP: ${params.customer.nip})` : 'NIE' },
+        ...(params.items.some(i => i.subscriptionInterval) ? [{
+          key: 'Inteligentne Przypomnienie',
+          value: params.items.filter(i => i.subscriptionInterval).map(i => `${i.product.name} (co ${i.subscriptionInterval} dni)`).join(', ')
+        }] : []),
       ],
       line_items: params.items.map(item => {
         const wooProductId = item.product.wooId || WOO_PRODUCT_IDS_MAP[item.product.id] || 37;
+        const lineMeta = [
+          { key: 'Waga/Wariant', value: `${item.weightGrams || item.selectedWeightGrams || 400}g` },
+          { key: 'Produkt', value: item.product.name },
+        ];
+        if (item.subscriptionInterval) {
+          lineMeta.push({
+            key: 'Przypomnienie o miodzie',
+            value: `Co ${item.subscriptionInterval} dni (1-Click Reorder)`
+          });
+        }
         return {
           product_id: wooProductId,
           quantity: item.quantity,
-          meta_data: [
-            { key: 'Waga/Wariant', value: `${item.weightGrams || item.selectedWeightGrams || 400}g` },
-            { key: 'Produkt', value: item.product.name },
-          ],
+          meta_data: lineMeta,
         };
       }),
       shipping_lines: [
@@ -445,6 +456,9 @@ export async function createWooCommerceOrder(params: CreateOrderParams): Promise
         params.customer.notes || '',
         params.delivery.method === 'paczkomat'
           ? `Paczkomat: ${params.delivery.parcelLockerCode || ''} (${params.delivery.parcelLockerAddress || ''})`
+          : '',
+        params.items.some(i => i.subscriptionInterval)
+          ? `[PRZYPOMNIENIE E-MAIL: Zapisano powiadomienie 1-Click Reorder]`
           : '',
       ]
         .filter(Boolean)
@@ -542,6 +556,44 @@ export async function fetchWooCommerceOrdersByEmail(email: string): Promise<any[
   } catch (err) {
     console.error('❌ [fetchWooCommerceOrdersByEmail] Błąd pobierania zamówień:', err);
     return [];
+  }
+}
+
+/**
+ * Wysyła elegancki e-mail z przypomnieniem o odnowieniu miodu (1-Click Reorder)
+ * przez endpoint w WordPressie: /wp-json/pasieka/v1/send-reminder-email
+ */
+export async function sendHoneyReminderEmail(params: {
+  email: string;
+  customerName?: string;
+  productName: string;
+  weightLabel?: string;
+  reorderUrl?: string;
+}): Promise<{ success: boolean; message: string }> {
+  try {
+    const res = await fetch(`${WOO_CONFIG.url}/wp-json/pasieka/v1/send-reminder-email`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: params.email,
+        customer_name: params.customerName || 'Kliencie Pasieki',
+        product_name: params.productName,
+        weight_label: params.weightLabel || '1200g',
+        reorder_url: params.reorderUrl || window.location.origin + '/sklep',
+      }),
+    });
+
+    if (!res.ok) {
+      return { success: false, message: 'Serwer zwrócił błąd podczas wysyłania e-maila.' };
+    }
+
+    const data = await res.json();
+    return { success: data.success ?? true, message: data.message || 'Wysłano przypomnienie.' };
+  } catch (err) {
+    console.error('❌ [sendHoneyReminderEmail] Błąd:', err);
+    return { success: false, message: 'Błąd połączenia z serwerem pocztowym pasieki.' };
   }
 }
 

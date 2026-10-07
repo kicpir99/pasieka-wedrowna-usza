@@ -339,7 +339,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                         <span>{item.pricePln} zł / szt.</span>
                         {item.subscriptionInterval && (
                           <span className="bg-[#1B4332]/10 text-[#1B4332] border border-[#1B4332]/20 px-2 py-0.5 rounded-full font-bold text-[10px]">
-                            🔄 Co {item.subscriptionInterval} dni (-10%)
+                            📧 Przypomnienie za {item.subscriptionInterval} dni (1-Click)
                           </span>
                         )}
                       </div>

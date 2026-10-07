@@ -143,7 +143,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
   // Status składania zamówienia
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [completedOrder, setCompletedOrder] = useState<{ id: number; total: number; paymentUrl?: string } | null>(null);
+  const [completedOrder, setCompletedOrder] = useState<{ id: number; total: number; paymentUrl?: string; hasReminder?: boolean } | null>(null);
 
   // Kalkulacja kosztów
   const FREE_SHIPPING_THRESHOLD = 180;
@@ -330,7 +330,8 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
     }
 
     // 1. Najpierw ustawiamy stan sukcesu w React, aby ekran z podziękowaniem pojawił się natychmiast
-    setCompletedOrder({ id: res.orderId, total, paymentUrl: res.paymentUrl });
+    const hasReminder = items.some(i => Boolean(i.subscriptionInterval));
+    setCompletedOrder({ id: res.orderId, total, paymentUrl: res.paymentUrl, hasReminder });
 
     // 2. Czyścimy koszyk po ustawieniu ekranu sukcesu, bez mignięcia pustym koszykiem
     onClearCart();
@@ -377,6 +378,18 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
               </span>
             </div>
           </div>
+
+          {completedOrder.hasReminder && (
+            <div className="p-4 rounded-xl bg-[#FAF5EB] border border-[#DFCAB0] text-xs text-[#5C4D3B] text-left space-y-1.5">
+              <div className="flex items-center gap-1.5 font-bold text-[#1B4332]">
+                <span className="text-sm">📧</span>
+                <span>Zapisano Inteligentne Przypomnienie o Miodzie</span>
+              </div>
+              <p className="leading-relaxed">
+                Na 5 dni przed zakończeniem wybranego okresu wyślemy do Ciebie wiadomość e-mail z podsumowaniem i 1-kliknięciowym linkiem do przygotowanego koszyka. Żadnych ukrytych subskrypcji ani zapisywania karty – Ty decydujesz, kiedy zamawiasz!
+              </p>
+            </div>
+          )}
 
           {paymentMethod === 'blik' && (
             <div className="p-4 rounded-xl bg-[#FAF5EB] border border-[#DFCAB0] text-xs text-[#5C4D3B] text-left space-y-1">
@@ -1137,9 +1150,16 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
                     />
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-bold text-[#23201C] truncate">{item.product.name}</p>
-                      <span className="text-[11px] text-[#7A6C5B]">
-                        {item.weightGrams || item.selectedWeightGrams || 400}g • {item.quantity} szt.
-                      </span>
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span className="text-[11px] text-[#7A6C5B]">
+                          {item.weightGrams || item.selectedWeightGrams || 400}g • {item.quantity} szt.
+                        </span>
+                        {item.subscriptionInterval && (
+                          <span className="text-[9.5px] font-bold text-[#1B4332] bg-[#1B4332]/10 px-1.5 py-0.5 rounded-md">
+                            📧 Przypomnienie za {item.subscriptionInterval} dni
+                          </span>
+                        )}
+                      </div>
                     </div>
                     <span className="font-serif font-bold text-xs text-[#8C4609] shrink-0">
                       {item.pricePln * item.quantity} zł

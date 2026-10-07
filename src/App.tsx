@@ -212,7 +212,7 @@ function App() {
         }
       ];
     });
-    const subText = subscriptionInterval ? ` (autouzupełnianie co ${subscriptionInterval} dni)` : '';
+    const subText = subscriptionInterval ? ` (przypomnienie za ${subscriptionInterval} dni)` : '';
     setToastMessage(`Dodano ${product.name} (${weightGrams}g)${subText} do koszyka!`);
     setTimeout(() => setToastMessage(null), 3000);
   };

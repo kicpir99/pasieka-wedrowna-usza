@@ -176,7 +176,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
   const activeImage = images[activeImageIndex] || images[0];
 
   const basePrice = currentSize?.price || 0;
-  const effectivePrice = purchaseMode === 'subscription' ? Math.round(basePrice * 0.9) : basePrice;
+  const effectivePrice = basePrice;
 
   // Related products - strictly isolate honey varieties vs. hive treasures
   const candidatePool = isTreasure 
@@ -1644,7 +1644,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                           {size.gram}
                         </div>
                         <div className={`text-xs font-bold mt-1 ${isSelected ? 'text-[#F3C06B]' : 'text-[#8C5815]'}`}>
-                          {purchaseMode === 'subscription' ? Math.round(size.price * 0.9) : size.price} zł
+                          {size.price} zł
                         </div>
                         <div className={`text-[10px] font-mono mt-0.5 ${isSelected ? 'text-white/65' : 'text-[#8C7A6B]'}`}>
                           {prodType === 'bee-colony'
@@ -1653,7 +1653,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                             ? '100% wosk pszczeli'
                             : prodType === 'apitherapy'
                             ? `${Math.round((size.price / size.weightGrams) * 100)} zł / 100g`
-                            : `${Math.round(((purchaseMode === 'subscription' ? Math.round(size.price * 0.9) : size.price) / size.weightGrams) * 1000)} zł/kg`}
+                            : `${Math.round((size.price / size.weightGrams) * 1000)} zł/kg`}
                         </div>
                       </button>
                     );
@@ -1661,16 +1661,16 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                 </div>
               </div>
 
-              {/* Model zakupu: Jednorazowy vs Autouzupełnianie spiżarni (wyłącznie dla miodu i apiterapii) */}
+              {/* Model zakupu: Standardowy vs Inteligentne Przypomnienie E-mail (wyłącznie dla miodu i apiterapii) */}
               {(prodType === 'honey' || prodType === 'apitherapy') && (
                 <div className="pt-2 border-t border-[#D9821E]/15 space-y-2">
                   <div className="flex items-center justify-between">
                     <label className="text-xs font-bold uppercase tracking-wider text-[#594D42]">
-                      Wybierz model zakupu:
+                      Wybierz sposób zakupu:
                     </label>
                     {purchaseMode === 'subscription' && (
-                      <span className="text-[10px] font-bold text-[#1B4332] bg-[#1B4332]/10 px-2 py-0.5 rounded-full">
-                        ✓ Aktywny stały rabat -10%
+                      <span className="text-[10px] font-bold text-[#1B4332] bg-[#1B4332]/10 px-2 py-0.5 rounded-full flex items-center gap-1">
+                        ✓ Inteligentne Przypomnienie E-mail
                       </span>
                     )}
                   </div>
@@ -1686,7 +1686,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                       }`}
                     >
                       <div className="flex items-center justify-between font-bold">
-                        <span>Zakup jednorazowy</span>
+                        <span>Zakup standardowy</span>
                         <span className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${
                           purchaseMode === 'one-time' ? 'border-[#1B4332] bg-[#1B4332]' : 'border-[#A69784]'
                         }`}>
@@ -1694,7 +1694,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                         </span>
                       </div>
                       <span className="text-[11px] text-[#7A6A5A] block mt-1">
-                        Cena standardowa ({basePrice} zł)
+                        Pojedyncze zamówienie ({basePrice} zł)
                       </span>
                     </button>
 
@@ -1707,11 +1707,11 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                           : 'bg-[#FAF8F5] border-[#DFCBB5] text-[#594D42] hover:bg-white'
                       }`}
                     >
-                      <span className="absolute top-0 right-0 bg-[#D9821E] text-white text-[9px] font-black uppercase px-2 py-0.5 rounded-bl-lg">
-                        -10% Rabat
+                      <span className="absolute top-0 right-0 bg-[#1B4332] text-white text-[9px] font-bold uppercase px-2 py-0.5 rounded-bl-lg">
+                        1-Click Reorder
                       </span>
                       <div className="flex items-center justify-between font-bold">
-                        <span>Autouzupełnianie</span>
+                        <span>Z Przypomnieniem E-mail</span>
                         <span className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${
                           purchaseMode === 'subscription' ? 'border-[#D9821E] bg-[#D9821E]' : 'border-[#A69784]'
                         }`}>
@@ -1719,29 +1719,29 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                         </span>
                       </div>
                       <span className="text-[11px] text-[#7A6A5A] block mt-1">
-                        Dostawa co {subscriptionInterval} dni • <strong>{effectivePrice} zł</strong> • Bez umowy
+                        Powiadomienie za {subscriptionInterval} dni • <strong>{basePrice} zł</strong> • Bez karty
                       </span>
                     </button>
                   </div>
 
-                  {/* Rozwijany elastyczny selektor częstotliwości autouzupełniania */}
+                  {/* Rozwijany elastyczny selektor częstotliwości przypomnienia */}
                   {purchaseMode === 'subscription' && (
-                    <div className="p-3 bg-[#FFFDF9] rounded-2xl border border-[#D9821E]/30 space-y-2 animate-in fade-in slide-in-from-top-1 duration-200">
+                    <div className="p-3 bg-[#FFFDF9] rounded-2xl border border-[#D9821E]/30 space-y-2.5 animate-in fade-in slide-in-from-top-1 duration-200">
                       <div className="flex items-center justify-between text-xs">
                         <span className="font-bold text-[#3B2D20] flex items-center gap-1.5">
                           <Calendar className="w-3.5 h-3.5 text-[#D9821E]" />
-                          Częstotliwość dostaw spiżarni:
+                          Kiedy wysłać przypomnienie o zapasie?
                         </span>
                         <span className="text-[10px] text-[#1B4332] font-semibold bg-[#1B4332]/10 px-2 py-0.5 rounded-full">
-                          Stały rabat -10%
+                          100% Dobrowolne
                         </span>
                       </div>
 
                       <div className="grid grid-cols-3 gap-2">
                         {[
-                          { days: 30, label: 'Co 30 dni', sub: 'Codzienna herbata' },
-                          { days: 60, label: 'Co 60 dni', sub: 'Rekomendowane', badge: 'Popularne' },
-                          { days: 90, label: 'Co 90 dni', sub: 'Okazjonalnie' },
+                          { days: 30, label: 'Za 30 dni', sub: 'Szybkie zużycie' },
+                          { days: 60, label: 'Za 60 dni', sub: 'Rekomendowane', badge: 'Optymalne' },
+                          { days: 90, label: 'Za 90 dni', sub: 'Okazjonalnie' },
                         ].map((opt) => {
                           const isActive = subscriptionInterval === opt.days;
                           return (
@@ -1775,10 +1775,20 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                         })}
                       </div>
 
-                      <p className="text-[10.5px] text-[#7A6A5A] flex items-center gap-1.5 pt-0.5">
-                        <Check className="w-3 h-3 text-[#1B4332] shrink-0" />
-                        <span>Możesz przesunąć termin, wstrzymać lub anulować w dowolnym momencie w 1 kliknięcie bez umów.</span>
-                      </p>
+                      {/* Box wyjaśniający transparentnie zasadę działania */}
+                      <div className="p-3 bg-[#FAF5EB] rounded-xl border border-[#E7DCCE] text-[11px] text-[#5C4F40] leading-relaxed space-y-1.5">
+                        <div className="font-bold text-[#8C4609] flex items-center gap-1.5 text-xs">
+                          <span>📧</span>
+                          <span>Jak działa przypomnienie o miodzie?</span>
+                        </div>
+                        <p>
+                          <strong>Płacisz dzisiaj normalnie</strong> (BLIK, szybki przelew lub karta) standardową cenę <strong>{basePrice} zł</strong>. Nie zapisujemy Twojej karty ani nie pobieramy środków automatycznie.
+                        </p>
+                        <p className="text-[#1B4332] font-medium flex items-center gap-1">
+                          <Check className="w-3 h-3 text-[#1B4332] shrink-0" />
+                          <span>Na 5 dni przed upływem {subscriptionInterval} dni otrzymasz e-mail z 1-kliknięciowym linkiem do odnowienia zapasu. Jeśli zechcesz – kupujesz w 5 sekund. Zero zobowiązań!</span>
+                        </p>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -2879,8 +2889,8 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                   </span>
                 )}
                 {purchaseMode === 'subscription' && (
-                  <span className="text-[9.5px] font-bold text-[#8C4609] bg-[#E5983A]/20 px-1.5 py-0.5 rounded-md leading-none">
-                    -10% co {subscriptionInterval} dni
+                  <span className="text-[9.5px] font-bold text-[#1B4332] bg-[#1B4332]/10 px-1.5 py-0.5 rounded-md leading-none">
+                    📧 Przypomnienie za {subscriptionInterval} dni
                   </span>
                 )}
               </div>

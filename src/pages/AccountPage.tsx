@@ -263,7 +263,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                   Witaj, {user.firstName}!
                 </h1>
                 <p className="mt-2 text-sm sm:text-base text-[#C7BDB0] leading-relaxed">
-                  Zarządzaj swoimi zamówieniami miodów, autouzupełnianiem spiżarni, zapisanym Paczkomatem InPost, danymi do faktury VAT oraz ulubionymi słoikami.
+                  Zarządzaj swoimi zamówieniami miodów, inteligentnymi przypomnieniami o zapasie, zapisanym Paczkomatem InPost, danymi do faktury VAT oraz ulubionymi słoikami.
                 </p>
               </div>
             ) : (
@@ -272,7 +272,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                   Moje Konto w Pasiece Usza
                 </h1>
                 <p className="mt-2 text-sm sm:text-base text-[#C7BDB0] leading-relaxed">
-                  Zaloguj się lub załóż konto w 5 sekund, aby zyskać stały dostęp do historii zamówień, szybkiej wysyłki bez ponownego wpisywania adresu oraz autouzupełniania spiżarni ze stałym rabatem -10%.
+                  Zaloguj się lub załóż konto w 5 sekund, aby zyskać stały dostęp do historii zamówień, szybkiej wysyłki bez ponownego wpisywania adresu oraz inteligentnych przypomnień o odnowieniu zapasu 1 kliknięciem.
                 </p>
               </div>
             )}
@@ -284,7 +284,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({
               <div className="bg-[#383126] p-3.5 sm:p-4 rounded-2xl border border-[#524637]">
                 <div className="text-[11px] font-medium text-[#C7BDB0] flex items-center gap-1.5">
                   <RefreshCw className="w-3.5 h-3.5 text-[#E5983A]" />
-                  <span>Subskrypcje</span>
+                  <span>Przypomnienia</span>
                 </div>
                 <div className="text-xl sm:text-2xl font-bold font-serif text-[#FAF5ED] mt-1">
                   {user.subscriptions.length} aktywne
@@ -623,10 +623,10 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                     </div>
                     <div>
                       <h3 className="font-bold text-xs sm:text-sm text-[#23201C]">
-                        3. Autouzupełnianie Spiżarni ze stałym rabatem -10%
+                        3. Inteligentne Przypomnienia o Miodzie (1-Click Reorder)
                       </h3>
                       <p className="text-[11px] sm:text-xs text-[#716556] mt-0.5 leading-relaxed">
-                        Świeży miód z pasieki prosto na Twój stół co 30, 60 lub 90 dni. Możesz wstrzymać dostawę na czas wakacji lub zrezygnować 1 kliknięciem bez żadnych umów.
+                        Dyskretne przypomnienie e-mail co 30, 60 lub 90 dni z 1-kliknięciowym linkiem do przygotowanego koszyka. Bez abonamentu i bez zapisywania karty.
                       </p>
                     </div>
                   </div>
@@ -704,7 +704,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({
               >
                 <div className="flex items-center gap-2.5">
                   <RefreshCw className="w-4 h-4" />
-                  <span>Autouzupełnianie</span>
+                  <span>Przypomnienia o miodzie</span>
                 </div>
                 {user.subscriptions.length > 0 && (
                   <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
@@ -826,10 +826,10 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                           Klub Pasieki Usza • Status Aktywny
                         </div>
                         <h3 className="font-serif text-lg font-bold text-[#23201C]">
-                          Stały rabat -10% na autouzupełnianie miodów
+                          Inteligentne Przypomnienia o Miodzie
                         </h3>
                         <p className="text-xs text-[#716556] mt-0.5">
-                          Twoje dane adresowe i Paczkomat są aktywne i gotowe do 1-kliknięciowych zakupów.
+                          Twoje powiadomienia e-mail i zapisany Paczkomat są gotowe do 1-kliknięciowych zakupów.
                         </p>
                       </div>
                     </div>
@@ -847,7 +847,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                     <div className="flex items-center justify-between">
                       <h3 className="font-serif text-base font-bold text-[#23201C] flex items-center gap-2">
                         <RefreshCw className="w-4 h-4 text-[#D9821E]" />
-                        <span>Twoje Miodowe Autouzupełnianie</span>
+                        <span>Twoje Miodowe Przypomnienia</span>
                       </h3>
                       <button
                         type="button"
@@ -860,7 +860,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({
 
                     {user.subscriptions.length === 0 ? (
                       <div className="text-center p-6 rounded-2xl bg-[#FAF8F5] border border-dashed border-[#DFCBB5] text-xs text-[#786B5A]">
-                        Nie masz jeszcze aktywnych subskrypcji miodu. Zamów słoik z opcją „Autouzupełnianie (-10%)”, aby nie martwić się o pustą spiżarnię!
+                        Nie masz jeszcze zaplanowanych przypomnień o miodzie. Zamów ulubiony słoik z opcją „Z Przypomnieniem E-mail”, aby nie martwić się o pustą spiżarnię!
                       </div>
                     ) : (
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -877,7 +877,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                                 <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                                   sub.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'
                                 }`}>
-                                  {sub.status === 'active' ? 'Aktywna' : 'Wstrzymana'}
+                                  {sub.status === 'active' ? 'Aktywne' : 'Wyciszone'}
                                 </span>
                               </div>
                             </div>
@@ -912,16 +912,19 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                 </div>
               )}
 
-              {/* TAB 2: AUTOUZUPEŁNIANIE SPIŻARNI (SUBSKRYPCJE) */}
+              {/* TAB 2: INTELIGENTNE PRZYPOMNIENIA O MIODZIE (1-CLICK REORDER) */}
               {activeTab === 'subskrypcje' && (
                 <div className="space-y-6">
                   <div className="border-b border-[#EFE3CF] pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div>
-                      <h2 className="font-serif text-2xl font-bold text-[#23201C]">
-                        Autouzupełnianie Spiżarni (Subskrypcje)
+                      <h2 className="font-serif text-2xl font-bold text-[#23201C] flex items-center gap-2">
+                        <span>Inteligentne Przypomnienia o Miodzie</span>
+                        <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-[#1B4332]/10 text-[#1B4332] border border-[#1B4332]/20">
+                          1-Click Reorder
+                        </span>
                       </h2>
                       <p className="text-xs text-[#6B5E4F] mt-1">
-                        Twoje regularne dostawy miodu ze stałym rabatem -10%. Pełna kontrola w 1 kliknięcie.
+                        Powiadomienia e-mail nim słoik stanie się pusty. Bez abonamentu, bez pobierania środków z karty – Ty decydujesz, kiedy zamawiasz.
                       </p>
                     </div>
                     <Link
@@ -929,21 +932,21 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                       className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#1B4332] text-white text-xs font-bold hover:bg-[#143326] transition-colors w-fit"
                     >
                       <Plus className="w-3.5 h-3.5" />
-                      <span>Dodaj miód do subskrypcji</span>
+                      <span>Dodaj miód do przypomnień</span>
                     </Link>
                   </div>
 
                   {user.subscriptions.length === 0 ? (
                     <div className="text-center py-12 px-4 rounded-3xl bg-[#FAF8F5] border border-dashed border-[#DFCBB5] space-y-4">
                       <div className="w-14 h-14 mx-auto rounded-2xl bg-[#EFE3CF] text-[#945209] flex items-center justify-center text-2xl">
-                        🍯
+                        📧
                       </div>
                       <div className="max-w-md mx-auto">
                         <h3 className="font-serif text-lg font-bold text-[#23201C]">
-                          Brak aktywnych dostaw w subskrypcji
+                          Brak aktywnych przypomnień o miodzie
                         </h3>
                         <p className="text-xs text-[#786B5A] mt-1 leading-relaxed">
-                          Wybierz dowolny miód w naszym sklepie i zaznacz opcję <strong>„Autouzupełnianie Spiżarni”</strong>, aby zyskać 10% rabatu na zawsze i regularne dostawy bez pamiętania o zakupach.
+                          Wybierz dowolny miód w naszym sklepie i zaznacz opcję <strong>„Z Przypomnieniem E-mail”</strong>. Na kilka dni przed końcem okresu wyślemy Ci dyskretną wiadomość z 1-kliknięciowym linkiem do koszyka!
                         </p>
                       </div>
                       <Link
@@ -984,42 +987,62 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                                         ? 'bg-amber-100 text-amber-900 border border-amber-300' 
                                         : 'bg-[#1B4332]/10 text-[#1B4332] border border-[#1B4332]/20'
                                     }`}>
-                                      {isPaused ? 'Wstrzymana (Urlop)' : 'Aktywna (-10%)'}
+                                      {isPaused ? 'Przypomnienie wyciszone' : 'Powiadomienie aktywne'}
                                     </span>
                                   </div>
                                   <p className="text-xs text-[#716556] mt-0.5">
-                                    Wielkość: <strong>{sub.weightLabel}</strong> • Cena: <strong>{sub.pricePln} zł</strong> / dostawa
+                                    Wielkość: <strong>{sub.weightLabel}</strong> • Cena regularna: <strong>{sub.pricePln} zł</strong>
                                   </p>
                                   <div className="flex items-center gap-1.5 text-xs text-[#8C4609] mt-1 font-medium">
                                     <Calendar className="w-3.5 h-3.5" />
                                     <span>
-                                      {isPaused ? 'Dostawa zawieszona do momentu wznowienia' : `Najbliższa wysyłka: ${sub.nextShipmentDate}`}
+                                      {isPaused ? 'Powiadomienia wstrzymane (możesz wznowić w każdej chwili)' : `Planowane przypomnienie e-mail: ${sub.nextShipmentDate}`}
                                     </span>
                                   </div>
                                 </div>
                               </div>
 
-                              {/* Subscription action buttons */}
-                              <div className="flex items-center gap-2 w-full sm:w-auto justify-end pt-2 sm:pt-0 border-t sm:border-t-0 border-[#E9DFD2]">
+                              {/* Reminder action buttons */}
+                              <div className="flex items-center gap-2 w-full sm:w-auto justify-end pt-2 sm:pt-0 border-t sm:border-t-0 border-[#E9DFD2] flex-wrap">
+                                {/* 1-Click Reorder Button */}
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const prod = HONEY_PRODUCTS.find(p => p.id === sub.productId) || HONEY_PRODUCTS[0];
+                                    const weight = parseInt(sub.weightLabel, 10) || 1200;
+                                    if (onAddToCart) {
+                                      onAddToCart(prod, weight, sub.pricePln);
+                                      setReorderToast(`Dodano ${sub.productName} do koszyka!`);
+                                      setTimeout(() => setReorderToast(null), 3500);
+                                    }
+                                    if (onOpenCart) onOpenCart();
+                                  }}
+                                  className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#1B4332] hover:bg-[#143326] text-white flex items-center gap-1.5 transition-all shadow-xs cursor-pointer active:scale-95"
+                                  title="Dodaj ten miód natychmiast do koszyka"
+                                >
+                                  <RotateCcw className="w-3.5 h-3.5 text-[#E6C065]" />
+                                  <span>Odnów zapas (1-Click)</span>
+                                </button>
+
                                 <button
                                   type="button"
                                   onClick={() => togglePauseSubscription(sub.id)}
                                   className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer ${
                                     isPaused
-                                      ? 'bg-[#1B4332] text-white hover:bg-[#143326]'
+                                      ? 'bg-amber-100 text-amber-900 border border-amber-300 hover:bg-amber-200'
                                       : 'bg-white border border-[#D9CDBD] text-[#554939] hover:bg-[#EFE5D6]'
                                   }`}
-                                  title={isPaused ? 'Wznów regularne dostawy' : 'Wstrzymaj na czas wyjazdu / wakacji'}
+                                  title={isPaused ? 'Włącz ponownie przypomnienia e-mail' : 'Wycisz przypomnienia (np. na czas wakacji)'}
                                 >
                                   {isPaused ? (
                                     <>
                                       <PlayCircle className="w-3.5 h-3.5" />
-                                      <span>Wznów</span>
+                                      <span>Włącz</span>
                                     </>
                                   ) : (
                                     <>
                                       <PauseCircle className="w-3.5 h-3.5" />
-                                      <span>Wstrzymaj</span>
+                                      <span>Wycisz</span>
                                     </>
                                   )}
                                 </button>
@@ -1027,12 +1050,12 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                                 <button
                                   type="button"
                                   onClick={() => {
-                                    if (confirm(`Czy na pewno chcesz anulować autouzupełnianie dla: ${sub.productName}? Możesz też po prostu wstrzymać subskrypcję bez utraty rabatu.`)) {
+                                    if (confirm(`Czy na pewno chcesz usunąć przypomnienie o miodzie dla: ${sub.productName}?`)) {
                                       cancelSubscription(sub.id);
                                     }
                                   }}
                                   className="p-2 text-[#A69784] hover:text-red-700 hover:bg-red-50 rounded-xl transition-colors cursor-pointer"
-                                  title="Anuluj autouzupełnianie jednym kliknięciem"
+                                  title="Usuń to przypomnienie"
                                 >
                                   <Trash2 className="w-4 h-4" />
                                 </button>
@@ -1042,7 +1065,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                             {/* Frequency Switcher: 30 / 60 / 90 days */}
                             <div className="mt-4 pt-3 border-t border-[#EDE1D1] flex flex-wrap items-center justify-between gap-2">
                               <span className="text-xs font-bold text-[#554A3B]">
-                                Częstotliwość wysyłki:
+                                Wyślij przypomnienie za:
                               </span>
                               <div className="flex items-center gap-1.5">
                                 {([30, 60, 90] as const).map((days) => {
@@ -1054,11 +1077,11 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                                       onClick={() => updateSubscriptionInterval(sub.id, days)}
                                       className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                                         isActive
-                                          ? 'bg-[#D9821E] text-white shadow-2xs'
+                                          ? 'bg-[#1B4332] text-white shadow-2xs'
                                           : 'bg-white border border-[#DFCBB5] text-[#635747] hover:bg-[#F3E7D5]'
                                       }`}
                                     >
-                                      Co {days} dni
+                                      {days} dni
                                     </button>
                                   );
                                 })}
@@ -1070,16 +1093,17 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                     </div>
                   )}
 
-                  {/* Subscription Policy & Guarantees */}
+                  {/* Reminder Policy & Guarantees */}
                   <div className="p-4 rounded-2xl bg-[#F6EFE5] border border-[#DFCBB5] text-xs text-[#6B5E4F] space-y-2">
                     <div className="flex items-center gap-2 font-bold text-[#23201C]">
                       <ShieldCheck className="w-4 h-4 text-[#1B4332]" />
-                      <span>Zasady Autouzupełniania Pasieki Usza</span>
+                      <span>Gwarancja Pełnej Kontroli Pasieki Usza</span>
                     </div>
                     <ul className="list-disc list-inside space-y-1 text-[11px] leading-relaxed">
-                      <li>Brak jakichkolwiek umów i minimalnych okresów – możesz anulować w każdej chwili 1 kliknięciem.</li>
-                      <li>Przed każdym kolejnym pobraniem płatności i wysyłką otrzymasz od nas e-mail z powiadomieniem (3 dni wcześniej).</li>
-                      <li>Możesz bezpłatnie wstrzymać subskrypcję w dowolnym momencie (np. na czas wakacji lub urlopu).</li>
+                      <li><strong>Brak automatycznych obciążeń karty</strong> – to nie jest klasyczna subskrypcja. Żadne środki nie zostaną pobrane bez Twojej wiedzy.</li>
+                      <li><strong>E-mail na 5 dni przed terminem</strong> – otrzymasz wiadomość z podsumowaniem i bezpośrednim linkiem z przygotowanym koszykiem.</li>
+                      <li><strong>Płacisz jak chcesz</strong> – odnawiając zapas, płacisz w ułamku sekundy BLIK-iem, kartą lub szybkim przelewem online.</li>
+                      <li><strong>Pełna swoboda</strong> – możesz w każdej chwili zmienić częstotliwość przypomnienia lub usunąć je 1 kliknięciem.</li>
                     </ul>
                   </div>
                 </div>
@@ -1476,7 +1500,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                       Karty Płatnicze & Bezpieczeństwo (PCI-DSS)
                     </h2>
                     <p className="text-xs text-[#6B5E4F] mt-1">
-                      Zarządzaj bezpieczną metodą płatności dla autouzupełniania spiżarni.
+                      Zarządzaj zapisaną kartą płatniczą do szybkich zakupów 1 kliknięciem.
                     </p>
                   </div>
 

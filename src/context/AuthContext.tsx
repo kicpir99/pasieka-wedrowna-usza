@@ -134,7 +134,7 @@ const DEMO_USER: UserProfile = {
       productName: 'Miód Lipowy (RAW)',
       weightLabel: '1200 g (Duży słoik)',
       intervalDays: 60,
-      pricePln: 67.5, // 75 zł - 10%
+      pricePln: 75,
       nextShipmentDate: '15 października 2026',
       status: 'active',
       imageUrl: 'https://pasiekausza.pl/wp-content/uploads/2022/02/miod-lipowy-650x650.jpg',
@@ -145,7 +145,7 @@ const DEMO_USER: UserProfile = {
       productName: 'Pyłek Pszczeli Kwiatowy',
       weightLabel: '200 g',
       intervalDays: 30,
-      pricePln: 25.2, // 28 zł - 10%
+      pricePln: 28,
       nextShipmentDate: '10 października 2026',
       status: 'active',
       imageUrl: 'https://pasiekausza.pl/wp-content/uploads/2022/02/pylek-pszczeli.jpg',
