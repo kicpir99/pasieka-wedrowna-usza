@@ -46,7 +46,7 @@ const POPULAR_LOCKERS = [
 export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }) => {
   const navigate = useNavigate();
   const { user, register, addOrder } = useAuth();
-  const [createAccount, setCreateAccount] = useState(!user);
+  const [createAccount, setCreateAccount] = useState(false);
   const [accountPassword, setAccountPassword] = useState('');
 
   // Stan formularza z automatycznym uzupełnieniem z profilu użytkownika
@@ -137,6 +137,11 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
 
     if (deliveryMethod === 'paczkomat' && !selectedLocker) {
       setSubmitError('Prosimy o wybranie paczkomatu docelowego.');
+      return;
+    }
+
+    if (!user && createAccount && (!accountPassword || accountPassword.trim().length < 6)) {
+      setSubmitError('Aby założyć konto w pasiece, podaj hasło o długości minimum 6 znaków.');
       return;
     }
 
@@ -309,22 +314,24 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
           </p>
 
           <div className="pt-4 flex flex-col sm:flex-row gap-3 justify-center">
-            <button
-              onClick={() => navigate('/moje-konto')}
-              className="px-6 py-3 rounded-xl bg-[#945209] hover:bg-[#784107] text-[#FAF5ED] font-semibold text-xs transition-all shadow-md inline-flex items-center justify-center gap-2"
-            >
-              <Package className="w-4 h-4" />
-              <span>Śledź status w panelu Moje Konto</span>
-            </button>
+            {(user || createAccount) && (
+              <button
+                onClick={() => navigate('/moje-konto')}
+                className="px-6 py-3 rounded-xl bg-[#945209] hover:bg-[#784107] text-[#FAF5ED] font-semibold text-xs transition-all shadow-md inline-flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Package className="w-4 h-4" />
+                <span>Śledź status w panelu Moje Konto</span>
+              </button>
+            )}
             <button
               onClick={() => navigate('/sklep')}
-              className="px-6 py-3 rounded-xl bg-[#2D2821] hover:bg-[#433B31] text-[#FAF5ED] font-semibold text-xs transition-all shadow-md"
+              className="px-6 py-3 rounded-xl bg-[#2D2821] hover:bg-[#433B31] text-[#FAF5ED] font-semibold text-xs transition-all shadow-md cursor-pointer"
             >
               Wróć do sklepu
             </button>
             <button
               onClick={() => navigate('/')}
-              className="px-6 py-3 rounded-xl border border-[#D5C6B1] bg-white text-[#524534] font-semibold text-xs hover:bg-[#FAF6F0] transition-all"
+              className="px-6 py-3 rounded-xl border border-[#D5C6B1] bg-white text-[#524534] font-semibold text-xs hover:bg-[#FAF6F0] transition-all cursor-pointer"
             >
               Strona główna pasieki
             </button>
@@ -525,26 +532,30 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
                       />
                       <div className="text-xs">
                         <strong className="text-[#2D2821] block">
-                          Załóż konto w Pasiece Usza jednym kliknięciem
+                          Chcę założyć konto w Pasiece Usza
                         </strong>
                         <span className="text-[11px] text-[#7A6C5B] block mt-0.5">
-                          Śledź status przygotowania zamówienia, zapisz adres na przyszłość i zyskaj dostęp do Klubu Pasieki.
+                          Umożliwi Ci to śledzenie statusu przesyłki, podgląd historii zamówień i zapisanie adresu na przyszłe zakupy.
                         </span>
                       </div>
                     </label>
 
                     {createAccount && (
-                      <div className="pt-2 border-t border-[#E8DCB8] pl-6.5">
-                        <label className="block text-[11px] font-semibold text-[#5B4F3F] mb-1">
-                          Hasło do Twojego konta (opcjonalnie)
+                      <div className="pt-2 border-t border-[#E8DCB8] pl-6.5 space-y-1.5 animate-in fade-in duration-200">
+                        <label className="block text-[11px] font-semibold text-[#5B4F3F]">
+                          Utwórz hasło do Twojego konta * (min. 6 znaków)
                         </label>
                         <input
                           type="password"
+                          required={createAccount}
                           value={accountPassword}
                           onChange={e => setAccountPassword(e.target.value)}
-                          placeholder="Wpisz hasło lub zostaw puste (wyślemy link aktywacyjny)"
-                          className="w-full px-3 py-2 rounded-xl bg-white border border-[#DCCEB9] text-xs outline-none focus:border-[#945209]"
+                          placeholder="Wpisz bezpieczne hasło..."
+                          className="w-full px-3 py-2 rounded-xl bg-white border border-[#DCCEB9] text-xs outline-none focus:border-[#945209] focus:ring-1 focus:ring-[#945209]/20"
                         />
+                        <span className="text-[10px] text-[#8A7C6B] block">
+                          Hasło pozwoli Ci zalogować się w każdej chwili, aby sprawdzić status zamówienia w panelu Moje Konto.
+                        </span>
                       </div>
                     )}
                   </div>
@@ -1009,7 +1020,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
       {/* Modal interaktywnej mapy Paczkomatów */}
       {isMapModalOpen && (
         <div className="fixed inset-0 z-50 overflow-hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
-          <div className="bg-white rounded-3xl border border-[#E7DDCE] shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col overflow-hidden">
+          <div className="bg-white rounded-3xl border border-[#E7DDCE] shadow-2xl max-w-2xl w-full max-h-[88vh] flex flex-col overflow-hidden">
             <div className="p-5 border-b border-[#E7DDCE] flex items-center justify-between bg-[#FAF8F5]">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-xl bg-[#FAF0DC] text-[#8C4609] flex items-center justify-center">
@@ -1019,7 +1030,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
                   <h3 className="font-serif text-base sm:text-lg font-bold text-[#23201C]">
                     Wybierz Paczkomat InPost 24/7
                   </h3>
-                  <span className="text-[11px] text-[#7A6C5B] block">Wybierz automat z listy lub wpisz jego kod</span>
+                  <span className="text-[11px] text-[#7A6C5B] block">Kliknij automat na liście poniżej, aby wybrać</span>
                 </div>
               </div>
               <button
@@ -1032,19 +1043,50 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
             </div>
 
             <div className="p-5 space-y-4 flex-1 overflow-y-auto pasieka-scrollbar">
-              <div className="p-3 rounded-xl bg-[#FAF6EE] border border-[#E2D2BC] text-xs text-[#5D4E3C] flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-[#D97706] shrink-0" />
-                <span>
-                  Kliknij automat poniżej lub wyszukaj na oficjalnej mapie InPost. Kod automatycznie wskoczy do Twojego zamówienia.
-                </span>
+              {/* Wyszukiwarka wewnątrz modalu */}
+              <div className="relative">
+                <Search className="w-4 h-4 text-[#8C7B68] absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={lockerSearch}
+                  onChange={e => setLockerSearch(e.target.value)}
+                  placeholder="Filtruj automaty: wpisz miasto, ulicę lub kod (np. WRO, Trzebnica, Legnicka)..."
+                  className="w-full pl-9 pr-3.5 py-2.5 rounded-xl bg-[#FAF8F5] border border-[#DCCEB9] text-xs outline-none focus:bg-white focus:border-[#945209] focus:ring-1 focus:ring-[#945209]/20"
+                />
               </div>
 
-              <div className="space-y-2">
-                <span className="text-[11px] font-bold text-[#736351] uppercase tracking-wider block">
-                  Popularne Paczkomaty:
-                </span>
+              {/* Szybkie filtry miast */}
+              <div className="flex flex-wrap gap-1.5 items-center">
+                <span className="text-[10px] font-bold text-[#8C7B68] uppercase tracking-wider mr-1">Miasta:</span>
+                {['Wrocław', 'Trzebnica', 'Milicz', 'Warszawa', 'Kraków', 'Poznań', 'Gdańsk', 'Katowice'].map(city => (
+                  <button
+                    key={city}
+                    type="button"
+                    onClick={() => setLockerSearch(city)}
+                    className={`px-2.5 py-1 rounded-lg text-[10px] font-semibold border transition-all cursor-pointer ${
+                      lockerSearch.toLowerCase() === city.toLowerCase()
+                        ? 'bg-[#945209] text-white border-[#945209]'
+                        : 'bg-[#FAF6EF] text-[#635342] border-[#E8DEC8] hover:bg-[#F2E5D4]'
+                    }`}
+                  >
+                    {city}
+                  </button>
+                ))}
+                {lockerSearch && (
+                  <button
+                    type="button"
+                    onClick={() => setLockerSearch('')}
+                    className="text-[10px] text-[#A63A26] hover:underline font-semibold ml-1 cursor-pointer"
+                  >
+                    Wyczyść filtr
+                  </button>
+                )}
+              </div>
+
+              {/* Wyniki paczkomatów */}
+              <div className="space-y-2 pt-1">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  {POPULAR_LOCKERS.map(l => (
+                  {filteredLockers.map(l => (
                     <div
                       key={l.code}
                       onClick={() => {
@@ -1052,15 +1094,23 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
                         setLockerSearch(l.code);
                         setIsMapModalOpen(false);
                       }}
-                      className="p-3 rounded-xl border border-[#E5DACB] hover:border-[#945209] hover:bg-[#FAF6EF] cursor-pointer transition-all space-y-1 shadow-2xs"
+                      className={`p-3.5 rounded-xl border cursor-pointer transition-all space-y-1 shadow-2xs group ${
+                        selectedLocker?.code === l.code
+                          ? 'border-[#945209] bg-[#FAF3E8] ring-1 ring-[#945209]/20'
+                          : 'border-[#E5DACB] hover:border-[#945209] hover:bg-[#FAF6EF] bg-white'
+                      }`}
                     >
                       <div className="flex justify-between items-center">
-                        <span className="font-mono font-bold text-xs text-[#8C4609]">{l.code}</span>
+                        <span className="font-mono font-bold text-xs text-[#8C4609] group-hover:text-[#703A07]">{l.code}</span>
                         <span className="text-[10px] bg-[#EFE3CF] text-[#733F07] px-2 py-0.5 rounded-md font-bold">
                           {l.city}
                         </span>
                       </div>
-                      <span className="text-[11px] text-[#70614E] block">{l.address}</span>
+                      <span className="text-[11px] text-[#554737] block font-medium leading-tight">{l.address}</span>
+                      <div className="pt-1 flex items-center justify-between text-[10px] text-[#8C7B68]">
+                        <span>Dostępny 24/7</span>
+                        <span className="text-[#945209] font-bold group-hover:underline">Wybierz ten automat →</span>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -1068,21 +1118,15 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
             </div>
 
             <div className="p-4 bg-[#FAF8F5] border-t border-[#E7DDCE] flex justify-between items-center">
-              <a
-                href="https://inpost.pl/znajdz-paczkomat"
-                target="_blank"
-                rel="noreferrer"
-                className="text-xs font-bold text-[#945209] hover:underline inline-flex items-center gap-1"
-              >
-                <span>Otwórz oficjalną mapę InPost w nowej karcie</span>
-                <span>↗</span>
-              </a>
+              <span className="text-xs text-[#706250]">
+                Wybrany: <strong className="font-mono text-[#8C4609]">{selectedLocker?.code}</strong> ({selectedLocker?.city})
+              </span>
               <button
                 type="button"
                 onClick={() => setIsMapModalOpen(false)}
-                className="px-5 py-2 rounded-xl bg-[#2D2821] text-[#FAF5ED] text-xs font-bold hover:bg-[#433B31] transition-all cursor-pointer"
+                className="px-6 py-2 rounded-xl bg-[#2D2821] hover:bg-[#433B31] text-[#FAF5ED] text-xs font-bold transition-all cursor-pointer shadow-xs"
               >
-                Gotowe
+                Zatwierdź wybór
               </button>
             </div>
           </div>
