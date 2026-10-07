@@ -757,7 +757,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
         ? 'Surowy kit pszczeli z żywic drzew leśnych'
         : isPierzga
         ? 'Chleb pszczeli – fermentowany pyłek z komórek plastra'
-        : 'Wielobarwne ziarna pyłkowe z kwitnących łąk Warmii';
+        : 'Wielobarwne ziarna pyłkowe z kwitnących łąk Dolnego Śląska';
 
       const cardBadge = isPropolis
         ? '100% Kit Pszczeli'
@@ -2113,9 +2113,9 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                     ) : prodType === 'candle' ? (
                       'Nasze świece powstają ręcznie w małych partiach z dziewiczego wosku pszczelego pozyskiwanego z węzy i odsklepin naszej pasieki. Nie zawierają parafiny, stearyny ani sztucznych aromatów. Płomień świecy uwalnia ciepły, miodowy mikroklimat i emituje dobroczynne jony ujemne oczyszczające powietrze z kurzu i smogu.'
                     ) : prodType === 'apitherapy' ? (
-                      'Surowce apiterapeutyczne pozyskujemy wyłącznie w szczycie pożytkowym na Warmii. Zbiór i selekcja odbywają się ręcznie z zachowaniem rygorystycznego reżimu temperaturowego (do 38°C), co pozwala zachować nienaruszone enzymy ulowe, witaminy i bioflawonoidy o potężnym działaniu prozdrowotnym.'
+                      'Surowce apiterapeutyczne pozyskujemy wyłącznie w szczycie pożytkowym na Dolnym Śląsku. Zbiór i selekcja odbywają się ręcznie z zachowaniem rygorystycznego reżimu temperaturowego (do 38°C), co pozwala zachować nienaruszone enzymy ulowe, witaminy i bioflawonoidy o potężnym działaniu prozdrowotnym.'
                     ) : (
-                      'Nasz miód nie jest poddawany szkodliwym procesom pasteryzacji, dekrystalizacji termicznej ani filtracji ciśnieniowej. Trafia do słoika dokładnie w takiej postaci, w jakiej stworzyły go pszczoły w czystym ekosystemie Dolnego Śląska i Warmii. Zachowuje naturalne pyłki kwiatowe, drobiny wosku i propolisu oraz pełną bioaktywność enzymatyczną.'
+                      'Nasz miód nie jest poddawany szkodliwym procesom pasteryzacji, dekrystalizacji termicznej ani filtracji ciśnieniowej. Trafia do słoika dokładnie w takiej postaci, w jakiej stworzyły go pszczoły w czystym ekosystemie Dolnego Śląska. Zachowuje naturalne pyłki kwiatowe, drobiny wosku i propolisu oraz pełną bioaktywność enzymatyczną.'
                     )}
                   </p>
                 </div>
@@ -2142,11 +2142,11 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                         : prodType === 'candle'
                         ? '100% Cera Flava'
                         : product.id === 'propolis-kit'
-                        ? 'Lasy Warmii i Mazur'
+                        ? 'Lasy i Bory Dolnośląskie'
                         : product.id === 'pierzga-pszczela'
                         ? 'Pszczeli Chleb Ulowy'
                         : product.id === 'pylek-pszczeli'
-                        ? 'Kwitnące łąki Warmii'
+                        ? 'Kwitnące łąki Dolnego Śląska'
                         : product.region}
                     </p>
                     <p className="text-xs sm:text-sm text-[#594D42] mt-1 leading-relaxed">
@@ -2159,7 +2159,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                         : product.id === 'pierzga-pszczela'
                         ? 'Pyłek kwiatowy naturalnie zakiszony kwasem mlekowym w komórkach plastra pszczelego.'
                         : product.id === 'pylek-pszczeli'
-                        ? 'Wielobarwny pyłek z czystych, dzikich łąk, facelii, mniszka i zagajników Warmii.'
+                        ? 'Wielobarwny pyłek z czystych, dzikich łąk, facelii, mniszka i dolnośląskich zagajników.'
                         : 'Dziewicze tereny leśne i łąkowe wolne od intensywnego przemysłu.'}
                     </p>
                   </div>
@@ -2626,7 +2626,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                           <tr>
                             <td className="py-3.5 px-4 font-semibold text-[#241D17]">Rejestr Powiatowego Lekarza Weterynarii</td>
                             <td className="py-3.5 px-4 font-bold text-[#1B4332]">WNI 28143502</td>
-                            <td className="py-3.5 px-4 text-[#7A6A5A]">PIW Ostróda / Morąg</td>
+                            <td className="py-3.5 px-4 text-[#7A6A5A]">PIW Środa Śląska</td>
                             <td className="py-3.5 px-4 text-right text-[#1B4332] font-bold">✓ Rejestrowany</td>
                           </tr>
                           <tr>

@@ -23,13 +23,17 @@
 5. [InPost — Umowa i automatyczne etykiety (Manager Paczek)](#5-inpost--umowa-i-automatyczne-etykiety-manager-paczek)
 6. [Dane formalne do Regulaminu i Polityki Prywatności (RODO / Weterynaria)](#6-dane-formalne-do-regulaminu-i-polityki-prywatności-rodo--weterynaria)
 7. [Weryfikacja cen, gramatur i stanów magazynowych](#7-weryfikacja-cen-gramatur-i-stanów-magazynowych)
-8. [Audyt treści sklepu — elementy testowe wymagające Waszej weryfikacji](#8-audyt-treści-sklepu--elementy-testowe-wymagające-waszej-weryfikacji)
-   * [8.1. Profile sensoryczne miodów (Słodycz, Kwasowość, Aromat, Krystalizacja)](#81-profile-sensoryczne-miodów-skala-1-5)
-   * [8.2. Bukiety i nuty smakowe (selekcja z 41 obecnych)](#82-bukiety-i-nuty-smakowe)
-   * [8.3. Badania laboratoryjne vs Certyfikat Weterynaryjny PIW](#83-badania-laboratoryjne-vs-certyfikat-weterynaryjny-piw)
-   * [8.4. Spójność historii pasieki i dane stacjonarne (Sekcja „O nas” i Kontakt)](#84-spójność-historii-pasieki-i-dane-stacjonarne)
-   * [8.5. Koszyki prezentowe B2B, Odkłady pszczele i Szkolenia](#85-oferta-specjalna-b2b-odkłady-i-szkolenia)
-   * [8.6. Koszty dostawy, darmowa wysyłka i opinie klientów](#86-koszty-dostawy-darmowa-wysyłka-i-opinie-klientów)
+8. [Audyt treści sklepu — deklaracje, opakowania i kwestie operacyjne do potwierdzenia](#8-audyt-treści-sklepu--deklaracje-opakowania-i-kwestie-operacyjne-do-potwierdzenia)
+   * [8.1. Sposób pakowania paczek (Tuby vs Tektura falista vs Plaster miodu)](#81-sposób-pakowania-paczek-tuby-vs-tektura-falista-vs-plaster-miodu)
+   * [8.2. Czas realizacji zamówień i gwarancja „Zero stłuczek”](#82-czas-realizacji-zamówień-i-gwarancja-zero-stłuczek)
+   * [8.3. Ujednolicenie pojemności słoików (400g / 1200g vs 450g / 900g)](#83-ujednolicenie-pojemności-słoików-400g--1200g-vs-450g--900g)
+   * [8.4. Pożytki wędrowne i usunięcie błędów prototypu (Dolny Śląsk vs Warmia)](#84-pożytki-wędrowne-i-usunięcie-błędów-prototypu-dolny-śląsk-vs-warmia)
+   * [8.5. Profile sensoryczne miodów (Słodycz, Kwasowość, Aromat, Krystalizacja)](#85-profile-sensoryczne-miodów-skala-1-5)
+   * [8.6. Bukiety i nuty smakowe (selekcja z 41 obecnych)](#86-bukiety-i-nuty-smakowe)
+   * [8.7. Badania laboratoryjne vs Certyfikat Weterynaryjny PIW](#87-badania-laboratoryjne-vs-certyfikat-weterynaryjny-piw)
+   * [8.8. Spójność historii pasieki i dane stacjonarne (O nas, Ciechów, telefon)](#88-spójność-historii-pasieki-i-dane-stacjonarne)
+   * [8.9. Oferta specjalna: B2B, Odkłady pszczele i Szkolenia, Skarby Ula](#89-oferta-specjalna-b2b-odkłady-pszczele-i-szkolenia-skarby-ula)
+   * [8.10. Koszty dostawy, darmowa wysyłka i opinie klientów](#810-koszty-dostawy-darmowa-wysyłka-i-opinie-klientów)
 9. [📝 Szybki formularz do skopiowania i odesłania](#-szybki-formularz-do-skopiowania-i-odesłania)
 
 ---
@@ -195,13 +199,50 @@ Poniżej znajduje się lista 17 produktów, które wprowadziliśmy do bazy sklep
 
 ---
 
-## 8. Audyt treści sklepu — elementy testowe wymagające Waszej weryfikacji
+## 8. Audyt treści sklepu — deklaracje, opakowania i kwestie operacyjne do potwierdzenia
 
-Podczas budowy prototypu wprowadziliśmy szereg parametrów, które były niezbędne do zaprogramowania filtrów, porównywarki i kart produktów. **Poniżej zestawiliśmy wszystkie elementy, które wymagają Waszego autorskiego zatwierdzenia lub korekty:**
+Podczas budowy prototypu wprowadziliśmy szereg parametrów wizualnych, opisów i obietnic marketingowych, które były niezbędne do zaprogramowania filtrów, porównywarki, koszyka i kart produktów. **Poniżej zestawiliśmy wszystkie elementy, które wymagają Waszego autorskiego zatwierdzenia lub korekty:**
 
 ---
 
-### 8.1. Profile sensoryczne miodów (skala 1-5)
+### 8.1. Sposób pakowania paczek (Tuby vs Tektura falista vs Plaster miodu)
+W sklepie szkło musi być bezpieczne. Na różnych podstronach pojawiły się jednak różne określenia opakowań:
+* W sklepie na banerze: *„Bezpieczna dostawa w tubach”*.
+* Na stronie głównej i karcie produktu: *„Pancerne tuby & wysyłka 24h”*.
+* W koszyku: *„Amortyzujące ekotuby plaster miodu z osłoną termiczną chroniącą biokomponenty ula przed upałem”*.
+* W stopce: *„Wysyłamy miód w pancernych tekturowych tubach”* oraz *„Bezpieczne pakowanie z tektury falistej”*.
+* W recenzjach: wzmianka o *„plombie pasiecznej”* na słoiku.
+
+* **Pytania do Właścicieli:**
+  1. **W co fizycznie pakujecie wysyłany miód?** Czy zamawiacie sztywne okrągłe tuby tekturowe, kartony fasonowe z kratownicą/przegródkami z tektury falistej, owijki o strukturze plastra miodu, czy rękawy powietrzne / folię bąbelkową? *(Ujednolicimy cały sklep do Waszego faktycznego sposobu pakowania).*
+  2. **Czy stosujecie osłonę termiczną w upały?** (Jeśli nie, wykreślamy tę deklarację z koszyka).
+  3. **Czy słoiki posiadają papierową banderolę/plombę na wieczku?**
+
+---
+
+### 8.2. Czas realizacji zamówień i gwarancja „Zero stłuczek”
+* **Czas wysyłki:** Na stronie głównej widnieje *„Wysyłka w 24h”*, a w formularzu kasy *„Wysyłka w 24–48h bezpośrednio z naszej dolnośląskiej pracowni”*.
+  * **Pytanie:** Jaki jest Wasz realny czas na nadanie paczki do Paczkomatu / kurierowi? (np. zamówienia do 12:00 wysyłane tego samego dnia, czy standardowo w 24–48h?).
+* **Gwarancja stłuczek:** W kasie i koszyku umieściliśmy obietnicę: *„100% Gwarancja szkła – w razie stłuczki w transporcie wysyłamy nowy słoik w 24h na nasz koszt”*.
+  * **Pytanie:** Czy akceptujecie taką bezdyskusyjną procedurę natychmiastowej dosyłki słoika po przesłaniu zdjęcia przez klienta?
+
+---
+
+### 8.3. Ujednolicenie pojemności słoików (400g / 1200g vs 450g / 900g)
+Wykryliśmy rozbieżność w gramaturach na stronie:
+* Na stronie głównej w ramce informacyjnej widnieje opis: *Słoik 450g (od 39 zł)* oraz *Słoik 900g – Polecany (od 68 zł)*.
+* Natomiast w katalogu sklepu, bazie produktów i WooCommerce wprowadziliśmy słoiki **400g** oraz **1200g** (np. Wielokwiat 30 zł / 65 zł, Akacja 36 zł / 75 zł, Lipa 35 zł / 75 zł, Wrzos 55 zł / 120 zł).
+* **Pytanie do Właścicieli:** W jakich słoikach faktycznie sprzedajecie miód? Czy są to pojemności **400g i 1200g**, czy tradycyjne **450g i 900g / 1000g**? Prosimy o potwierdzenie oficjalnych gramatur, abyśmy ujednolicili wszystkie tabele.
+
+---
+
+### 8.4. Pożytki wędrowne i usunięcie błędów prototypu (Dolny Śląsk vs Warmia)
+Pasieka Usza to w 100% pasieka dolnośląska (Ciechów, powiat średzki). W zakamarkach prototypu sklepu wykryliśmy i usunęliśmy testowe frazy z demonstracyjnej wersji (takie jak *„Warmia”*, *„Mazury”* czy *„PIW Ostróda”*).
+* **Pytanie do Właścicieli:** Jakie są Wasze oficjalne tereny wędrówek z ulami? Obecnie na stronie opisujemy: *Ciechów, Wzgórza Trzebnickie, Dolina Baryczy, Bory Dolnośląskie, Góry Sowie, Masyw Ślęży*. Czy ten zestaw pożytków odpowiada Waszym trasom pasiecznym?
+
+---
+
+### 8.5. Profile sensoryczne miodów (skala 1-5)
 Każdy miód w sklepie posiada wizualną kartę smaku w 4 wymiarach (ocenianą od 1 do 5). Wpisaliśmy wartości według tradycyjnej wiedzy pszczelarskiej, ale **prosimy o weryfikację według Waszego podniebienia i specyfiki Waszych miodobrań**:
 
 | Miód | Słodycz (1-5) | Kwasowość (1-5) | Aromat (1-5) | Krystalizacja (1-5) | Konsystencja | Wasza korekta |
@@ -223,29 +264,29 @@ Każdy miód w sklepie posiada wizualną kartę smaku w 4 wymiarach (ocenianą o
 
 ---
 
-### 8.2. Bukiety i nuty smakowe
+### 8.6. Bukiety i nuty smakowe
 Obecnie w kodzie filtrów i na kartach mamy aż **41 różnych nut smakowych**:  
 > *Kwiat lipy, Mięta leśna, Żywica jodłowa, Palony karmel, Melasa, Białe kwiaty, Kwiat akacji, Majowy mniszek, Owoce leśne, Kwas chlebowy, Ferment ulowy, Gorzka pomarańcza, Ciepły wosk, Nuta dębowa, Nuta marcepanowa, Cytrynowa rześkość...*
 
 * **Pytanie do Właścicieli:**  
-  Czy chcecie utrzymać tak bogaty bukiet (41 nut), czy **wolice, abyśmy uprościli listę do 12–15 najbardziej naturalnych i zrozumiałych dla każdego klienta** (np. *kwiatowy, lipowy, ziołowy, leśny, żywiczny, karmelowy, owocowy, cytrusowy, wytrawny, łagodny*)?
+  Czy chcecie utrzymać tak bogaty bukiet (41 nut), czy **wolicie, abyśmy uprościli listę do 12–15 najbardziej naturalnych i zrozumiałych dla każdego klienta** (np. *kwiatowy, lipowy, ziołowy, leśny, żywiczny, karmelowy, owocowy, cytrusowy, wytrawny, łagodny*)?
 
 ---
 
-### 8.3. Badania laboratoryjne vs Certyfikat Weterynaryjny PIW
+### 8.7. Badania laboratoryjne vs Certyfikat Weterynaryjny PIW
 Na karcie każdego miodu w sklepie zaprogramowaliśmy zakładkę **„Badania Laboratoryjne”**, gdzie obecnie wyświetlają się przykładowe parametry:
 * Zawartość wody (np. *16.4%* dla lipy, *19.2%* dla wrzosu),
 * Liczba diastazowa DN (np. *18.2 DN*, norma min. 8),
 * HMF i przewodność elektryczna,
-* Dla odkładów pszczelich wstawiono tymczasowy testowy wpis: *WNI 28143502 (PIW Ostróda)* — co wymaga zmiany na Wasz dolnośląski numer z PIW Środa Śląska!
+* W sekcji „O nas” widnieje zdanie: *„W Pasiece Usza udostępniamy wyniki badań laboratoryjnych każdej partii miodu (liczbę diastazową, HMF oraz analizę melisopalynologiczną)”*.
 
 * **Pytanie do Właścicieli:**  
-  1. Czy zlecacie regularne badania fizykochemiczne każdej partii w laboratorium (np. Puławy, Instytut Pszczelnictwa, Eurofins) i chcecie publikować dokładne wyniki w sklepie?  
-  2. **Czy wolicie prostsze, bezpieczniejsze rozwiązanie:** zamienić tę zakładkę na oficjalne **„Świadectwo Jakości i Weterynaryjny Certyfikat Pasieki Usza”**, gdzie prezentujemy Wasz legalny numer WNI, potwierdzenie corocznych badań zdrowotności pasieki przez Powiatowego Lekarza Weterynarii i gwarancję 100% naturalnego miodu?
+  1. Czy zlecacie regularne badania fizykochemiczne i pyłkowe każdej partii w laboratorium i chcecie publikować dokładne wyniki w sklepie?  
+  2. **Czy wolicie prostsze, bezpieczniejsze rozwiązanie:** zamienić tę zakładkę na oficjalne **„Świadectwo Jakości i Weterynaryjny Certyfikat Pasieki Usza”**, gdzie prezentujemy Wasz legalny numer WNI z PIW Środa Śląska, potwierdzenie corocznych badań zdrowotności pasieki przez Powiatowego Lekarza Weterynarii i gwarancję 100% naturalnego miodu RAW?
 
 ---
 
-### 8.4. Spójność historii pasieki i dane stacjonarne
+### 8.8. Spójność historii pasieki i dane stacjonarne
 Przeglądając teksty na podstronach wykryliśmy drobne rozbieżności, które warto ujednolicić:
 1. **Rok założenia pasieki:**
    * W jednym miejscu na stronie głównej widnieje: *„Od 1984 r.”*, natomiast w zakładce O nas napisane jest: *„Po ponad 10 latach pracy z pszczołami”*.
@@ -253,27 +294,30 @@ Przeglądając teksty na podstronach wykryliśmy drobne rozbieżności, które w
 2. **Liczba rodzin pszczelich / uli:**
    * Czy podajemy oficjalną liczbę pni wędrownych (np. *150 uli wędrownych*), czy ogólne sformułowanie *„kilkadziesiąt rodzin pszczelich prowadzonych wędrownie”*?
 3. **Dokładny adres stacjonarny:**
-   * W zakładce Kontakt wpisana jest *ul. Łąkowa 3, 55-300 Ciechów*, a w szablonie faktury pojawiła się *ul. Lipowa 12*.
-   * **Do ustalenia:** Jaki jest dokładny adres pocztowy i adres do ewentualnego odbioru słoików na miejscu?
+   * W zakładce Kontakt wpisana jest *ul. Łąkowa 3, 55-300 Ciechów*. Czy to właściwy adres do odbioru osobistego?
+4. **Numer telefonu:**
+   * Na stronie podany jest numer: `+48 697 512 103`. Czy to jest Wasz oficjalny telefon firmowy i w jakich godzinach klienci mogą dzwonić?
 
 ---
 
-### 8.5. Oferta specjalna B2B, Odkłady i Szkolenia
+### 8.9. Oferta specjalna: B2B, Odkłady pszczele i Szkolenia, Skarby Ula
 1. **Zestawy prezentowe dla firm (B2B):**
-   * Na stronie Oferta prezentujemy kosze prezentowe, zestawy w drewnianych skrzynkach i ekotubach z miodem. Czy rzeczywiście realizujecie takie zamówienia dla lokalnych firm i urzędów?
+   * Na stronie Oferta prezentujemy kosze prezentowe, zestawy w drewnianych skrzynkach i tubach z miodem oraz bilecikami firmowymi. Czy realizujecie takie zamówienia dla lokalnych firm i urzędów?
 2. **Produkt #17: Odkład Pszczeli + Szkolenie (350 zł):**
-   * Czy w sezonie wiosennym 2027 planujecie faktycznie sprzedawać odkłady pszczele na ramce wielkopolskiej/dadant i prowadzić warsztaty, czy ten produkt na start sprzedaży miodów ukryć?
+   * W sklepie umieściliśmy ofertę odkładów na ramce wielkopolskiej z młodą matką krainka/buckfast oraz 1h szkolenia przy ulu w Ciechowie (odbiór czerwiec-lipiec). Czy w sezonie 2026/2027 planujecie faktycznie sprzedawać odkłady przez sklep, czy ten produkt na start ukryć?
+3. **Skarby ula:**
+   * Czy potwierdzacie dostępność i ceny: Świece z wosku pszczelego (22 zł), Propolis 20% 50ml (29 zł), Pierzga (35/65/150 zł), Pyłek (28/60 zł)?
 
 ---
 
-### 8.6. Koszty dostawy, darmowa wysyłka i opinie klientów
+### 8.10. Koszty dostawy, darmowa wysyłka i opinie klientów
 1. **Próg darmowej dostawy:**
-   * W kasie ustawiliśmy: Paczkomat 15 zł, Kurier 18 zł, **Darmowa dostawa od 180 zł** (co oznacza zakup średnio 2 dużych słoików miodu lub 4–5 małych). Czy ten próg Wam odpowiada, czy wolicie go podnieść (np. 200 zł) lub obniżyć (np. 150 zł)?
+   * W kasie i na kartach produktów ustawiliśmy: Paczkomat 15 zł, Kurier InPost 18 zł, **Darmowa dostawa od 180 zł** (co oznacza zakup średnio 2 dużych słoików miodu lub 4–5 małych). Czy ten próg Wam odpowiada?
 2. **Opinie i recenzje na stronie:**
-   * Na stronie głównej i przy miodach wyświetlają się obecnie przykładowe recenzje (Marek K. z Wrocławia, Barbara M. z Legnicy itp.).
-   * **Do ustalenia:** Czy macie kilka prawdziwych opinii od swoich stałych klientów (np. z Facebooka, wizytówki Google lub SMS-ów), które możemy tam wkleić, czy wolicie zacząć z czystym kontem opinii zbieranych przez sklep?
-3. **Klub Miodowy / Subskrypcja cykliczna:**
-   * W sklepie zaprogramowaliśmy opcję „Subskrybuj z dostawą co 30, 60 lub 90 dni z 10% rabatem”. Czy chcecie uruchomić tę opcję od razu, czy zostawić ją jako II etap rozwoju sklepu?
+   * Na stronie głównej i przy miodach wyświetlają się obecnie przykładowe recenzje prototypowe (Marek K. z Wrocławia, Barbara M. z Legnicy itp.).
+   * **Do ustalenia:** Czy macie 3–5 prawdziwych opinii od swoich stałych klientów (np. z Facebooka, wizytówki Google lub SMS-ów), które możemy wkleić na start?
+3. **Materiały wideo z pasieki:**
+   * Na blogu i podstronie O nas osadzony jest film z YouTube (`af2qEqCfBTY` - *Przygotowanie pszczół do zimowania*). Czy to Wasz kanał, czy chcecie dodać własne nowe filmy?
 
 ---
 
@@ -291,51 +335,60 @@ PAKIET STARTOWY DLA PASIEKI USZA — FORMULARZ DANYCH I WERYFIKACJI
    - Imię i nazwisko właścicieli: Magdalena i Piotr Szymkowicz
    - Dokładny adres pasieki (do odbioru i faktur): 
    - NIP (jeśli jest): 
-   - Weterynaryjny Numer Identyfikacyjny (WNI): 
+   - Weterynaryjny Numer Identyfikacyjny (WNI z PIW Środa Śląska): 
    - Telefon do kontaktu z klientami: 
-   - Godziny kontaktu i odbioru osobistego: 
+   - Godziny kontaktu telefonicznego i odbioru osobistego: 
 
-2. HISTORIA PASIEKI:
+2. HISTORIA I SKALA PASIEKI:
    - Oficjalny rok założenia / tradycji (np. 1984 czy inny): 
-   - Liczba rodzin pszczelich / uli (podawać czy pominąć): 
+   - Liczba rodzin pszczelich / uli (podawać na stronie czy pominąć): 
+   - Główne rejony wędrówek z ulami na Dolnym Śląsku: 
 
-3. PODATKI, KSIĘGOWOŚĆ I FAKTURY (KSeF):
+3. PAKOWANIE I LOGISTYKA WYSYŁKI:
+   - W co pakowane są słoiki do wysyłki? (np. karton z kratownicą / tuby / folia / inne): 
+   - Czas nadania paczki: [ ] 24h / [ ] 24-48h robocze
+   - Czy słoiki mają banderolę/plombę na wieczku?: [ ] Tak / [ ] Nie
+   - Czy akceptujecie gwarancję dosyłki nowego słoika w razie stłuczki?: [ ] Tak / [ ] Nie
+
+4. PODATKI, KSIĘGOWOŚĆ I FAKTURY (KSeF):
    - Forma opodatkowania: [ ] Rolnik ryczałtowy / RHD (zwolniony z VAT)
                          [ ] Czynny podatnik VAT
    - Program do wystawiania faktur (np. Fakturownia / wFirma / inny): 
    - Kontakt do księgowej (opcjonalnie): 
 
-4. PŁATNOŚCI ONLINE (Przelewy24 / PayU):
+5. PŁATNOŚCI ONLINE (Przelewy24 / PayU):
    - Status umowy: [ ] Podpisana / [ ] W trakcie rejestracji
    - ID Sprzedawcy (Merchant ID): 
    - Klucz CRC: 
    - Klucz API / Raportów: 
 
-5. RACHUNEK BANKOWY (Do przelewów tradycyjnych):
+6. RACHUNEK BANKOWY (Do przelewów tradycyjnych):
    - Numer konta IBAN (26 cyfr): 
    - Nazwa banku: 
    - Nazwa odbiorcy: 
 
-6. INPOST (Manager Paczek):
+7. INPOST (Manager Paczek):
    - Status konta: [ ] Założone / [ ] Czeka na rejestrację
    - Token API: 
    - ID Organizacji: 
 
-7. POCZTA E-MAIL (SMTP):
+8. POCZTA E-MAIL (SMTP):
    - Preferowany adres (np. kontakt@pasiekausza.pl): 
    - Hasło do skrzynki (lub dostęp do hostingu): 
 
-8. WERYFIKACJA OFERTY I PARAMETRÓW:
-   - Gramatury słoików: [ ] Potwierdzam 400g i 1200g / [ ] Zmień na:
+9. WERYFIKACJA OFERTY I PARAMETRÓW:
+   - Gramatury słoików w pasiece: [ ] 400g i 1200g / [ ] 450g i 900g / [ ] Inne: _____
    - Próg darmowej dostawy: [ ] 180 zł jest OK / [ ] Zmień na: _____ zł
    - Bukiety smakowe: [ ] Zostawić 41 szczegółowych / [ ] Uprościć do 12-15 głównych
-   - Badania lab: [ ] Podajemy parametry z badań / [ ] Jeden oficjalny Certyfikat PIW
-   - Odkłady pszczele i szkolenia: [ ] Zostawić w ofercie / [ ] Ukryć na start
-   - Subskrypcja miodowa (co miesiąc): [ ] Włączona od razu / [ ] Na później
-   - Zmiany w cenach z tabeli: (wpisz jeśli któreś ceny mają ulec zmianie)
+   - Badania laboratoryjne: [ ] Podajemy parametry liczbowe / [ ] Jeden Certyfikat Jakości PIW
+   - Odkłady pszczele i szkolenia: [ ] Zostawić w ofercie / [ ] Ukryć na start sprzedaży
+   - Zestawy prezentowe B2B dla firm: [ ] Tak, oferujemy / [ ] Ukryć na start
+   - Prawdziwe opinie klientów: (można wkleić 2-3 cytaty lub link do profilu)
+   - Zmiany w cenach miodów z tabeli: (wpisz jeśli któreś ceny mają ulec zmianie)
 ==================================================================
 ```
 
 ---
 
 *Dokument przygotowany z myślą o prostym i bezpiecznym wdrożeniu sklepu Pasieki Wędrownej „Usza”. W razie jakichkolwiek pytań służymy pomocą przy każdym z powyższych kroków!*
+

@@ -77,7 +77,7 @@ export const REVIEW_CONFIGS: Record<ProductType, ProductTypeReviewConfig> = {
     ],
     headerSubtitle: 'Oceny wielowymiarowe: czystość i świeżość surowca ulowego, odczuwalne efekty kuracji oraz jakość opakowania.',
     formTitlePrefix: 'Twoja recenzja produktu apiterapii',
-    formSubtitle: 'Oceń świeżość surowca, efekty profilaktyki zdrowotnej oraz czystość produktu z Warmii.',
+    formSubtitle: 'Oceń świeżość surowca, efekty profilaktyki zdrowotnej oraz czystość produktu z Dolnego Śląska.',
     formCriteriaHeading: 'Oceń produkt ulowy (1-5 gwiazdek):',
     contentPlaceholder: 'Napisz o sposobie przyjmowania (np. nalewka, namaczanie pyłku), czystości i zauważonych efektach kuracji...',
   },
@@ -543,7 +543,7 @@ export const ProductReviews: React.FC<ProductReviewsProps> = ({
                       onChange={(e) => setIsVerifiedPurchase(e.target.checked)}
                       className="w-4 h-4 rounded text-[#1B4332] border-[#C4B3A0] focus:ring-[#1B4332]"
                     />
-                    <span>Potwierdzam zakup w Pasiece Warmia</span>
+                    <span>Potwierdzam zakup w Pasiece Usza</span>
                   </label>
                 </div>
                 {isVerifiedPurchase && (

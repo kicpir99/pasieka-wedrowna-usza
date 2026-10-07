@@ -83,8 +83,8 @@ export const HoneyQualitySection: React.FC<HoneyQualitySectionProps> = ({ contai
               <div className="space-y-3 text-xs text-[#524434]">
                 <div className="p-3 rounded-2xl bg-white border border-[#E3D7C5] space-y-1">
                   <div className="flex items-center justify-between font-bold text-[#241E17]">
-                    <span>Słoik 450g</span>
-                    <span className="text-[#8C5819]">od 39 zł</span>
+                    <span>Słoik 400g</span>
+                    <span className="text-[#8C5819]">od 30 zł</span>
                   </div>
                   <p className="text-[#6E5D4C] text-[11px] leading-relaxed">
                     Poręczny, idealny na stół śniadaniowy, do przetestowania nowego smaku lub jako ciepły podarunek dla kogoś bliskiego.
@@ -93,8 +93,8 @@ export const HoneyQualitySection: React.FC<HoneyQualitySectionProps> = ({ contai
 
                 <div className="p-3 rounded-2xl bg-white border border-[#E3D7C5] space-y-1">
                   <div className="flex items-center justify-between font-bold text-[#241E17]">
-                    <span>Słoik 900g (Polecany)</span>
-                    <span className="text-[#8C5819]">od 68 zł</span>
+                    <span>Słoik 1200g (Polecany)</span>
+                    <span className="text-[#8C5819]">od 65 zł</span>
                   </div>
                   <p className="text-[#6E5D4C] text-[11px] leading-relaxed">
                     Tradycyjny, duży słoik do domowej spiżarni. Najbardziej ekonomiczny wybór dla miłośników codziennej herbaty.

@@ -260,7 +260,7 @@ export function getEnrichedProduct(product: HoneyProduct): HoneyProduct & Enrich
       'Wybitna łagodność (linie Krainka / Buckfast) – spokojne trzymanie się plastrów i bezpieczna praca bez uciążliwego żądlenia',
       'Młoda matka 2026 ze sprawdzonym czerwieniem – wysoka plenność i zwarty czerw kryty od listewki do listewki',
       'Dynamiczny rozwój wiosenny – rodzina błyskawicznie buduje węzę i dochodzi do pełnej siły produkcyjnej',
-      'Silny instynkt higieniczny rodziny – wysoka odporność na choroby czerwiu i doskonałe przystosowanie do warunków Warmii',
+      'Silny instynkt higieniczny rodziny – wysoka odporność na choroby czerwiu i doskonałe przystosowanie do warunków Dolnego Śląska',
       'Pszczoły o niskiej skłonności do rojenia – ukierunkowane na intensywny zbiór pożytków nektarowych i spadziowych',
     ];
     advisorVerdict = 'Wybierz Odkład Pszczeli ze Szkoleniem, jeśli planujesz bezpieczny i profesjonalny start własnej pasieki pod okiem mistrza pszczelarskiego, z gwarancją zdrowego materiału biologicznego pod nadzorem weterynaryjnym PIW.';
@@ -330,7 +330,7 @@ export function getEnrichedProduct(product: HoneyProduct): HoneyProduct & Enrich
     ];
   } else if (product.id === 'pylek-pszczeli') {
     healthBenefits = [
-      'Ponad 250 substancji biologicznie czynnych – naturalna multiwitamina i biopierwiastki z kwitnących łąk Warmii',
+      'Ponad 250 substancji biologicznie czynnych – naturalna multiwitamina i biopierwiastki z kwitnących łąk Dolnego Śląska',
       'Pełnowartościowe białko roślinne – ponad 22% łatwoprzyswajalnych aminokwasów egzogennych dla regeneracji mięśni',
       'Wzmocnienie układu krążenia – wysoka zawartość rutyny uelastycznia naczynia krwionośne i reguluje ciśnienie',
       'Likwidacja chronicznego zmęczenia – podnosi siły witalne, poprawia pamięć, koncentrację i nastrój',
@@ -529,7 +529,7 @@ export function getEnrichedProduct(product: HoneyProduct): HoneyProduct & Enrich
       'Działa wspomagająco przy alergii na pyłki (naturalna desensybilizacja)',
       'Wspomaga mięsień sercowy i łagodzi stany wyczerpania psychofizycznego',
     ];
-    advisorVerdict = 'Wybierz Miód Wielokwiatowy, jeśli szukasz klasycznego, uniwersalnego miodu z bogactwa wiosenno-letnich łąk Warmii, idealnego dla całej rodziny do codziennej profilaktyki odporności i łagodzenia alergii pyłkowych.';
+    advisorVerdict = 'Wybierz Miód Wielokwiatowy, jeśli szukasz klasycznego, uniwersalnego miodu z bogactwa wiosenno-letnich łąk Dolnego Śląska, idealnego dla całej rodziny do codziennej profilaktyki odporności i łagodzenia alergii pyłkowych.';
     masterTip = 'Regularne spożywanie miodu wielokwiatowego z lokalnej pasieki działa jak naturalna desensybilizacja – uodparnia organizm na pyłki roślin kwitnących w naszym regionie.';
     culinaryPairing = 'Świeże chrupiące pieczywo z wiejskim masłem, poranna owsianka, twaróg, napary ziołowe, lemoniady.';
     culinaryIdeas = [
@@ -621,7 +621,7 @@ export function getEnrichedProduct(product: HoneyProduct): HoneyProduct & Enrich
       state: 'krupiec',
       label: 'Produkt apiterapeutyczny (Superfood)',
       badgeClass: 'bg-amber-900/10 text-amber-900 border-amber-900/25',
-      shortExplanation: 'Surowiec ulowy pozyskany z czystych rejonów Warmii, zachowujący 100% aktywności biologicznej.',
+      shortExplanation: 'Surowiec ulowy pozyskany z czystych rejonów Dolnego Śląska, zachowujący 100% aktywności biologicznej.',
       crystallizationSpeed: 'Suszony w reżimie do 38°C',
       hasGlucoseBloom: false,
       storageTips: 'Przechowywać w szczelnym opakowaniu w ciemnym i chłodnym miejscu (poniżej 18°C).',
@@ -720,7 +720,7 @@ export function getEnrichedProduct(product: HoneyProduct): HoneyProduct & Enrich
   } else if (product.id === 'pierzga-pszczela') {
     botanicalSource = 'Pyłek kwiatowy poddany naturalnej fermentacji mlekowej w ulu';
   } else if (product.id === 'pylek-pszczeli') {
-    botanicalSource = 'Różnobarwne obnóża pyłkowe z kwitnących łąk i lasów Warmii';
+    botanicalSource = 'Różnobarwne obnóża pyłkowe z kwitnących łąk i lasów Dolnego Śląska';
   }
 
   return {

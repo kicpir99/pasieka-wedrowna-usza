@@ -461,8 +461,8 @@ const ProductDetailModalContent: React.FC<ProductDetailModalContentProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="bg-white p-3.5 rounded-xl border border-[#D9821E]/20 shadow-2xs">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-[#D9821E] block mb-1">Pochodzenie</span>
-                  <p className="text-xs font-bold text-[#241D17]">100% Warmia</p>
-                  <p className="text-[11px] text-[#7A6A5A] mt-0.5">Zbiór z czystych, mazursko-warmińskich pożytków</p>
+                  <p className="text-xs font-bold text-[#241D17]">100% Dolny Śląsk</p>
+                  <p className="text-[11px] text-[#7A6A5A] mt-0.5">Zbiór z czystych, dolnośląskich pożytków wędrownych</p>
                 </div>
                 <div className="bg-white p-3.5 rounded-xl border border-[#D9821E]/20 shadow-2xs">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-[#D9821E] block mb-1">Przetwarzanie</span>
