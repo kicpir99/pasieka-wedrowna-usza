@@ -306,6 +306,27 @@ export interface CreateOrderParams {
   paymentTitle: string;
 }
 
+// Mapa synchronizacji identyfikatorów produktów z WooCommerce REST API
+export const WOO_PRODUCT_IDS_MAP: Record<string, number> = {
+  'miod-akacjowy': 37,
+  'miod-lipowy': 50,
+  'miod-wrzosowy': 52,
+  'miod-ze-spadzi-iglastej': 54,
+  'miod-wielokwiatowy': 56,
+  'miod-gryczany': 58,
+  'miod-rzepakowy': 60,
+  'miod-mniszkowy': 62,
+  'miod-lesny': 64,
+  'miod-malinowy': 66,
+  'miod-nawlociowy': 68,
+  'miod-faceliowy': 70,
+  'pierzga-pszczela': 72,
+  'propolis-kit': 74,
+  'pylek-pszczeli': 76,
+  'swieca-wosk-pszczeli': 78,
+  'odklad-szkolenie-pszczele': 80,
+};
+
 export async function createWooCommerceOrder(params: CreateOrderParams): Promise<{
   success: boolean;
   orderId?: number;
@@ -358,14 +379,17 @@ export async function createWooCommerceOrder(params: CreateOrderParams): Promise
         postcode: params.delivery.method === 'kurier' ? params.customer.postcode || '00-000' : '00-000',
         country: 'PL',
       },
-      line_items: params.items.map(item => ({
-        product_id: item.product.wooId || (item.product.id === 'miod-akacjowy' ? 37 : 37),
-        quantity: item.quantity,
-        meta_data: [
-          { key: 'Waga', value: `${item.weightGrams || item.selectedWeightGrams || 400}g` },
-          { key: 'Miód', value: item.product.name },
-        ],
-      })),
+      line_items: params.items.map(item => {
+        const wooProductId = item.product.wooId || WOO_PRODUCT_IDS_MAP[item.product.id] || 37;
+        return {
+          product_id: wooProductId,
+          quantity: item.quantity,
+          meta_data: [
+            { key: 'Waga/Wariant', value: `${item.weightGrams || item.selectedWeightGrams || 400}g` },
+            { key: 'Produkt', value: item.product.name },
+          ],
+        };
+      }),
       shipping_lines: [
         {
           method_id: params.delivery.method,
