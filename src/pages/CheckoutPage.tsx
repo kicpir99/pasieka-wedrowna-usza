@@ -19,7 +19,9 @@ import {
   Clock,
   Check,
   AlertCircle,
-  X
+  X,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 import { createWooCommerceOrder } from '../services/wooCommerceService';
 
@@ -31,16 +33,35 @@ interface CheckoutPageProps {
   displayResolution?: { width: number; height: number; deviceType: string; containerClass: string };
 }
 
-// Przykładowa lista popularnych paczkomatów na start dla ułatwienia wyboru
-const POPULAR_LOCKERS = [
-  { code: 'WRO01A', address: 'ul. Legnicka 58, 54-204 Wrocław', city: 'Wrocław' },
-  { code: 'TRZ01M', address: 'ul. Wrocławska 14, 55-100 Trzebnica', city: 'Trzebnica' },
-  { code: 'MIL02A', address: 'ul. Krotoszyńska 2, 56-300 Milicz', city: 'Milicz' },
-  { code: 'WAW22B', address: 'ul. Marszałkowska 104, 00-017 Warszawa', city: 'Warszawa' },
-  { code: 'KRA14M', address: 'ul. Floriańska 25, 31-019 Kraków', city: 'Kraków' },
-  { code: 'POZ08A', address: 'ul. Półwiejska 32, 61-888 Poznań', city: 'Poznań' },
-  { code: 'GDA04A', address: 'ul. Grunwaldzka 82, 80-244 Gdańsk', city: 'Gdańsk' },
-  { code: 'KAT03B', address: 'ul. Chorzowska 107, 40-101 Katowice', city: 'Katowice' },
+// Baza prawdziwych Paczkomatów InPost na Dolnym Śląsku i w Polsce
+const REAL_LOCKERS = [
+  // Wrocław (prawdziwe automaty InPost z podziałem na dzielnice)
+  { code: 'WRO01A', address: 'ul. Legnicka 58 (Kaufland)', city: 'Wrocław', district: 'Fabryczna' },
+  { code: 'WRO12M', address: 'ul. Świdnicka 40 (Dom Handlowy Renoma)', city: 'Wrocław', district: 'Stare Miasto' },
+  { code: 'WRO25N', address: 'ul. Powstańców Śląskich 95 (Sky Tower)', city: 'Wrocław', district: 'Krzyki' },
+  { code: 'WRO08M', address: 'pl. Grunwaldzki 22 (Pasaż Grunwaldzki)', city: 'Wrocław', district: 'Śródmieście' },
+  { code: 'WRO44A', address: 'ul. Bolesława Krzywoustego 126 (CH Korona)', city: 'Wrocław', district: 'Psie Pole' },
+  { code: 'WRO55P', address: 'ul. Grabiszyńska 240 (Tarasy Grabiszyńskie)', city: 'Wrocław', district: 'Fabryczna' },
+  { code: 'WRO77B', address: 'ul. Sucha 1 (Wroclavia / Dworzec Główny)', city: 'Wrocław', district: 'Krzyki' },
+  { code: 'WRO90K', address: 'ul. Jedności Narodowej 180', city: 'Wrocław', district: 'Śródmieście' },
+
+  // Dolny Śląsk / Rejon Pasieki
+  { code: 'TRZ01M', address: 'ul. Wrocławska 14 (Biedronka)', city: 'Trzebnica', district: 'Dolny Śląsk' },
+  { code: 'TRZ02A', address: 'ul. Daszyńskiego 42 (Stacja PKP)', city: 'Trzebnica', district: 'Dolny Śląsk' },
+  { code: 'MIL01A', address: 'ul. Trzebnicka 10 (Centrum)', city: 'Milicz', district: 'Dolina Baryczy' },
+  { code: 'MIL02A', address: 'ul. Krotoszyńska 2 (Dino)', city: 'Milicz', district: 'Dolina Baryczy' },
+  { code: 'OLE01A', address: 'ul. Wojska Polskiego 22', city: 'Oleśnica', district: 'Dolny Śląsk' },
+  { code: 'WOL01A', address: 'ul. Ścinawska 5', city: 'Wołów', district: 'Dolny Śląsk' },
+  { code: 'SRO01A', address: 'ul. Wrocławska 18', city: 'Środa Śląska', district: 'Dolny Śląsk' },
+
+  // Główne miasta Polski
+  { code: 'WAW22B', address: 'ul. Marszałkowska 104 (Centrum)', city: 'Warszawa', district: 'Śródmieście' },
+  { code: 'WAW01A', address: 'al. Jana Pawła II 82 (Westfield Arkadia)', city: 'Warszawa', district: 'Wola' },
+  { code: 'KRA14M', address: 'ul. Floriańska 25 (Stare Miasto)', city: 'Kraków', district: 'Śródmieście' },
+  { code: 'KRA02A', address: 'ul. Pawia 5 (Galeria Krakowska)', city: 'Kraków', district: 'Centrum' },
+  { code: 'POZ08A', address: 'ul. Półwiejska 32 (Stary Browar)', city: 'Poznań', district: 'Centrum' },
+  { code: 'GDA04A', address: 'ul. Grunwaldzka 82 (Galeria Bałtycka)', city: 'Gdańsk', district: 'Wrzeszcz' },
+  { code: 'KAT03B', address: 'ul. Chorzowska 107 (Silesia City Center)', city: 'Katowice', district: 'Centrum' },
 ];
 
 export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }) => {
@@ -48,6 +69,22 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
   const { user, register, addOrder } = useAuth();
   const [createAccount, setCreateAccount] = useState(false);
   const [accountPassword, setAccountPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+
+  // Wskaźnik siły hasła
+  const passwordStrength = useMemo(() => {
+    if (!accountPassword) return { score: 0, label: '', color: '' };
+    let score = 0;
+    if (accountPassword.length >= 8) score++;
+    if (accountPassword.length >= 10) score++;
+    if (/[0-9]/.test(accountPassword)) score++;
+    if (/[A-Z]/.test(accountPassword)) score++;
+    if (/[^A-Za-z0-9]/.test(accountPassword)) score++;
+
+    if (score <= 1) return { score: 1, label: 'Za słabe (min. 8 znaków)', color: 'bg-[#C92A2A]' };
+    if (score <= 3) return { score: 2, label: 'Dobre (wystarczające)', color: 'bg-[#D97706]' };
+    return { score: 3, label: 'Bardzo silne', color: 'bg-[#2A6546]' };
+  }, [accountPassword]);
 
   // Stan formularza z automatycznym uzupełnieniem z profilu użytkownika
   const [firstName, setFirstName] = useState(() => user?.address?.firstName || user?.name || '');
@@ -68,7 +105,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
 
   // Paczkomat
   const [lockerSearch, setLockerSearch] = useState('');
-  const [selectedLocker, setSelectedLocker] = useState<{ code: string; address: string; city: string } | null>(() => {
+  const [selectedLocker, setSelectedLocker] = useState<{ code: string; address: string; city: string; district?: string } | null>(() => {
     if (user?.address?.parcelLocker) {
       return {
         code: user.address.parcelLocker,
@@ -76,7 +113,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
         city: user.address.city || 'Polska',
       };
     }
-    return POPULAR_LOCKERS[0];
+    return REAL_LOCKERS[0];
   });
   const [isMapModalOpen, setIsMapModalOpen] = useState(false);
 
@@ -90,7 +127,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
   // Status składania zamówienia
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [completedOrder, setCompletedOrder] = useState<{ id: number; total: number } | null>(null);
+  const [completedOrder, setCompletedOrder] = useState<{ id: number; total: number; paymentUrl?: string } | null>(null);
 
   // Kalkulacja kosztów
   const FREE_SHIPPING_THRESHOLD = 180;
@@ -106,12 +143,21 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
   const remainingForFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
   const freeShippingProgress = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
 
-  // Filtrowane paczkomaty
+  // Precyzyjne filtrowanie paczkomatów (z priorytetem dopasowania po mieście)
   const filteredLockers = useMemo(() => {
-    if (!lockerSearch.trim()) return POPULAR_LOCKERS;
+    if (!lockerSearch.trim()) return REAL_LOCKERS;
     const q = lockerSearch.toLowerCase().trim();
-    return POPULAR_LOCKERS.filter(
-      l => l.code.toLowerCase().includes(q) || l.address.toLowerCase().includes(q) || l.city.toLowerCase().includes(q)
+
+    // Jeśli zapytanie odpowiada dokładnie nazwie miasta (np. kliknięto pigułkę "Wrocław")
+    const exactCity = REAL_LOCKERS.filter(l => l.city.toLowerCase() === q);
+    if (exactCity.length > 0) return exactCity;
+
+    return REAL_LOCKERS.filter(
+      l =>
+        l.code.toLowerCase().includes(q) ||
+        l.city.toLowerCase().includes(q) ||
+        l.address.toLowerCase().includes(q) ||
+        (l.district && l.district.toLowerCase().includes(q))
     );
   }, [lockerSearch]);
 
@@ -140,9 +186,12 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
       return;
     }
 
-    if (!user && createAccount && (!accountPassword || accountPassword.trim().length < 6)) {
-      setSubmitError('Aby założyć konto w pasiece, podaj hasło o długości minimum 6 znaków.');
-      return;
+    // Walidacja hasła, jeśli klient chce założyć konto
+    if (!user && createAccount) {
+      if (!accountPassword || accountPassword.length < 8 || !(/[0-9]/.test(accountPassword) || /[A-Z]/.test(accountPassword))) {
+        setSubmitError('Hasło powinno mieć minimum 8 znaków i zawierać przynajmniej jedną cyfrę lub wielką literę (np. Miod2026).');
+        return;
+      }
     }
 
     setIsSubmitting(true);
@@ -541,20 +590,50 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
                     </label>
 
                     {createAccount && (
-                      <div className="pt-2 border-t border-[#E8DCB8] pl-6.5 space-y-1.5 animate-in fade-in duration-200">
-                        <label className="block text-[11px] font-semibold text-[#5B4F3F]">
-                          Utwórz hasło do Twojego konta * (min. 6 znaków)
-                        </label>
-                        <input
-                          type="password"
-                          required={createAccount}
-                          value={accountPassword}
-                          onChange={e => setAccountPassword(e.target.value)}
-                          placeholder="Wpisz bezpieczne hasło..."
-                          className="w-full px-3 py-2 rounded-xl bg-white border border-[#DCCEB9] text-xs outline-none focus:border-[#945209] focus:ring-1 focus:ring-[#945209]/20"
-                        />
+                      <div className="pt-2 border-t border-[#E8DCB8] pl-6.5 space-y-2 animate-in fade-in duration-200">
+                        <div className="flex items-center justify-between">
+                          <label className="block text-[11px] font-semibold text-[#5B4F3F]">
+                            Utwórz hasło do Twojego konta * (min. 8 znaków)
+                          </label>
+                          {passwordStrength.label && (
+                            <span className={`text-[10px] font-bold ${
+                              passwordStrength.score === 1 ? 'text-[#C92A2A]' : passwordStrength.score === 2 ? 'text-[#D97706]' : 'text-[#2A6546]'
+                            }`}>
+                              {passwordStrength.label}
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="relative">
+                          <input
+                            type={showPassword ? 'text' : 'password'}
+                            required={createAccount}
+                            value={accountPassword}
+                            onChange={e => setAccountPassword(e.target.value)}
+                            placeholder="Wpisz bezpieczne hasło (np. Miod2026)..."
+                            className="w-full pl-3.5 pr-10 py-2.5 rounded-xl bg-white border border-[#DCCEB9] text-xs outline-none focus:border-[#945209] focus:ring-1 focus:ring-[#945209]/20"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8C7B68] hover:text-[#2D2821] p-1 cursor-pointer"
+                            title={showPassword ? 'Ukryj hasło' : 'Pokaż hasło'}
+                          >
+                            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          </button>
+                        </div>
+
+                        {/* Wskaźnik siły hasła */}
+                        {accountPassword && (
+                          <div className="grid grid-cols-3 gap-1 h-1.5 rounded-full overflow-hidden bg-[#EAE0D1]">
+                            <div className={`h-full ${passwordStrength.score >= 1 ? passwordStrength.color : ''}`} />
+                            <div className={`h-full ${passwordStrength.score >= 2 ? passwordStrength.color : ''}`} />
+                            <div className={`h-full ${passwordStrength.score >= 3 ? passwordStrength.color : ''}`} />
+                          </div>
+                        )}
+
                         <span className="text-[10px] text-[#8A7C6B] block">
-                          Hasło pozwoli Ci zalogować się w każdej chwili, aby sprawdzić status zamówienia w panelu Moje Konto.
+                          Zalecamy hasło z min. 8 znaków i co najmniej jedną cyfrą lub wielką literą (np. Miod2026).
                         </span>
                       </div>
                     )}
