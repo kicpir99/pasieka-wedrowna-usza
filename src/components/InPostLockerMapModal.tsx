@@ -51,7 +51,7 @@ export const REAL_INPOST_LOCKERS: ParcelLocker[] = [
   { code: 'KAT03B', address: 'ul. Chorzowska 107 (Silesia City Center)', city: 'Katowice', district: 'Centrum', lat: 50.2708, lng: 19.0045 },
 ];
 
-const CITIES = ['Wrocław', 'Trzebnica', 'Milicz', 'Środa Śląska', 'Warszawa', 'Kraków', 'Poznań', 'Gdańsk', 'Katowice'];
+const CITIES = ['Wrocław', 'Trzebnica', 'Milicz', 'Lubań', 'Środa Śląska', 'Warszawa', 'Kraków', 'Poznań', 'Gdańsk', 'Katowice'];
 
 interface Props {
   isOpen: boolean;
@@ -63,6 +63,7 @@ interface Props {
 export const InPostLockerMapModal: React.FC<Props> = ({ isOpen, onClose, selectedCode, onSelect }) => {
   const [search, setSearch] = useState('');
   const [activeCity, setActiveCity] = useState('Wrocław');
+  const [allLockers, setAllLockers] = useState<ParcelLocker[]>(REAL_INPOST_LOCKERS);
   const [activeLocker, setActiveLocker] = useState<ParcelLocker>(() => {
     return REAL_INPOST_LOCKERS.find(l => l.code === selectedCode) || REAL_INPOST_LOCKERS[0];
   });
@@ -71,20 +72,36 @@ export const InPostLockerMapModal: React.FC<Props> = ({ isOpen, onClose, selecte
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<{ [code: string]: L.Marker }>({});
 
+  // Dynamiczne załadowanie pełnej oficjalnej bazy paczkomatów InPost
+  useEffect(() => {
+    fetch('/data/inpost_lockers.json')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          setAllLockers(data);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   // Filtrowanie paczkomatów
   const displayedLockers = useMemo(() => {
     if (search.trim()) {
       const q = search.toLowerCase().trim();
-      return REAL_INPOST_LOCKERS.filter(
-        l =>
-          l.code.toLowerCase().includes(q) ||
-          l.address.toLowerCase().includes(q) ||
-          l.city.toLowerCase().includes(q) ||
-          (l.district && l.district.toLowerCase().includes(q))
-      );
+      return allLockers
+        .filter(
+          l =>
+            l.code.toLowerCase().includes(q) ||
+            l.address.toLowerCase().includes(q) ||
+            l.city.toLowerCase().includes(q) ||
+            (l.district && l.district.toLowerCase().includes(q))
+        )
+        .slice(0, 60);
     }
-    return REAL_INPOST_LOCKERS.filter(l => l.city.toLowerCase() === activeCity.toLowerCase());
-  }, [search, activeCity]);
+    return allLockers
+      .filter(l => l.city.toLowerCase() === activeCity.toLowerCase())
+      .slice(0, 60);
+  }, [allLockers, search, activeCity]);
 
   // Inicjalizacja i obsługa mapy Leaflet
   useEffect(() => {

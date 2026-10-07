@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { CartItem } from '../types';
 import {
@@ -104,6 +104,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
   const [city, setCity] = useState(() => user?.address?.city || '');
 
   // Paczkomat
+  const [allLockers, setAllLockers] = useState<any[]>(REAL_LOCKERS);
   const [lockerSearch, setLockerSearch] = useState('');
   const [selectedLocker, setSelectedLocker] = useState<{ code: string; address: string; city: string; district?: string } | null>(() => {
     if (user?.address?.parcelLocker) {
@@ -116,6 +117,18 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
     return REAL_LOCKERS[0];
   });
   const [isMapModalOpen, setIsMapModalOpen] = useState(false);
+
+  // Dynamiczne załadowanie pełnej oficjalnej bazy paczkomatów InPost
+  useEffect(() => {
+    fetch('/data/inpost_lockers.json')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          setAllLockers(data);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   // Metoda płatności
   const [paymentMethod, setPaymentMethod] = useState<'blik' | 'p24' | 'cod' | 'bacs'>('blik');
@@ -143,23 +156,28 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
   const remainingForFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
   const freeShippingProgress = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
 
-  // Precyzyjne filtrowanie paczkomatów (z priorytetem dopasowania po mieście)
+  // Wyszukiwanie paczkomatów w bazie 14 901 oficjalnych automatów InPost
   const filteredLockers = useMemo(() => {
-    if (!lockerSearch.trim()) return REAL_LOCKERS;
+    const source = allLockers.length > 0 ? allLockers : REAL_LOCKERS;
+    if (!lockerSearch.trim()) {
+      return source.filter(l => l.city.toLowerCase() === 'wrocław' || l.city.toLowerCase() === 'trzebnica').slice(0, 10);
+    }
     const q = lockerSearch.toLowerCase().trim();
 
-    // Jeśli zapytanie odpowiada dokładnie nazwie miasta (np. kliknięto pigułkę "Wrocław")
-    const exactCity = REAL_LOCKERS.filter(l => l.city.toLowerCase() === q);
-    if (exactCity.length > 0) return exactCity;
+    // Jeśli zapytanie odpowiada dokładnie nazwie miasta (np. "Wrocław", "Lubań")
+    const exactCity = source.filter(l => l.city.toLowerCase() === q);
+    if (exactCity.length > 0) return exactCity.slice(0, 40);
 
-    return REAL_LOCKERS.filter(
-      l =>
-        l.code.toLowerCase().includes(q) ||
-        l.city.toLowerCase().includes(q) ||
-        l.address.toLowerCase().includes(q) ||
-        (l.district && l.district.toLowerCase().includes(q))
-    );
-  }, [lockerSearch]);
+    return source
+      .filter(
+        l =>
+          l.code.toLowerCase().includes(q) ||
+          l.city.toLowerCase().includes(q) ||
+          l.address.toLowerCase().includes(q) ||
+          (l.district && l.district.toLowerCase().includes(q))
+      )
+      .slice(0, 40);
+  }, [allLockers, lockerSearch]);
 
   // Obsługa wysłania zamówienia
   const handleSubmit = async (e: React.FormEvent) => {
