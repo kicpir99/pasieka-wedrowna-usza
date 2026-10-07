@@ -3,13 +3,6 @@
 
 ---
 
-> [!NOTE]
-> **Dobra wiadomość:**  
-> Wtyczka łącząca sklep z WordPressem (`Pasieka Usza - Headless REST API Connector`) została **pomyślnie zainstalowana i jest już w 100% aktywna na serwerze!**  
-> Oznacza to, że każda zmiana wprowadzona w panelu WordPressa natychmiast odzwierciedla się w sklepie internetowym. Wszystko zostało zaprojektowane tak, abyście mogli samodzielnie zarządzać ofertą, cenami, blogiem i pytaniami bez pisania ani jednej linijki kodu.
-
----
-
 ## 📋 Spis Treści Podręcznika
 
 1. [Logowanie do panelu administracyjnego](#1-logowanie-do-panelu-administracyjnego)
@@ -122,7 +115,7 @@ W oknie edycji produktu (pod głównym polem opisu) znajduje się sekcja **Pola 
 
 ## 5. Zarządzanie pytaniami i odpowiedziami FAQ
 
-Po aktywacji naszej wtyczki w lewym menu WordPressa pojawiła się dedykowana zakładka **Pytania FAQ**.
+W lewym menu WordPressa znajduje się dedykowana zakładka **Pytania FAQ**.
 
 ```
 Panel WordPress (lewe menu)
