@@ -243,7 +243,7 @@ const USE_UNIVERSAL_RIBBON = true;
 
 /**
  * HoneyLiquidRibbon
- * Luksusowa płynna wstęga miodowa renderowana w fizycznych warstwach 3D:
+ * Naturalna płynna wstęga miodowa renderowana w fizycznych warstwach 3D:
  * - isFrontLayer = false: ładuje warstwę tylną (z-index: 5, za głównym słoikiem) oraz organiczną kaustykę na podłożu i lustrzane odbicie
  * - isFrontLayer = true: ładuje warstwę przednią (z-index: 30, przed dolną krawędzią słoika)
  * - 100% zsynchronizowana fizyka unoszenia (RAF Harmonic Motion z globalnym czasem performance.now())

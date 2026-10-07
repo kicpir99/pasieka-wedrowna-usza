@@ -892,7 +892,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
                     />
                   </div>
 
-                  {/* Lista paczkomatów z luksusowym suwakiem i bezpiecznym marginesem pr-3.5 */}
+                  {/* Lista paczkomatów z przejrzystym suwakiem i bezpiecznym marginesem pr-3.5 */}
                   <div className="space-y-2 max-h-56 overflow-y-auto pr-3.5 pasieka-scrollbar">
                     {filteredLockers.map(locker => (
                       <div

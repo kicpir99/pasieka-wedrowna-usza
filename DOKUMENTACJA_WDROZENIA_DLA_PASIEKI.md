@@ -9,7 +9,7 @@
 
 > [!NOTE]
 > **Dobra wiadomość na start:**  
-> Cała techniczna strona sklepu — luksusowa szata graficzna, katalog 17 produktów pszczelich, koszyk, kasa, dobierak miodów oraz mapa z bazą 14 901 Paczkomatów InPost — **jest już w 100% gotowa i działa**.  
+> Cała techniczna strona sklepu — naturalny, swojski i ciepły wygląd, katalog 17 produktów pszczelich, prosty i przejrzysty koszyk, kasa, dobierak miodów oraz mapa z bazą 14 901 Paczkomatów InPost — **jest już w 100% gotowa i działa**.  
 > Poniższa lista to wyłącznie formalności i dane dostępowe, które musicie przekazać jako właściciele firmy/pasieki. Wszystko opisaliśmy prostym, nietechnicznym językiem.
 
 ---
@@ -107,7 +107,7 @@
    * Port (zwykle 465 lub 587)
 
 ### 💡 Po co to jest nam potrzebne?
-* **Prestiż i zaufanie:** Klient widząc maila z adresu `@pasiekausza.pl` wie, że kupuje z prawdziwej, profesjonalnej pasieki, a nie z przypadkowego adresu prywatnego (np. gmail czy wp.pl).
+* **Wiarygodność i zaufanie:** Klient widząc maila z oficjalnego adresu `@pasiekausza.pl` wie, że kupuje z prawdziwej, legalnej pasieki, a nie z przypadkowego adresu prywatnego (np. gmail czy wp.pl).
 * **Niezawodność (uniknięcie folderu SPAM):** Jeśli sklep wysyła maile bez konfiguracji SMTP, serwery pocztowe (Gmail, Onet, WP) wrzucają potwierdzenia zamówień do spamu. Dzięki oficjalnej konfiguracji SMTP maile dochodzą w 100%.
 * **Powiadomienia na Wasz telefon:** Przy każdym nowym zamówieniu natychmiast otrzymacie e-mail: *„Nowe zamówienie #1234: 2x Miód Lipowy 1200g, Paczkomat WRO01A”*.
 
