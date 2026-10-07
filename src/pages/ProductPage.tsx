@@ -1904,7 +1904,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                       {prodType === 'bee-colony' ? 'Rezerwacja aktywna (Dostępny)' : 'Świeża partia z pasieki (Dostępny)'}
                     </span>
                     <span className="text-[#7A6A5A]">
-                      {prodType === 'bee-colony' ? 'Odbiór osobisty' : 'Darmowa dostawa od 199 zł'}
+                      {prodType === 'bee-colony' ? 'Odbiór osobisty' : 'Darmowa dostawa od 180 zł'}
                     </span>
                   </div>
                 </div>
