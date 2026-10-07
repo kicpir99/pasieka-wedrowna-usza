@@ -26,6 +26,7 @@
 7. [Formularz kontaktowy — jak działa i gdzie trafiają wiadomości klientów](#7-formularz-kontaktowy--jak-działa-i-gdzie-trafiają-wiadomości)
 8. [Edycja podstrony „O nas” (Historia i cytat pasieki)](#8-edycja-podstrony-o-nas-historia-i-cytat-pasieki)
 9. [Codzienna obsługa zamówień i etykiety InPost](#9-codzienna-obsługa-zamówień-i-etykiety-inpost)
+10. [Edycja tekstów na Stronie Głównej (Co zmienia się w WordPressie, a co w kodzie?)](#10-edycja-tekstów-na-stronie-głównej-co-zmienia-się-w-wordpressie-a-co-w-kodzie)
 
 ---
 
@@ -214,6 +215,44 @@ Panel WordPress (lewe menu)
    * Jeśli klient wybrał fakturę B2B: pełne dane firmy i NIP do faktury.
 4. **Etykieta InPost:** Klikacie przycisk **„Generuj etykietę InPost”** $\rightarrow$ drukujecie naklejkę $\rightarrow$ naklejacie na tubę z miodem i nadajecie w automacie!
 5. **Zakończenie:** Zmieniacie status zamówienia na **„Zrealizowane”**. Klient automatycznie otrzymuje e-mail z podziękowaniem i kodem śledzenia paczki.
+
+---
+ 
+## 10. Edycja tekstów na Stronie Głównej (Co zmienia się w WordPressie, a co w kodzie?)
+
+Sklep Pasieki Usza działa w nowoczesnej, szybkiej architekturze **Headless (React + WordPress)**. Dzięki temu treści na stronie dzielą się na dwie grupy:
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                          TREŚCI W SKLEPIE                              │
+├──────────────────────────────────┬─────────────────────────────────────┤
+│   DYNAMICZNE (Z PANELU WORDPRESS)│   WIZERUNKOWE (SZKIELET DESIGNU)    │
+│  - Opisy i ceny miodów w sklepie │  - Hasła główne Hero 3D             │
+│  - Treści kafelków miodów        │  - Sekcja „Wędrowna pasieka...”     │
+│  - Pytania i odpowiedzi FAQ      │  - Bloki „Brak standaryzacji”       │
+│  - Artykuły i filmy na Blogu     │  - Sekcja „Żelazne zasady jakości”  │
+│  - Opowieść na podstronie „O nas”│                                     │
+└──────────────────────────────────┴─────────────────────────────────────┘
+```
+
+### 10.1. Opisy miodów na Stronie Głównej i w Sklepie
+* **Gdzie to zmienić:** W panelu WordPress: **Produkty $\rightarrow$ Wszystkie produkty $\rightarrow$ Edytuj miód**.
+* **Które pola:**
+  * **Krótki opis produktu** (pod głównym edytorem): to podtytuł wyświetlany na kafelkach miodów na stronie głównej oraz w sklepie.
+  * **Opis główny produktu**: szczegółowy tekst o pożytku, smaku i zbiorach.
+  * **Pola własne (sensory_*, flavor_notes)**: suwaki smaku i nuty degustacyjne.
+* **Efekt:** Każda zmiana opisu miodu w WooCommerce **automatycznie aktualizuje się na stronie głównej** (w sekcji „Najchętniej Wybierane Miody”), na karcie produktu oraz w modalu szybkiego zakupu.
+
+### 10.2. Podstrona „O nas” (`/o-nas`)
+* **Gdzie to zmienić:** W panelu WordPress: **Strony $\rightarrow$ Wszystkie strony $\rightarrow$ O nas**.
+* **Jak to działa:** Edytując treść strony w edytorze blokowym (Gutenberg) lub klasycznym, możecie dopisywać nowe akapity o pasiece oraz zmieniać cytat. Aplikacja pobiera te teksty na żywo przez REST API (`/wp-json/wp/v2/pages?slug=o-nas`).
+
+### 10.3. Stałe sekcje wizerunkowe Strony Głównej (np. „Wędrowna pasieka z pasją”, „Żelazne zasady jakości”)
+* **Dlaczego są osadzone w szablonie?**  
+  Strona główna to interaktywna aplikacja z fizyką obrotu słoików 3D, animowaną wstęgą miodową GSAP, certyfikatami weterynaryjnymi i ściśle dopasowanym układem kafelków. Aby zapewnić **błyskawiczne ładowanie strony (poniżej 1 sekundy)** i gwarancję, że nikt przypadkowo nie zepsuje precyzyjnego układu graficznego, te fundamentalne hasła brandingowe są zintegrowane w kodzie frontendu.
+* **Jak zmienić te hasła, gdy zajdzie taka potrzeba?**
+  * **Standardowo:** Ponieważ hasła tożsamościowe pasieki (np. zasady „Tylko dojrzały nektar”, „Promień 2 km”) zmienia się niezwykle rzadko, zmianę zgłasza się autorowi kodu — zmiana w plikach źródłowych ([`HomePage.tsx`](file:///c:/Users/kacpe/Desktop/tes/src/pages/HomePage.tsx) lub [`HoneyQualitySection.tsx`](file:///c:/Users/kacpe/Desktop/tes/src/components/HoneyQualitySection.tsx)) trwa 1–2 minuty.
+  * **Opcjonalnie (jeśli właściciele chcą edytować je z WP):** Możemy w każdej chwili podpiąć te sekcje pod dedykowaną stronę `Strona Główna` w panelu WordPress, aby każde hasło dało się przepisać bezpośrednio w edytorze WordPressa.
 
 ---
 

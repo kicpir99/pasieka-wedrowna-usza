@@ -479,6 +479,53 @@
       </ol>
     </div>
 
+    <!-- KROK 8 -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-num">8</div>
+        <div class="step-title">Edycja podstrony „O nas” (Historia i cytat pasieki)</div>
+      </div>
+      <div class="step-path">Ścieżka w menu: Strony → Wszystkie strony → O nas</div>
+      
+      <p>Chcecie zmienić motto przewodnie lub dopisać nowy fragment o historii Waszej pasieki w Ciechowie?</p>
+      <ol>
+        <li>Wejdźcie w: <strong>Strony → Wszystkie strony → O nas</strong>.</li>
+        <li>W edytorze możecie zmienić tekst opowieści lub cytat w bloku cytatu (<code>blockquote</code>).</li>
+        <li>Kliknijcie <strong>Zaktualizuj</strong>. Sklep natychmiast pobierze zaktualizowaną treść z WordPressa i zachowa ciepłą, elegancką oprawę graficzną.</li>
+      </ol>
+    </div>
+
+    <!-- KROK 9 -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-num">9</div>
+        <div class="step-title">Edycja tekstów na Stronie Głównej (Co w WordPressie, co w kodzie?)</div>
+      </div>
+      <div class="step-path">Zasady architektury Headless (React + WordPress)</div>
+      
+      <p>Treści na stronie dzielą się na dwie logiczne grupy:</p>
+      
+      <div style="background: #FAF5EB; border: 1px solid #E2D0B6; border-radius: 12px; padding: 16px; margin: 12px 0;">
+        <h4 style="color: #945209; margin-bottom: 8px;">✨ 1. Treści dynamiczne (100% z WordPressa):</h4>
+        <ul style="font-size: 13px; color: #5C5042; padding-left: 20px; line-height: 1.7;">
+          <li><strong>Opisy miodów:</strong> Edytowane w <em>Produkty → Edytuj</em> (Krótki opis i Opis główny) — natychmiast aktualizują się na kafelkach miodów na stronie głównej oraz w całym sklepie.</li>
+          <li><strong>Pytania FAQ:</strong> Dodawane w <em>Pytania FAQ</em> — trafiają na dół strony głównej.</li>
+          <li><strong>Blog & wideo:</strong> Dodawane we <em>Wpisach</em> — trafiają na podstronę Bloga.</li>
+          <li><strong>Historia pasieki:</strong> Edytowana w <em>Strony → O nas</em> — trafia na podstronę O nas.</li>
+        </ul>
+      </div>
+
+      <div style="background: #F3F6F4; border: 1px solid #C8DACF; border-radius: 12px; padding: 16px; margin: 12px 0;">
+        <h4 style="color: #1B4332; margin-bottom: 8px;">🛡️ 2. Stały szkielet wizerunkowy (Hero 3D, „Wędrowna pasieka z pasją”, „Żelazne zasady”):</h4>
+        <p style="font-size: 13px; color: #435548; line-height: 1.6;">
+          Hasła tożsamościowe („Brak standaryzacji”, „Promień 2 km”, „Zasady jakości”) są zintegrowane w szablonie aplikacji React, aby zagwarantować <strong>ładowanie strony poniżej 1 sekundy</strong> oraz stabilność zaawansowanych animacji i fizyki 3D.
+        </p>
+        <p style="font-size: 13px; color: #435548; line-height: 1.6; margin-top: 8px;">
+          <strong>Jak dokonać w nich zmiany?</strong> Wystarczy zgłosić korektę haseł osobie opiekującej się kodem — zmiana trwa 1–2 minuty. W razie potrzeby możemy również podpiąć te hasła pod edytor strony w WordPressie.
+        </p>
+      </div>
+    </div>
+
     <div class="footer" style="text-align: center; border-top: 1px solid var(--border); padding-top: 20px; font-size: 12px; color: var(--text-muted); margin-top: 30px;">
       Pasieka Wędrowna „Usza” • Ciechów, Dolny Śląsk • Podręcznik Administratora 2026
     </div>
