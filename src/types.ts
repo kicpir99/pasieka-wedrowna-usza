@@ -6,9 +6,9 @@ export type HoneyCategory =
   | 'z-dodatkami'
   | 'zestawy';
 
-export type ConsistencyType = 'kremowany' | 'patoka' | 'krupiec';
+export type ConsistencyType = 'kremowany' | 'patoka' | 'krupiec' | string;
 
-export type FlavorIntensity = 'lagodny' | 'sredni' | 'wyrazisty';
+export type FlavorIntensity = 'lagodny' | 'sredni' | 'wyrazisty' | string;
 
 export type Gramature = '250g' | '450g' | '500g' | '900g' | '1000g' | string;
 
