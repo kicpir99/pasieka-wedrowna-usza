@@ -1,59 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronDown, HelpCircle, Sparkles, ShieldCheck, Mail, Phone } from 'lucide-react';
-
-interface FAQItem {
-  question: string;
-  category: string;
-  answer: string;
-  highlight?: string;
-}
-
-const FAQ_ITEMS: FAQItem[] = [
-  {
-    category: 'Biologia i jakość',
-    question: 'Czy krystalizacja i rozwarstwienie miodu oznaczają, że miód się zepsuł?',
-    answer: 'Absolutnie nie! Krystalizacja to w 100% naturalny proces fizyczny, świadczący o tym, że miód nie był pasteryzowany ani zafałszowany sztucznym syropem. Czas przejścia w postać krupca zależy od naturalnego stosunku glukozy do fruktozy w nektarze. Czasami na dnie słoika pojawia się gęstsza warstwa kryształków glukozy, a na górze lżejsza fruktoza – to zjawisko naturalnej sedymentacji (częste np. w miodach gryczanych). Wystarczy słoik przemieszać.',
-    highlight: 'Naturalny proces dowodzący braku obróbki termicznej.',
-  },
-  {
-    category: 'Jakość i surowość',
-    question: 'Czym jest biały nalot na ściankach i powierzchni słoika („kwiat miodu”)?',
-    answer: 'Biały, marmurkowy nalot lub wykwity na ściankach słoika w miodzie skrystalizowanym to tzw. „wykwity glukozowe” lub tradycyjny „kwiat miodu”. Powstaje w wyniku uwięzienia mikroskopijnych pęcherzyków powietrza między kryształami glukozy podczas powolnego dojrzewania w chłodzie. To najważniejsza dla koneserów wizualna gwarancja, że miód jest surowy (RAW), niefiltrowany ciśnieniowo i nieprzegrzewany.',
-    highlight: 'Dla konesera to bezsporny dowód 100% surowego miodu.',
-  },
-  {
-    category: 'Stosowanie i zdrowie',
-    question: 'W jakiej temperaturze miód traci właściwości lecznicze i jak go chronić?',
-    answer: 'Graniczną temperaturą jest 40°C. Powyżej tego progu cenne białka enzymatyczne pszczół (m.in. inhibina, diastaza, inwertaza i lizozym) ulegają bezpowrotnej denaturacji termicznej, a miód traci swoje unikalne działanie bio-bójcze. Dlatego miodu nigdy nie dodajemy do wrzątku – zawsze odczekaj kilka minut, aż kubek herbaty lub naparu będzie przyjemnie ciepły w dłoniach.',
-    highlight: 'Żelazna zasada 40°C: chroń żywe enzymy ula.',
-  },
-  {
-    category: 'Bezpieczeństwo i dzieci',
-    question: 'Dlaczego miodu nie wolno podawać niemowlętom poniżej 12. miesiąca życia?',
-    answer: 'Jest to oficjalny, rygorystyczny standard medyczny rekomendowany przez WHO oraz Główny Inspektorat Sanitarny (GIS). W surowym miodzie mogą występować naturalne przetrwalniki bakterii Clostridium botulinum z pyłku roślinnego. Dla dojrzałego układu pokarmowego dorosłych i starszych dzieci są one całkowicie nieszkodliwe, jednak u niemowląt do 1. roku życia, z braku rozwiniętej mikroflory jelitowej, mogą wywołać botulizm dziecięcy. Po ukończeniu 12 miesięcy miód jest wysoce zalecany.',
-    highlight: 'Oficjalny standard medyczny chroniący najmłodszych.',
-  },
-  {
-    category: 'Przechowywanie',
-    question: 'Jak poprawnie rozpuścić skrystalizowany miód w domu bez utraty enzymów?',
-    answer: 'Jeśli wolisz płynną patokę, wstaw odkręcony słoik do garnka z ciepłą wodą o temperaturze nieprzekraczającej 36–38°C (tzw. kąpiel wodna) i co jakiś czas zamieszaj drewnianą lub szklaną łyżeczką. Proces potrwa dłużej, ale zachowasz 100% witamin i enzymów. Nigdy nie używaj mikrofalówki!',
-    highlight: 'Łagodna kąpiel wodna do 38°C.',
-  },
-  {
-    category: 'Przechowywanie',
-    question: 'Jak najlepiej przechowywać słoik miodu w domowych warunkach?',
-    answer: 'Miód rzemieślniczy najlepiej czuje się w suchym, ciemnym i chłodnym miejscu (optymalna temperatura to 10–18°C, np. spiżarnia lub zamknięta szafka z dala od kuchenki i słońca). Zawsze pamiętaj o szczelnym dokręcaniu wieczka – miód silnie chłonie wilgoć oraz zapachy z otoczenia.',
-    highlight: 'Ciemne, suche miejsce w temperaturze 10–18°C.',
-  }
-];
+import { fetchFAQs, DEFAULT_FAQ_ITEMS, FAQItem } from '../services/faqService';
 
 interface HoneyFAQSectionProps {
   containerClass?: string;
 }
 
 export const HoneyFAQSection: React.FC<HoneyFAQSectionProps> = ({ containerClass }) => {
+  const [faqItems, setFaqItems] = useState<FAQItem[]>(DEFAULT_FAQ_ITEMS);
   const [openIdx, setOpenIdx] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetchFAQs().then((res) => {
+      if (res.items.length > 0) {
+        setFaqItems(res.items);
+      }
+    });
+  }, []);
 
   const toggleItem = (idx: number) => {
     setOpenIdx(openIdx === idx ? null : idx);
@@ -80,7 +44,7 @@ export const HoneyFAQSection: React.FC<HoneyFAQSectionProps> = ({ containerClass
 
         {/* Akordeon FAQ */}
         <div className="space-y-3">
-          {FAQ_ITEMS.map((item, idx) => {
+          {faqItems.map((item, idx) => {
             const isOpen = openIdx === idx;
             return (
               <div

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Phone, Mail, MapPin, Clock, ShieldCheck, Send, CheckCircle2 } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, ShieldCheck, Send, CheckCircle2, Loader2 } from 'lucide-react';
+import { submitContactMessage } from '../services/contactService';
 
 interface ContactPageProps {
   displayResolution: { width: number; height: number; deviceType: string; containerClass: string };
@@ -13,10 +14,18 @@ export const ContactPage: React.FC<ContactPageProps> = ({ displayResolution }) =
     subject: 'Zamówienie miodu / Pytanie ogólne',
     message: '',
   });
+  const [isSending, setIsSending] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [feedbackMessage, setFeedbackMessage] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSending) return;
+
+    setIsSending(true);
+    const result = await submitContactMessage(formData);
+    setFeedbackMessage(result.message);
+    setIsSending(false);
     setSubmitted(true);
   };
 
@@ -132,10 +141,10 @@ export const ContactPage: React.FC<ContactPageProps> = ({ displayResolution }) =
                   <CheckCircle2 className="w-8 h-8" />
                 </div>
                 <h3 className="font-serif text-2xl font-bold text-[#23201C]">
-                  Dziękujemy za wiadomość!
+                  Wiadomość została wysłana!
                 </h3>
                 <p className="text-xs sm:text-sm text-[#615444] max-w-md mx-auto">
-                  Otrzymaliśmy Twoje zapytanie. Odpowiemy najszybciej jak to możliwe po zakończeniu prac w pasiece.
+                  {feedbackMessage || 'Otrzymaliśmy Twoje zapytanie. Odpowiemy najszybciej jak to możliwe po zakończeniu prac w pasiece.'}
                 </p>
                 <button
                   type="button"
@@ -233,10 +242,20 @@ export const ContactPage: React.FC<ContactPageProps> = ({ displayResolution }) =
 
                 <button
                   type="submit"
-                  className="w-full py-3.5 px-6 rounded-xl bg-[#8B5337] hover:bg-[#6D3F28] text-white text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+                  disabled={isSending}
+                  className="w-full py-3.5 px-6 rounded-xl bg-[#8B5337] hover:bg-[#6D3F28] text-white text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                  <Send className="w-3.5 h-3.5" />
-                  <span>Wyślij zapytanie do pasieki</span>
+                  {isSending ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Wysyłanie wiadomości...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-3.5 h-3.5" />
+                      <span>Wyślij zapytanie do pasieki</span>
+                    </>
+                  )}
                 </button>
               </form>
             )}

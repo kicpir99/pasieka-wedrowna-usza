@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Sparkles, ShieldCheck, Heart, Droplets, Flame, BookOpen, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { HONEY_PRODUCTS, HONEY_VARIETIES } from '../data/honeyProducts';
+import { useProducts } from '../context/ProductContext';
 import { HoneyProduct } from '../types';
 
 const ProductDetailModal = React.lazy(() => import('../components/ProductDetailModal').then(m => ({ default: m.ProductDetailModal })));
@@ -13,14 +14,18 @@ interface OfferPageProps {
 
 export const OfferPage: React.FC<OfferPageProps> = ({ displayResolution, onAddToCart }) => {
   const [detailProduct, setDetailProduct] = useState<HoneyProduct | null>(null);
+  const { products, honeyVarieties, hiveTreasures } = useProducts();
+  const currentHoneyVarieties = honeyVarieties.length > 0 ? honeyVarieties : HONEY_VARIETIES;
+  const currentProducts = products.length > 0 ? products : HONEY_PRODUCTS;
+
   // Automatyczne, dynamiczne wyszukiwanie najniższych cen z bazy produktów
   const minHoneyPrice = useMemo(() => {
-    const allPrices = HONEY_VARIETIES.flatMap(h => h.sizes.map(s => s.pricePln));
+    const allPrices = currentHoneyVarieties.flatMap(h => h.sizes.map(s => s.pricePln));
     return allPrices.length > 0 ? Math.min(...allPrices) : 30;
-  }, []);
+  }, [currentHoneyVarieties]);
 
   const getLowestPrice = (productId: string, fallback: number) => {
-    const prod = HONEY_PRODUCTS.find(p => p.id === productId);
+    const prod = currentProducts.find(p => p.id === productId);
     if (!prod || !prod.sizes || prod.sizes.length === 0) return fallback;
     return Math.min(...prod.sizes.map(s => s.pricePln));
   };
@@ -31,115 +36,144 @@ export const OfferPage: React.FC<OfferPageProps> = ({ displayResolution, onAddTo
   const minWoskPrice = useMemo(() => getLowestPrice('swieca-wosk-pszczeli', 22), []);
   const minOdkladPrice = useMemo(() => getLowestPrice('odklad-szkolenie-pszczele', 350), []);
 
-  const offerItems = useMemo(() => [
-    {
-      id: 'miody',
-      title: 'Miód Pszczeli – Odmianowy & Surowy',
-      badge: 'Miody Odmianowe RAW',
-      price: `od ${minHoneyPrice} zł / słoik`,
-      image: 'https://pasiekausza.pl/wp-content/uploads/2022/02/oferta-miody-infobox.jpg',
-      icon: Droplets,
-      description:
-        'Wiesz, że to właśnie prawdziwy miód jest jednym z najbogatszych w składniki odżywcze darów natury? W naszej wędrownej pasiece nie standaryzujemy miodu – każdy słoiczek różni się smakiem, barwą i aromatem w zależności od leśnych i łąkowych pożytków Dolnego Śląska.',
-      bullets: [
-        '100% naturalny, surowy miód bez podgrzewania powyżej 36°C',
-        'Bogaty w aktywne enzymy (inhibina, lizozym, apidycyna)',
-        `${HONEY_VARIETIES.length} odmian: lipowy, gryczany, spadziowy, wrzosowy, akacjowy...`,
-      ],
-      ctaText: `Zobacz ${HONEY_VARIETIES.length} odmian w sklepie`,
-      ctaLink: '/sklep',
-    },
-    {
-      id: 'pierzga',
-      title: 'Pierzga Pszczela (Bee Bread)',
-      badge: 'Superfood Ula',
-      price: `od ${minPierzgaPrice} zł`,
-      image: 'https://pasiekausza.pl/wp-content/uploads/2022/02/oferta-pierzga.jpg',
-      icon: Sparkles,
-      description:
-        'Pierzga to pyłek kwiatowy zebrany przez pszczoły, wzbogacony miodem i enzymami ślinowymi, a następnie poddany naturalnej fermentacji mlekowej w plastrze pszczelim. Wartość odżywcza i profilaktyczna pierzgi jest znacznie wyższa niż zwykłego pyłku dzięki doskonałej bioprzyswajalności.',
-      bullets: [
-        'Silne wsparcie przy rekonwalescencji, anemiach i osłabieniu',
-        'Naturalny probiotyk regenerujący florę bakteryjną jelit',
-        'Pokarm, którym pszczoły karmią matkę i młode larwy',
-      ],
-      ctaText: 'Wybierz gramaturę i kup',
-      ctaLink: '/produkt/pierzga-pszczela',
-      productId: 'pierzga-pszczela',
-    },
-    {
-      id: 'propolis',
-      title: 'Propolis – Kit Pszczeli',
-      badge: 'Naturalny Antybiotyk',
-      price: `od ${minPropolisPrice} zł`,
-      image: 'https://pasiekausza.pl/wp-content/uploads/2022/02/oferta-propolis.jpg',
-      icon: ShieldCheck,
-      description:
-        'Substancja żywiczna wytwarzana przez pszczoły do sterylizacji i uszczelniania ula przed bakteriami, wirusami i grzybami. W skład kitu pszczelego wchodzi ponad 300 aktywnych związków organicznych (flawonoidy, olejki eteryczne, mikroelementy).',
-      bullets: [
-        'Wybitne działanie antybakteryjne, przeciwgrzybicze i gojące',
-        'Błyskawiczna ulga przy bólach gardła, infekcjach jamy ustnej i dziąseł',
-        'Naturalna tarcza układu oddechowego i odpornościowego',
-      ],
-      ctaText: 'Kup naturalny propolis',
-      ctaLink: '/produkt/propolis-kit',
-      productId: 'propolis-kit',
-    },
-    {
-      id: 'pylek',
-      title: 'Pyłek Pszczeli Kwiatowy',
-      badge: 'Bomba Witaminowa',
-      price: `od ${minPylekPrice} zł`,
-      image: 'https://pasiekausza.pl/wp-content/uploads/2022/02/pylek-pszczeli.jpg',
-      icon: Heart,
-      description:
-        'Miód to nie jedyny skarb pozyskiwany z pasieki. Pyłek kwiatowy zebrany w postaci różnobarwnych obnóży wzmacnia organizm, zwiększa liczbę czerwonych ciałek krwi, stabilizuje poziom żelaza i wspomaga naturalny detoks organizmu.',
-      bullets: [
-        'Bogaty w białko roślinne, aminokwasy egzogenne i witaminy z grupy B',
-        'Wspomaga prawidłową pracę układu krążenia i obniża cholesterol',
-        'Znakomicie wpływa na witalność, pamięć oraz stan skóry, włosów i paznokci',
-      ],
-      ctaText: 'Wybierz gramaturę i kup',
-      ctaLink: '/produkt/pylek-pszczeli',
-      productId: 'pylek-pszczeli',
-    },
-    {
-      id: 'wosk',
-      title: 'Wosk Pszczeli & Świece',
-      badge: '100% Wosk Pszczeli',
-      price: `od ${minWoskPrice} zł`,
-      image: 'https://pasiekausza.pl/wp-content/uploads/2022/02/oferta-wosk-pszeczeli.jpg',
-      icon: Flame,
-      description:
-        'Wytwarzany przez młode pszczoły robotnice za pomocą gruczołów woskowych w spektakularnym procesie łączenia się w łańcuchy. Przez stulecia wosk pszczeli służył do wyrobu pachnących świec, które jonizują powietrze i oczyszczają dom z kurzu i alergenów.',
-      bullets: [
-        '100% czysty wosk z naszej pasieki bez grama szkodliwej parafiny',
-        'Piękny, miodowo-propolisowy aromat palącej się świecy',
-        'Świece odlewane i zwijane z naturalnej węzy pszczelej',
-      ],
-      ctaText: 'Zobacz świece z wosku',
-      ctaLink: '/produkt/swieca-wosk-pszczeli',
-      productId: 'swieca-wosk-pszczeli',
-    },
-    {
-      id: 'szkolenia',
-      title: 'Odkłady Pszczele & Szkolenia',
-      badge: 'Odkłady & Szkolenia',
-      price: `od ${minOdkladPrice} zł`,
-      image: 'https://pasiekausza.pl/wp-content/uploads/2022/02/oferta-oklady-683x1024.jpg',
-      icon: BookOpen,
-      description:
-        'Z pasją dzielimy się naszą wiedzą pszczelarską zdobytą przez lata pracy. Oferujemy zdrowe odkłady pszczele na ramkach wielkopolskich z młodymi matkami oraz indywidualne pakiety szkoleniowe dla początkujących pasjonatów pszczelarstwa.',
-      bullets: [
-        'Odkłady pod stałą kontrolą Powiatowego Lekarza Weterynarii',
-        'Praktyczna nauka pracy przy ulu bez stresu i dróg na skróty',
-        'Wsparcie merytoryczne i doradztwo w doborze sprzętu',
-      ],
-      ctaText: 'Szczegóły i rezerwacja',
-      ctaLink: '/produkt/odklad-szkolenie-pszczele',
-      productId: 'odklad-szkolenie-pszczele',
-    },
-  ], [minHoneyPrice, minPierzgaPrice, minPropolisPrice, minPylekPrice, minWoskPrice, minOdkladPrice]);
+  const offerItems = useMemo(() => {
+    const baseItems = [
+      {
+        id: 'miody',
+        title: 'Miód Pszczeli – Odmianowy & Surowy',
+        badge: 'Miody Odmianowe RAW',
+        price: `od ${minHoneyPrice} zł / słoik`,
+        image: 'https://pasiekausza.pl/wp-content/uploads/2022/02/oferta-miody-infobox.jpg',
+        icon: Droplets,
+        description:
+          'Wiesz, że to właśnie prawdziwy miód jest jednym z najbogatszych w składniki odżywcze darów natury? W naszej wędrownej pasiece nie standaryzujemy miodu – każdy słoiczek różni się smakiem, barwą i aromatem w zależności od leśnych i łąkowych pożytków Dolnego Śląska.',
+        bullets: [
+          '100% naturalny, surowy miód bez podgrzewania powyżej 36°C',
+          'Bogaty w aktywne enzymy (inhibina, lizozym, apidycyna)',
+          `${currentHoneyVarieties.length} odmian: lipowy, gryczany, spadziowy, wrzosowy, akacjowy...`,
+        ],
+        ctaText: `Zobacz ${currentHoneyVarieties.length} odmian w sklepie`,
+        ctaLink: '/sklep',
+      },
+      {
+        id: 'pierzga',
+        title: 'Pierzga Pszczela (Bee Bread)',
+        badge: 'Superfood Ula',
+        price: `od ${minPierzgaPrice} zł`,
+        image: 'https://pasiekausza.pl/wp-content/uploads/2022/02/oferta-pierzga.jpg',
+        icon: Sparkles,
+        description:
+          'Pierzga to pyłek kwiatowy zebrany przez pszczoły, wzbogacony miodem i enzymami ślinowymi, a następnie poddany naturalnej fermentacji mlekowej w plastrze pszczelim. Wartość odżywcza i profilaktyczna pierzgi jest znacznie wyższa niż zwykłego pyłku dzięki doskonałej bioprzyswajalności.',
+        bullets: [
+          'Silne wsparcie przy rekonwalescencji, anemiach i osłabieniu',
+          'Naturalny probiotyk regenerujący florę bakteryjną jelit',
+          'Pokarm, którym pszczoły karmią matkę i młode larwy',
+        ],
+        ctaText: 'Wybierz gramaturę i kup',
+        ctaLink: '/produkt/pierzga-pszczela',
+        productId: 'pierzga-pszczela',
+      },
+      {
+        id: 'propolis',
+        title: 'Propolis – Kit Pszczeli',
+        badge: 'Naturalny Antybiotyk',
+        price: `od ${minPropolisPrice} zł`,
+        image: 'https://pasiekausza.pl/wp-content/uploads/2022/02/oferta-propolis.jpg',
+        icon: ShieldCheck,
+        description:
+          'Substancja żywiczna wytwarzana przez pszczoły do sterylizacji i uszczelniania ula przed bakteriami, wirusami i grzybami. W skład kitu pszczelego wchodzi ponad 300 aktywnych związków organicznych (flawonoidy, olejki eteryczne, mikroelementy).',
+        bullets: [
+          'Wybitne działanie antybakteryjne, przeciwgrzybicze i gojące',
+          'Błyskawiczna ulga przy bólach gardła, infekcjach jamy ustnej i dziąseł',
+          'Naturalna tarcza układu oddechowego i odpornościowego',
+        ],
+        ctaText: 'Kup naturalny propolis',
+        ctaLink: '/produkt/propolis-kit',
+        productId: 'propolis-kit',
+      },
+      {
+        id: 'pylek',
+        title: 'Pyłek Pszczeli Kwiatowy',
+        badge: 'Bomba Witaminowa',
+        price: `od ${minPylekPrice} zł`,
+        image: 'https://pasiekausza.pl/wp-content/uploads/2022/02/pylek-pszczeli.jpg',
+        icon: Heart,
+        description:
+          'Miód to nie jedyny skarb pozyskiwany z pasieki. Pyłek kwiatowy zebrany w postaci różnobarwnych obnóży wzmacnia organizm, zwiększa liczbę czerwonych ciałek krwi, stabilizuje poziom żelaza i wspomaga naturalny detoks organizmu.',
+        bullets: [
+          'Bogaty w białko roślinne, aminokwasy egzogenne i witaminy z grupy B',
+          'Wspomaga prawidłową pracę układu krążenia i obniża cholesterol',
+          'Znakomicie wpływa na witalność, pamięć oraz stan skóry, włosów i paznokci',
+        ],
+        ctaText: 'Wybierz gramaturę i kup',
+        ctaLink: '/produkt/pylek-pszczeli',
+        productId: 'pylek-pszczeli',
+      },
+      {
+        id: 'wosk',
+        title: 'Wosk Pszczeli & Świece',
+        badge: '100% Wosk Pszczeli',
+        price: `od ${minWoskPrice} zł`,
+        image: 'https://pasiekausza.pl/wp-content/uploads/2022/02/oferta-wosk-pszeczeli.jpg',
+        icon: Flame,
+        description:
+          'Wytwarzany przez młode pszczoły robotnice za pomocą gruczołów woskowych w spektakularnym procesie łączenia się w łańcuchy. Przez stulecia wosk pszczeli służył do wyrobu pachnących świec, które jonizują powietrze i oczyszczają dom z kurzu i alergenów.',
+        bullets: [
+          '100% czysty wosk z naszej pasieki bez grama szkodliwej parafiny',
+          'Piękny, miodowo-propolisowy aromat palącej się świecy',
+          'Świece odlewane i zwijane z naturalnej węzy pszczelej',
+        ],
+        ctaText: 'Zobacz świece z wosku',
+        ctaLink: '/produkt/swieca-wosk-pszczeli',
+        productId: 'swieca-wosk-pszczeli',
+      },
+      {
+        id: 'szkolenia',
+        title: 'Odkłady Pszczele & Szkolenia',
+        badge: 'Odkłady & Szkolenia',
+        price: `od ${minOdkladPrice} zł`,
+        image: 'https://pasiekausza.pl/wp-content/uploads/2022/02/oferta-oklady-683x1024.jpg',
+        icon: BookOpen,
+        description:
+          'Z pasją dzielimy się naszą wiedzą pszczelarską zdobytą przez lata pracy. Oferujemy zdrowe odkłady pszczele na ramkach wielkopolskich z młodymi matkami oraz indywidualne pakiety szkoleniowe dla początkujących pasjonatów pszczelarstwa.',
+        bullets: [
+          'Odkłady pod stałą kontrolą Powiatowego Lekarza Weterynarii',
+          'Praktyczna nauka pracy przy ulu bez stresu i dróg na skróty',
+          'Wsparcie merytoryczne i doradztwo w doborze sprzętu',
+        ],
+        ctaText: 'Szczegóły i rezerwacja',
+        ctaLink: '/produkt/odklad-szkolenie-pszczele',
+        productId: 'odklad-szkolenie-pszczele',
+      },
+    ];
+
+    // Dynamiczne dołączanie dowolnego nowego produktu dodanego przez klienta w WooCommerce w kategorii Skarby Ula
+    const standardTreasureIds = ['pierzga-pszczela', 'propolis-kit', 'pylek-pszczeli', 'swieca-wosk-pszczeli', 'odklad-szkolenie-pszczele'];
+    const customTreasures = hiveTreasures.filter(p => !standardTreasureIds.includes(p.id));
+
+    const extraItems = customTreasures.map(prod => {
+      const minPrice = prod.sizes && prod.sizes.length > 0 
+        ? Math.min(...prod.sizes.map(s => s.pricePln)) 
+        : 30;
+      return {
+        id: prod.id,
+        title: prod.name,
+        badge: prod.subtitle || 'Nowość w Pasiece',
+        price: `od ${minPrice} zł`,
+        image: prod.imageUrl || 'https://pasiekausza.pl/wp-content/uploads/2022/02/oferta-pierzga.jpg',
+        icon: Sparkles,
+        description: prod.description || 'Naturalny rzemieślniczy produkt pszczeli prosto z naszej pasieki wędrownej.',
+        bullets: prod.recommendedUse && prod.recommendedUse.length > 0
+          ? prod.recommendedUse.slice(0, 3)
+          : ['100% naturalny produkt z Dolnego Śląska', 'Bezpośrednio z pracowni pasiecznej', 'Gwarancja świeżości i rzemieślniczej jakości'],
+        ctaText: 'Zobacz i kup',
+        ctaLink: `/produkt/${prod.id}`,
+        productId: prod.id,
+      };
+    });
+
+    return [...baseItems, ...extraItems];
+  }, [minHoneyPrice, minPierzgaPrice, minPropolisPrice, minPylekPrice, minWoskPrice, minOdkladPrice, currentHoneyVarieties.length, hiveTreasures]);
 
   return (
     <main className="min-h-screen bg-[#FAF7F2] pb-24">

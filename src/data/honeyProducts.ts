@@ -575,5 +575,24 @@ export const HIVE_TREASURE_IDS = [
   'odklad-szkolenie-pszczele',
 ];
 
-export const HONEY_VARIETIES = HONEY_PRODUCTS.filter(p => !HIVE_TREASURE_IDS.includes(p.id));
-export const HIVE_TREASURES = HONEY_PRODUCTS.filter(p => HIVE_TREASURE_IDS.includes(p.id));
+/**
+ * Dynamicznie rozpoznaje czy produkt jest Skarbem Ula / Produktem Pszczelim pozamiodowym:
+ * Sprawdza stałe ID lub kategorie przypisane w WooCommerce (np. skarby-ula, apiterapia, swiece).
+ */
+export function isHiveTreasure(product: { id: string; category?: string }): boolean {
+  if (HIVE_TREASURE_IDS.includes(product.id)) return true;
+  if (!product.category) return false;
+  const cat = product.category.toLowerCase();
+  return (
+    cat === 'skarby-ula' ||
+    cat === 'apiterapia' ||
+    cat === 'swiece' ||
+    cat === 'manufaktura' ||
+    cat === 'z-dodatkami' ||
+    cat === 'zestawy'
+  );
+}
+
+export const HONEY_VARIETIES = HONEY_PRODUCTS.filter(p => !isHiveTreasure(p));
+export const HIVE_TREASURES = HONEY_PRODUCTS.filter(p => isHiveTreasure(p));
+

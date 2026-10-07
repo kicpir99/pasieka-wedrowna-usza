@@ -177,6 +177,31 @@ export const mapWooProductToHoneyProduct = (woo: WooProductRaw): HoneyProduct =>
     isBestseller: Boolean(getMetaValue(meta, 'is_bestseller', false)),
     isNewHarvest: Boolean(getMetaValue(meta, 'is_new_harvest', true)),
     isLimitedBatch: Boolean(getMetaValue(meta, 'is_limited_batch', false)),
+
+    // Pola ACF / dodatkowe metadane produktu z WordPress
+    healthBenefits: (() => {
+      const val = getMetaValue(meta, 'health_benefits', getMetaValue(meta, 'wlasciwosci_zdrowotne', null));
+      if (Array.isArray(val)) return val;
+      if (typeof val === 'string' && val.trim()) return val.split('\n').map(s => s.trim()).filter(Boolean);
+      return undefined;
+    })(),
+    pairing: getMetaValue(meta, 'pairing', getMetaValue(meta, 'jak_stosowac', undefined)),
+    detailedUsage: {
+      recommendedDose: getMetaValue(meta, 'recommended_dose', '1-2 łyżeczki dziennie rano na czczo'),
+      culinaryIdeas: (() => {
+        const val = getMetaValue(meta, 'culinary_ideas', null);
+        if (Array.isArray(val)) return val;
+        if (typeof val === 'string' && val.trim()) return val.split('\n').map(s => s.trim()).filter(Boolean);
+        return undefined;
+      })(),
+    },
+    labAnalysis: {
+      lotNumber: getMetaValue(meta, 'batch_number', `USZ-${woo.id}`),
+      waterContent: `${getMetaValue(meta, 'water_content_percentage', '17.2')}%`,
+      diastaseNumber: getMetaValue(meta, 'diastase_number', '18.2 DN'),
+      hmf: getMetaValue(meta, 'hmf_number', '< 10 mg/kg'),
+      conductivity: getMetaValue(meta, 'conductivity', '0.45 mS/cm'),
+    },
   };
 };
 

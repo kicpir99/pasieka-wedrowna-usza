@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useMemo, useCallback } from 'react';
 import { HoneyProduct } from '../types';
-import { HONEY_PRODUCTS, HIVE_TREASURE_IDS } from '../data/honeyProducts';
+import { HONEY_PRODUCTS, isHiveTreasure } from '../data/honeyProducts';
 import { fetchWooCommerceProducts, WOO_CONFIG } from '../services/wooCommerceService';
 
 interface ProductContextType {
@@ -73,12 +73,12 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
   }, [loadProducts]);
 
   const honeyVarieties = useMemo(
-    () => products.filter(p => !HIVE_TREASURE_IDS.includes(p.id)),
+    () => products.filter(p => !isHiveTreasure(p)),
     [products]
   );
 
   const hiveTreasures = useMemo(
-    () => products.filter(p => HIVE_TREASURE_IDS.includes(p.id)),
+    () => products.filter(p => isHiveTreasure(p)),
     [products]
   );
 

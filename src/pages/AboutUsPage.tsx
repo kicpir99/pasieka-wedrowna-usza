@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { HoneyCraftingJourney } from '../components/HoneyCraftingJourney';
 import { ShieldCheck, Heart, Sparkles, MapPin, Award, CheckCircle2, ArrowRight } from 'lucide-react';
+import { fetchWordPressPage, PageContent } from '../services/pageService';
 
 interface AboutUsPageProps {
   displayResolution: { width: number; height: number; deviceType: string; containerClass: string };
@@ -9,6 +10,15 @@ interface AboutUsPageProps {
 }
 
 export const AboutUsPage: React.FC<AboutUsPageProps> = ({ displayResolution }) => {
+  const [wpPage, setWpPage] = useState<PageContent | null>(null);
+
+  useEffect(() => {
+    fetchWordPressPage('o-nas').then((data) => {
+      if (data.isLiveWP) {
+        setWpPage(data);
+      }
+    });
+  }, []);
   return (
     <main className="min-h-screen bg-[#FAF7F2] pb-24">
       {/* Hero Header */}
@@ -68,16 +78,24 @@ export const AboutUsPage: React.FC<AboutUsPageProps> = ({ displayResolution }) =
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             <div className="lg:col-span-7 space-y-5 text-sm sm:text-base text-[#524638] leading-relaxed">
               <h2 className="font-serif text-2xl sm:text-3xl font-extrabold text-[#23201C] tracking-tight">
-                „Pierwsze, co musisz zrobić, by odnieść sukces w pracy z pszczołami – zakochać się w ciężkiej pracy.”
+                {wpPage?.quote || '„Pierwsze, co musisz zrobić, by odnieść sukces w pracy z pszczołami – zakochać się w ciężkiej pracy.”'}
               </h2>
               
-              <p>
-                Nasza pasieka powstała z zamiłowania do przyrody i niesamowitej chęci obcowania z nią na co dzień. Praca z pszczołami nie należy do łatwych – uczy cierpliwości, pokory i samodyscypliny. Początki naszej pracy i przygody z pszczołami nie były proste. Były sukcesy, ale i porażki.
-              </p>
-              
-              <p>
-                Po ponad 10 latach pracy i wielu zebranych doświadczeniach, możemy z dumą powiedzieć, że rozumiemy fascynujące życie rodziny pszczelej. Od naszych pszczół nauczyliśmy się rzetelności, solidności oraz tego, że pracując z naturą, niczego nie można odłożyć na później.
-              </p>
+              {wpPage?.bodyParagraphs && wpPage.bodyParagraphs.length > 0 ? (
+                wpPage.bodyParagraphs.map((para, idx) => (
+                  <p key={idx}>{para}</p>
+                ))
+              ) : (
+                <>
+                  <p>
+                    Nasza pasieka powstała z zamiłowania do przyrody i niesamowitej chęci obcowania z nią na co dzień. Praca z pszczołami nie należy do łatwych – uczy cierpliwości, pokory i samodyscypliny. Początki naszej pracy i przygody z pszczołami nie były proste. Były sukcesy, ale i porażki.
+                  </p>
+                  
+                  <p>
+                    Po ponad 10 latach pracy i wielu zebranych doświadczeniach, możemy z dumą powiedzieć, że rozumiemy fascynujące życie rodziny pszczelej. Od naszych pszczół nauczyliśmy się rzetelności, solidności oraz tego, że pracując z naturą, niczego nie można odłożyć na później.
+                  </p>
+                </>
+              )}
 
               <div className="p-4 rounded-2xl bg-[#FAF6EE] border border-[#D9821E]/20 space-y-2">
                 <h3 className="font-serif text-base font-bold text-[#23201C] flex items-center gap-2">
