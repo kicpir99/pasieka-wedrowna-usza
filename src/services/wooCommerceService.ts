@@ -293,6 +293,9 @@ export interface CreateOrderParams {
     isCompany?: boolean;
     nip?: string;
     companyName?: string;
+    companyStreet?: string;
+    companyPostcode?: string;
+    companyCity?: string;
     notes?: string;
   };
   delivery: {
@@ -357,16 +360,25 @@ export async function createWooCommerceOrder(params: CreateOrderParams): Promise
       billing: {
         first_name: params.customer.firstName,
         last_name: params.customer.lastName,
-        address_1:
-          params.delivery.method === 'kurier'
-            ? params.customer.street || 'Adres dostawy'
-            : params.delivery.parcelLockerAddress || 'Paczkomat InPost',
-        city: params.delivery.method === 'kurier' ? params.customer.city || 'Polska' : 'Polska',
-        postcode: params.delivery.method === 'kurier' ? params.customer.postcode || '00-000' : '00-000',
+        company: params.customer.isCompany ? params.customer.companyName || '' : '',
+        address_1: params.customer.isCompany
+          ? params.customer.companyStreet || params.customer.street || 'Adres firmy'
+          : params.delivery.method === 'kurier'
+          ? params.customer.street || 'Adres dostawy'
+          : params.delivery.parcelLockerAddress || 'Paczkomat InPost',
+        city: params.customer.isCompany
+          ? params.customer.companyCity || params.customer.city || 'Polska'
+          : params.delivery.method === 'kurier'
+          ? params.customer.city || 'Polska'
+          : 'Polska',
+        postcode: params.customer.isCompany
+          ? params.customer.companyPostcode || params.customer.postcode || '00-000'
+          : params.delivery.method === 'kurier'
+          ? params.customer.postcode || '00-000'
+          : '00-000',
         country: 'PL',
         email: params.customer.email,
         phone: params.customer.phone,
-        company: params.customer.isCompany ? `${params.customer.companyName || ''} (NIP: ${params.customer.nip || ''})` : '',
       },
       shipping: {
         first_name: params.customer.firstName,
@@ -379,6 +391,13 @@ export async function createWooCommerceOrder(params: CreateOrderParams): Promise
         postcode: params.delivery.method === 'kurier' ? params.customer.postcode || '00-000' : '00-000',
         country: 'PL',
       },
+      meta_data: [
+        { key: '_billing_nip', value: params.customer.nip || '' },
+        { key: 'billing_nip', value: params.customer.nip || '' },
+        { key: 'vat_number', value: params.customer.nip || '' },
+        { key: '_vat_number', value: params.customer.nip || '' },
+        { key: 'Faktura VAT', value: params.customer.isCompany ? `TAK (NIP: ${params.customer.nip})` : 'NIE' },
+      ],
       line_items: params.items.map(item => {
         const wooProductId = item.product.wooId || WOO_PRODUCT_IDS_MAP[item.product.id] || 37;
         return {

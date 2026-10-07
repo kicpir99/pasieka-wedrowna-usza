@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Raport Wdrożeniowy — Pasieka Wędrowna USZA</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:wght@600;700;800&display=swap');
+
+    @page {
+      size: A4;
+      margin: 18mm 16mm;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: #23201C;
+      background: #FFFFFF;
+      line-height: 1.55;
+      font-size: 13px;
+      padding: 30px;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    /* NAGŁÓWEK DOKUMENTU */
+    .header {
+      border-bottom: 2px solid #E5D5C0;
+      padding-bottom: 18px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .header-title h1 {
+      font-family: 'Fraunces', serif;
+      font-size: 26px;
+      color: #23201C;
+      margin-bottom: 6px;
+    }
+
+    .header-title p {
+      color: #7D6B57;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .badge-status {
+      background: #E5F2E1;
+      color: #2D6A23;
+      border: 1px solid #CDE1CA;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    .meta-bar {
+      display: flex;
+      gap: 20px;
+      font-size: 11px;
+      color: #8C7A67;
+      margin-top: 8px;
+    }
+
+    h2 {
+      font-family: 'Fraunces', serif;
+      font-size: 18px;
+      color: #23201C;
+      margin-top: 26px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #EFE4D6;
+      padding-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #8C4609;
+      margin-top: 16px;
+      margin-bottom: 8px;
+    }
+
+    p {
+      margin-bottom: 10px;
+      color: #4A4035;
+    }
+
+    ul, ol {
+      margin-left: 20px;
+      margin-bottom: 14px;
+      color: #4A4035;
+    }
+
+    li {
+      margin-bottom: 5px;
+    }
+
+    /* TABELE */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0 20px 0;
+      font-size: 12px;
+      background: #FFFFFF;
+      border: 1px solid #E5DACB;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th {
+      background: #FAF5EB;
+      color: #382E23;
+      font-weight: 700;
+      text-align: left;
+      padding: 9px 12px;
+      border-bottom: 1px solid #E5DACB;
+    }
+
+    td {
+      padding: 8px 12px;
+      border-bottom: 1px solid #EFE7DC;
+      color: #42382D;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:nth-child(even) td {
+      background: #FAF8F5;
+    }
+
+    .code-id {
+      font-family: monospace;
+      font-weight: 700;
+      color: #8C4609;
+      background: #FAF0DC;
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid #EAD8C1;
+    }
+
+    /* BLOKI CHECKLISTY */
+    .checklist-card {
+      background: #FAF7F2;
+      border: 1px solid #E7DAC9;
+      border-left: 4px solid #945209;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 12px;
+      page-break-inside: avoid;
+    }
+
+    .checklist-card h4 {
+      font-size: 13px;
+      font-weight: 700;
+      color: #2D2821;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .checklist-card p {
+      font-size: 12px;
+      margin-bottom: 0;
+      color: #594D3F;
+    }
+
+    .tip-box {
+      background: #FAF4E8;
+      border: 1px solid #EAD5B8;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin: 16px 0;
+      font-size: 12px;
+      color: #634F35;
+    }
+
+    .tip-box strong {
+      color: #8C4609;
+    }
+
+    .footer {
+      margin-top: 36px;
+      border-top: 1px solid #EAE0D1;
+      padding-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #8C7B68;
+    }
+
+    /* DRUK / PDF */
+    @media print {
+      body {
+        padding: 0;
+        max-width: 100%;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .page-break {
+        page-break-before: always;
+      }
+    }
+
+    /* PRZYCISK DRUKUJ NA GÓRZE */
+    .print-btn-bar {
+      background: #2D2821;
+      color: #FAF5ED;
+      padding: 12px 20px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+    }
+
+    .print-btn {
+      background: #945209;
+      color: white;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .print-btn:hover {
+      background: #7A4207;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Pasek pomocniczy z przyciskiem druku -->
+  <div class="print-btn-bar no-print">
+    <div>
+      <strong>📄 Dokument gotowy do wydruku / zapisu w PDF</strong>
+      <div style="font-size: 11px; opacity: 0.8; margin-top: 2px;">Kliknij przycisk obok, a w oknie wybierz cel: „Zapisz jako PDF”</div>
+    </div>
+    <button class="print-btn" onclick="window.print()">🖨️ Zapisz jako PDF / Drukuj</button>
+  </div>
+
+  <!-- NAGŁÓWEK -->
+  <div class="header">
+    <div class="header-title">
+      <h1>🐝 Pasieka Wędrowna „Usza”</h1>
+      <p>Raport Wdrożeniowy i Instrukcja dla Właścicieli Pasieki</p>
+      <div class="meta-bar">
+        <span><strong>Data:</strong> Październik 2026</span>
+        <span><strong>Wersja:</strong> 1.0 (Produkcyjna)</span>
+        <span><strong>Domena:</strong> pasiekausza.pl / sklep.pasiekausza.pl</span>
+      </div>
+    </div>
+    <div class="badge-status">
+      ✓ Frontend 100% zintegrowany
+    </div>
+  </div>
+
+  <!-- SEKCJA 1: CO JEST ZROBIONE -->
+  <h2>📌 1. Podsumowanie Wykonanych Prac (Co jest w 100% gotowe)</h2>
+  <p>
+    Sklep internetowy Pasieki Wędrownej „Usza” działa w nowoczesnej architekturze <strong>Headless e-Commerce</strong>:
+    superszybki, rzemieślniczy frontend w React połączony w tle bezpośrednio z panelem WordPress/WooCommerce.
+  </p>
+
+  <h3>✅ Pełna baza 17 produktów zsynchronizowana w WooCommerce</h3>
+  <p>Wszystkie miody odmianowe oraz produkty pszczele zostały utworzone przez API w bazie WordPressa ze swoimi unikalnymi numerami ID:</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Produkt</th>
+        <th>WooCommerce ID</th>
+        <th>Kategoria</th>
+        <th>Cena bazowa</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Miód Akacjowy</strong></td><td><span class="code-id">ID: 37</span></td><td>Miody Wiosenne</td><td>40 zł</td></tr>
+      <tr><td><strong>Miód Lipowy</strong></td><td><span class="code-id">ID: 50</span></td><td>Miody Letnie</td><td>35 zł</td></tr>
+      <tr><td><strong>Miód Wrzosowy</strong></td><td><span class="code-id">ID: 52</span></td><td>Miody Leśne i Spadziowe</td><td>55 zł</td></tr>
+      <tr><td><strong>Miód ze Spadzi Iglastej</strong></td><td><span class="code-id">ID: 54</span></td><td>Miody Leśne i Spadziowe</td><td>50 zł</td></tr>
+      <tr><td><strong>Miód Wielokwiatowy</strong></td><td><span class="code-id">ID: 56</span></td><td>Miody Wiosenne</td><td>30 zł</td></tr>
+      <tr><td><strong>Miód Gryczany</strong></td><td><span class="code-id">ID: 58</span></td><td>Miody Letnie</td><td>38 zł</td></tr>
+      <tr><td><strong>Miód Rzepakowy</strong></td><td><span class="code-id">ID: 60</span></td><td>Miody Wiosenne</td><td>30 zł</td></tr>
+      <tr><td><strong>Miód Mniszkowy</strong></td><td><span class="code-id">ID: 62</span></td><td>Miody Wiosenne</td><td>45 zł</td></tr>
+      <tr><td><strong>Miód Leśny</strong></td><td><span class="code-id">ID: 64</span></td><td>Miody Leśne i Spadziowe</td><td>42 zł</td></tr>
+      <tr><td><strong>Miód Malinowy</strong></td><td><span class="code-id">ID: 66</span></td><td>Miody Letnie</td><td>45 zł</td></tr>
+      <tr><td><strong>Miód Nawłociowy</strong></td><td><span class="code-id">ID: 68</span></td><td>Miody Letnie</td><td>42 zł</td></tr>
+      <tr><td><strong>Miód Faceliowy</strong></td><td><span class="code-id">ID: 70</span></td><td>Miody Letnie</td><td>35 zł</td></tr>
+      <tr><td><strong>Pierzga Pszczela (Bee Bread)</strong></td><td><span class="code-id">ID: 72</span></td><td>Skarby Ula i Produkty Pszczele</td><td>45 zł</td></tr>
+      <tr><td><strong>Propolis – Kit Pszczeli</strong></td><td><span class="code-id">ID: 74</span></td><td>Skarby Ula i Produkty Pszczele</td><td>25 zł</td></tr>
+      <tr><td><strong>Pyłek Pszczeli Kwiatowy</strong></td><td><span class="code-id">ID: 76</span></td><td>Skarby Ula i Produkty Pszczele</td><td>28 zł</td></tr>
+      <tr><td><strong>Świeca z Wosku Pszczelego</strong></td><td><span class="code-id">ID: 78</span></td><td>Zestawy i Akcesoria</td><td>22 zł</td></tr>
+      <tr><td><strong>Odkład Pszczeli + Szkolenie</strong></td><td><span class="code-id">ID: 80</span></td><td>Zestawy i Akcesoria</td><td>350 zł</td></tr>
+    </tbody>
+  </table>
+
+  <h3>✅ Luksusowa kasa i zamówienia bez przeskakiwania na WordPressa</h3>
+  <ul>
+    <li>Klient przechodzi cały proces zakupu w spójnym, dedykowanym formularzu kasy.</li>
+    <li>Dostawy: <strong>Paczkomat InPost (15 zł / gratis od 180 zł)</strong>, <strong>Kurier InPost (18 zł / gratis od 180 zł)</strong>, <strong>Odbiór w pasiece (0 zł)</strong>.</li>
+    <li>Płatności: <strong>BLIK</strong>, <strong>Szybki przelew Przelewy24</strong>, <strong>Za pobraniem</strong> oraz <strong>Przelew tradycyjny</strong>.</li>
+    <li>Brak mignięć pustego koszyka, brak surowych ostrzeżeń o „zamówieniu gościa” — zamówienie od razu trafia do bazy WordPressa.</li>
+  </ul>
+
+  <h3>✅ Oficjalna baza 14 901 Paczkomatów InPost + Mapa</h3>
+  <ul>
+    <li>Podpięto oficjalną bazę automatów InPost — wyszukanie <em>Strzegomska</em> we Wrocławiu, <em>Lubań</em> czy dowolnego miasta w Polsce natychmiast pokazuje właściwe punkty.</li>
+    <li>Interaktywna mapa OpenStreetMap/Leaflet działa bezawaryjnie bez konieczności generowania kluczy InPost.</li>
+  </ul>
+
+  <div class="page-break"></div>
+
+  <!-- SEKCJA 2: CHECKLISTA DLA WŁAŚCICIELI -->
+  <h2>📋 2. Checklista Przed Startem Sprzedaży (Dla Właścicieli Pasieki)</h2>
+  <p>Poniżej znajduje się 5 kroków konfiguracyjnych, które należy uzupełnić w panelu WordPress lub przekazać:</p>
+
+  <div class="checklist-card">
+    <h4>1. Produkcyjne Płatności Online (BLIK / Przelewy24)</h4>
+    <p>
+      • Podpisz umowę z operatorem płatności (<strong>Przelewy24</strong> lub <strong>PayU</strong>) na gospodarstwo pasieczne / firmę.<br>
+      • W panelu WordPress: <em>WooCommerce → Ustawienia → Płatności → Przelewy24</em> wklej otrzymane klucze produkcyjne (ID Sprzedawcy, Klucz CRC, Raporty).<br>
+      • <strong>Odznacz opcję „Tryb testowy / Sandbox”</strong> i zapisz zmiany.
+    </p>
+  </div>
+
+  <div class="checklist-card">
+    <h4>2. Właściwy Numer Konta do Przelewu Tradycyjnego</h4>
+    <p>
+      • Obecnie w kodzie kasy do tradycyjnego przelewu bankowego widnieje numer przykładowy (12 1090...).<br>
+      • <strong>Zadanie:</strong> Podaj właściwy numer rachunku bankowego pasieki, nazwę odbiorcy i bank, aby zaktualizować dane w kasie i w mailach.
+    </p>
+  </div>
+
+  <div class="checklist-card">
+    <h4>3. Poczta Wychodząca i Powiadomienia (WP Mail SMTP)</h4>
+    <p>
+      • Aby e-maile z potwierdzeniem zamówień nie wpadały klientom do spamu, w WordPressie zainstaluj wtyczkę <strong>WP Mail SMTP</strong>.<br>
+      • Skonfiguruj wysyłkę z oficjalnego adresu pasieki (np. <em>kontakt@pasiekausza.pl</em> lub <em>sklep@pasiekausza.pl</em>).<br>
+      • W <em>WooCommerce → Ustawienia → E-maile</em> sprawdź adres odbiorcy powiadomień o nowych zamówieniach.
+    </p>
+  </div>
+
+  <div class="checklist-card">
+    <h4>4. Umowa InPost (Manager Paczek — Etykiety 1-Kliknięciem)</h4>
+    <p>
+      • Załóż konto w <strong>InPost Manager Paczek</strong> (konto biznesowe).<br>
+      • Zainstaluj oficjalną, bezpłatną wtyczkę <strong>InPost PL</strong> w WordPressie i wklej swój klucz API z Managera Paczek.<br>
+      • <strong>Korzyść:</strong> Przy każdym nowym zamówieniu w panelu pojawi się przycisk „Generuj etykietę InPost” do naklejenia na paczkę z miodem!
+    </p>
+  </div>
+
+  <div class="checklist-card">
+    <h4>5. Dane Sprzedawcy i Regulamin Sklepu</h4>
+    <p>
+      • Uzupełnij w regulaminie dane podmiotu (Gospodarstwo Pasieczne / Rolniczy Handel Detaliczny RHD / NIP / WNI).<br>
+      • Sprawdź poprawność numerów telefonów i adresu odbioru osobistego.
+    </p>
+  </div>
+
+  <div class="checklist-card">
+    <h4>6. Faktury VAT i Automatyczna Wysyłka PDF (B2B)</h4>
+    <p>
+      • Sklep posiada pełną obsługę zamówień na firmę (NIP, nazwa firmy, pełny adres rejestrowy).<br>
+      • W WordPressie zainstaluj wtyczkę <strong>WooCommerce PDF Invoices & Packing Slips</strong> (darmowa) lub wtyczkę integracji z <strong>Fakturownia / wFirma</strong>.<br>
+      • <strong>Efekt:</strong> Po realizacji zamówienia klient automatycznie otrzymuje plik PDF z fakturą w wiadomości e-mail oraz ma do niego dostęp w panelu <em>Moje Konto</em>.
+    </p>
+  </div>
+
+  <div class="checklist-card">
+    <h4>7. Kody Rabatowe i Kupony Promocyjne</h4>
+    <p>
+      • Moduł kuponów rabatowych jest dostępny w WordPressie w zakładce <strong>Marketing → Kupony</strong>.<br>
+      • Można tworzyć kody procentowe (np. -10%), kwotowe oraz z darmową dostawą.
+    </p>
+  </div>
+
+  <!-- SEKCJA 3: INSTRUKCJA OBSŁUGI -->
+  <h2>🍯 3. Jak Obsługiwać Sklep na Co Dzień</h2>
+
+  <div class="tip-box">
+    <strong>📍 Gdzie sprawdzam nowe zamówienia?</strong><br>
+    Zaloguj się na <span style="font-family: monospace;">https://sklep.pasiekausza.pl/wp-admin</span> → przejdź do <strong>WooCommerce → Zamówienia</strong>. Znajdziesz tam listę zamówień z wybranym paczkomatem, danymi klienta i kwotą. Po spakowaniu słoików zmień status na <em>Zrealizowane</em>.
+  </div>
+
+  <div class="tip-box">
+    <strong>🏷️ Jak zmienić cenę miodu lub oznaczyć brak w magazynie?</strong><br>
+    Przejdź do <strong>Produkty → Wszystkie produkty</strong> → kliknij wybrany miód → w sekcji <em>Dane produktu</em> zmień cenę lub w zakładce <em>Magazyn</em> oznacz stan jako <em>Brak w magazynie</em> → kliknij niebieski przycisk <strong>Zaktualizuj</strong>. Zmiana pojawi się w sklepie natychmiast!
+  </div>
+
+  <!-- STOPKA -->
+  <div class="footer">
+    <span>Pasieka Wędrowna „Usza” • Ciechów, Dolny Śląsk</span>
+    <span>Projekt i wdrożenie: Sklep Headless e-Commerce</span>
+  </div>
+
+</body>
+</html>

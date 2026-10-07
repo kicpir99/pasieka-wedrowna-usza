@@ -66,7 +66,7 @@ const REAL_LOCKERS = [
 
 export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }) => {
   const navigate = useNavigate();
-  const { user, register, addOrder } = useAuth();
+  const { user, register, addOrder, updateInvoiceData } = useAuth();
   const [createAccount, setCreateAccount] = useState(false);
   const [accountPassword, setAccountPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -92,10 +92,13 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
   const [email, setEmail] = useState(() => user?.email || '');
   const [phone, setPhone] = useState(() => user?.address?.phone || '');
 
-  // Faktura na firmę
-  const [isCompany, setIsCompany] = useState(false);
-  const [companyName, setCompanyName] = useState('');
-  const [nip, setNip] = useState('');
+  // Faktura na firmę (B2B)
+  const [isCompany, setIsCompany] = useState(() => Boolean(user?.invoiceData?.isCompany));
+  const [companyName, setCompanyName] = useState(() => user?.invoiceData?.companyName || '');
+  const [nip, setNip] = useState(() => user?.invoiceData?.nip || '');
+  const [companyStreet, setCompanyStreet] = useState(() => user?.invoiceData?.street || '');
+  const [companyPostcode, setCompanyPostcode] = useState(() => user?.invoiceData?.postalCode || '');
+  const [companyCity, setCompanyCity] = useState(() => user?.invoiceData?.city || '');
 
   // Metoda dostawy
   const [deliveryMethod, setDeliveryMethod] = useState<'paczkomat' | 'kurier' | 'odbior'>('paczkomat');
@@ -204,6 +207,19 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
       return;
     }
 
+    // Walidacja faktury VAT na firmę (wymogi formalne art. 106e ustawy o VAT)
+    if (isCompany) {
+      if (!companyName.trim() || !nip.trim() || !companyStreet.trim() || !companyPostcode.trim() || !companyCity.trim()) {
+        setSubmitError('Dla faktury VAT wymagane są: pełna nazwa firmy, NIP oraz dokładny adres siedziby (ulica, kod pocztowy, miejscowość).');
+        return;
+      }
+      const cleanNip = nip.replace(/[^0-9]/g, '');
+      if (cleanNip.length < 10) {
+        setSubmitError('Prosimy o podanie poprawnego numeru NIP (min. 10 cyfr).');
+        return;
+      }
+    }
+
     // Walidacja hasła, jeśli klient chce założyć konto
     if (!user && createAccount) {
       if (!accountPassword || accountPassword.length < 8 || !(/[0-9]/.test(accountPassword) || /[A-Z]/.test(accountPassword))) {
@@ -243,6 +259,9 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
         isCompany,
         companyName,
         nip,
+        companyStreet,
+        companyPostcode,
+        companyCity,
         notes,
       },
       delivery: {
@@ -273,6 +292,16 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
 
     if (user) {
       addOrder(newPastOrder);
+      if (isCompany) {
+        updateInvoiceData({
+          isCompany: true,
+          companyName,
+          nip,
+          street: companyStreet,
+          postalCode: companyPostcode,
+          city: companyCity,
+        });
+      }
     } else if (createAccount) {
       register({
         firstName,
@@ -284,6 +313,16 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
         city: deliveryMethod === 'kurier' ? city : '',
         postalCode: deliveryMethod === 'kurier' ? postcode : '',
         parcelLocker: deliveryMethod === 'paczkomat' ? selectedLocker?.code : '',
+        invoiceData: isCompany
+          ? {
+              isCompany: true,
+              companyName,
+              nip,
+              street: companyStreet,
+              postalCode: companyPostcode,
+              city: companyCity,
+            }
+          : undefined,
       });
       setTimeout(() => {
         addOrder(newPastOrder);
@@ -546,42 +585,120 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
 
               {/* Checkbox Faktura VAT */}
               <div className="pt-2 border-t border-[#F2E8DA]">
-                <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-[#665846]">
+                <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-[#665846] select-none">
                   <input
                     type="checkbox"
                     checked={isCompany}
                     onChange={e => setIsCompany(e.target.checked)}
                     className="w-4 h-4 rounded text-[#945209] border-[#DCCEB9] focus:ring-[#945209]"
                   />
-                  <span>Chcę fakturę VAT na firmę</span>
+                  <span className="flex items-center gap-1.5">
+                    <Building2 className="w-3.5 h-3.5 text-[#945209]" />
+                    Chcę fakturę VAT na firmę (B2B)
+                  </span>
                 </label>
 
                 {isCompany && (
-                  <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-dashed border-[#E5DACB]">
-                    <div>
-                      <label className="block text-[11px] font-semibold text-[#5B4F3F] mb-1">
-                        Nazwa firmy *
-                      </label>
-                      <input
-                        type="text"
-                        value={companyName}
-                        onChange={e => setCompanyName(e.target.value)}
-                        placeholder="Firma Sp. z o.o."
-                        className="w-full px-3 py-2 rounded-lg bg-[#FAF8F5] border border-[#DCCEB9] text-xs outline-none"
-                      />
+                  <div className="mt-3 p-4 rounded-2xl bg-[#FAF6EE] border border-[#E7DDCE] space-y-3.5 animate-in fade-in duration-200">
+                    <div className="flex items-center justify-between pb-2 border-b border-[#E8DDCE]">
+                      <div className="text-[11px] font-bold text-[#8C5E28] uppercase tracking-wider flex items-center gap-1.5">
+                        <Building2 className="w-3.5 h-3.5" />
+                        Dane nabywcy do faktury VAT
+                      </div>
+                      {street.trim() && city.trim() && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setCompanyStreet(street);
+                            setCompanyPostcode(postcode);
+                            setCompanyCity(city);
+                          }}
+                          className="text-[11px] text-[#945209] hover:underline font-semibold cursor-pointer"
+                        >
+                          Użyj adresu z dostawy
+                        </button>
+                      )}
                     </div>
-                    <div>
-                      <label className="block text-[11px] font-semibold text-[#5B4F3F] mb-1">
-                        NIP *
-                      </label>
-                      <input
-                        type="text"
-                        value={nip}
-                        onChange={e => setNip(e.target.value)}
-                        placeholder="np. 1234567890"
-                        className="w-full px-3 py-2 rounded-lg bg-[#FAF8F5] border border-[#DCCEB9] text-xs outline-none"
-                      />
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-[11px] font-semibold text-[#5B4F3F] mb-1">
+                          Nazwa firmy *
+                        </label>
+                        <input
+                          type="text"
+                          required={isCompany}
+                          value={companyName}
+                          onChange={e => setCompanyName(e.target.value)}
+                          placeholder="np. Studio Projektowe Sp. z o.o."
+                          className="w-full px-3 py-2 rounded-lg bg-white border border-[#DCCEB9] text-xs outline-none focus:border-[#945209]"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-semibold text-[#5B4F3F] mb-1">
+                          NIP firmy * (10 cyfr)
+                        </label>
+                        <input
+                          type="text"
+                          required={isCompany}
+                          value={nip}
+                          onChange={e => setNip(e.target.value)}
+                          placeholder="np. 8971234567"
+                          className="w-full px-3 py-2 rounded-lg bg-white border border-[#DCCEB9] text-xs font-mono outline-none focus:border-[#945209]"
+                        />
+                      </div>
                     </div>
+
+                    <div className="pt-2 border-t border-[#EFE5D7] space-y-3">
+                      <div className="text-[11px] font-semibold text-[#7A6C5B]">
+                        Adres siedziby rejestrowej firmy:
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-semibold text-[#5B4F3F] mb-1">
+                          Ulica i numer siedziby *
+                        </label>
+                        <input
+                          type="text"
+                          required={isCompany}
+                          value={companyStreet}
+                          onChange={e => setCompanyStreet(e.target.value)}
+                          placeholder="np. ul. Lipowa 12/4"
+                          className="w-full px-3 py-2 rounded-lg bg-white border border-[#DCCEB9] text-xs outline-none focus:border-[#945209]"
+                        />
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                          <label className="block text-[11px] font-semibold text-[#5B4F3F] mb-1">
+                            Kod pocztowy *
+                          </label>
+                          <input
+                            type="text"
+                            required={isCompany}
+                            value={companyPostcode}
+                            onChange={e => setCompanyPostcode(e.target.value)}
+                            placeholder="np. 55-300"
+                            className="w-full px-3 py-2 rounded-lg bg-white border border-[#DCCEB9] text-xs outline-none focus:border-[#945209]"
+                          />
+                        </div>
+                        <div className="sm:col-span-2">
+                          <label className="block text-[11px] font-semibold text-[#5B4F3F] mb-1">
+                            Miejscowość *
+                          </label>
+                          <input
+                            type="text"
+                            required={isCompany}
+                            value={companyCity}
+                            onChange={e => setCompanyCity(e.target.value)}
+                            placeholder="np. Środa Śląska"
+                            className="w-full px-3 py-2 rounded-lg bg-white border border-[#DCCEB9] text-xs outline-none focus:border-[#945209]"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <p className="text-[10px] text-[#7A6C5B] pt-1 leading-relaxed">
+                      📄 Faktura VAT zostanie wystawiona automatycznie po skompletowaniu zamówienia i przesłana w pliku PDF na podany adres e-mail oraz będzie dostępna do pobrania w panelu Moje Konto.
+                    </p>
                   </div>
                 )}
               </div>

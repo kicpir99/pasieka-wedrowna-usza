@@ -82,6 +82,7 @@ interface AuthContextType {
     city?: string;
     postalCode?: string;
     parcelLocker?: string;
+    invoiceData?: InvoiceData;
   }) => void;
   logout: () => void;
   loginAsDemoUser: () => void;
@@ -241,6 +242,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     city?: string;
     postalCode?: string;
     parcelLocker?: string;
+    invoiceData?: InvoiceData;
   }) => {
     const newUser: UserProfile = {
       email: data.email,
@@ -255,6 +257,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         phone: data.phone || '',
         parcelLocker: data.parcelLocker || '',
       },
+      invoiceData: data.invoiceData,
       savedCard: null,
       subscriptions: [],
       orders: [],

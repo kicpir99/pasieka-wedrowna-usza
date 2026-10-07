@@ -115,6 +115,25 @@ W zakładce **Regulamin** oraz **Polityka Prywatności** na stronie należy uzup
 
 ---
 
+### Krok 6: Faktury VAT i Automatyczna Wysyłka PDF (B2B)
+W formularzu zamówienia (kasa) wprowadzono pełną obsługę zamówień na firmę (B2B) zgodną z art. 106e ustawy o VAT:
+* Klient zaznacza opcję *„Chcę fakturę VAT na firmę”* i podaje: **Nazwę firmy, NIP, Ulicę i numer, Kod pocztowy oraz Miejscowość**.
+* Dane te są natychmiast przekazywane do WooCommerce w sekcji `billing` oraz w metadanych zamówienia (`_billing_nip`, `vat_number`, `Faktura VAT: TAK`).
+* **Jak zautomatyzować generowanie i wysyłkę PDF w WordPress?**
+  1. W WordPressie zainstaluj wtyczkę **WooCommerce PDF Invoices & Packing Slips** (bezpłatna na wordpress.org) lub zintegruj pasiekę z systemem księgowym (**Fakturownia**, **wFirma**, **iFirma**).
+  2. W ustawieniach wtyczki wpisz dane sprzedawcy (Pasieka Usza, NIP, adres, numer rachunku bankowego).
+  3. **Efekt automatyzacji:**
+     * Gdy zamówienie zmieni status na *Zrealizowane*, wtyczka automatycznie wygeneruje plik PDF faktury i dołączy go do e-maila z potwierdzeniem wysłania paczki.
+     * Dodatkowo zarejestrowani klienci mają wgląd i możliwość pobrania e-Faktury bezpośrednio w panelu **Moje Konto $\rightarrow$ Historia zamówień $\rightarrow$ Faktura PDF**.
+
+---
+
+### Krok 7: Kody Rabatowe i Kupony Promocyjne
+* WooCommerce posiada wbudowany moduł kuponów (**Marketing $\rightarrow$ Kupony**).
+* Właściciele mogą tworzyć kupony kwotowe (np. `USZA10` na -10 zł) lub procentowe (np. `WIOSNA15` na -15%), kupony na darmową dostawę, bądź kupony z ograniczeniem ważności do określonej daty.
+
+---
+
 ## 🍯 Jak zarządzać sklepem na co dzień (Dla Właścicieli Pasieki)
 
 ### 1. Gdzie sprawdzam nowe zamówienia?
