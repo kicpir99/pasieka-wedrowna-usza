@@ -6,7 +6,7 @@ import { HONEY_PRODUCTS, HIVE_TREASURE_IDS } from '../data/honeyProducts';
  * Dane pobierane są ze zmiennych środowiskowych Vite (plik .env / .env.production).
  */
 export const WOO_CONFIG = {
-  url: (import.meta.env.VITE_WOOCOMMERCE_URL || 'https://sklep.pasiekausza.pl').replace(/\/$/, ''),
+  url: (import.meta.env.VITE_WOOCOMMERCE_URL || 'https://www.sklep.pasiekausza.pl').replace(/\/$/, ''),
   consumerKey: import.meta.env.VITE_WOOCOMMERCE_KEY || 'ck_0f255ea2edcfdefd8b92d38745d26eb748ff9930',
   consumerSecret: import.meta.env.VITE_WOOCOMMERCE_SECRET || 'cs_eac4c5ca089a58778f969d8756f0b4eba99d5c4c',
   get isConfigured(): boolean {

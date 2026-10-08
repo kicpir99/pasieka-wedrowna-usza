@@ -123,7 +123,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
 
   // Dynamiczne załadowanie pełnej oficjalnej bazy paczkomatów InPost
   useEffect(() => {
-    fetch('/data/inpost_lockers.json')
+    fetch(`${import.meta.env.BASE_URL}data/inpost_lockers.json`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data) && data.length > 0) {

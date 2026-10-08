@@ -1,6 +1,6 @@
 import { HONEY_PRODUCTS } from '../src/data/honeyProducts.ts';
 
-const WOO_URL = 'https://sklep.pasiekausza.pl';
+const WOO_URL = 'https://www.sklep.pasiekausza.pl';
 const WOO_KEY = 'ck_0f255ea2edcfdefd8b92d38745d26eb748ff9930';
 const WOO_SECRET = 'cs_eac4c5ca089a58778f969d8756f0b4eba99d5c4c';
 
