@@ -1,6 +1,6 @@
 # Pasieka Usza – Headless E-Commerce Platform
 
-> Nowoczesna, bezgłowa (Headless) platforma e-commerce zrealizowana dla dolnośląskiej rzemieślniczej pasieki wędrownej **Pasieka Usza**, łącząca zoptymalizowany frontend SPA (React 19 + TypeScript + Vite) z produkcyjnym backendem WordPress & WooCommerce REST API v3.
+> [English Version](#-english-version) | [Wersja Polska](#-wersja-polska)
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue.svg?logo=typescript)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-19.0-61dafb.svg?logo=react)](https://react.dev/)
@@ -11,9 +11,13 @@
 
 ---
 
-## 🎯 Architektura i Założenia Projektu
+# 🇬🇧 English Version
 
-Projekt powstał jako komercyjne wdrożenie headless e-commerce, którego celem było zastąpienie tradycyjnego, ociężałego motywu WordPress nowoczesną aplikacją Single Page Application (SPA). Rozwiązanie zachowuje pełną elastyczność panelu administracyjnego WordPress / WooCommerce dla właścicieli pasieki, dostarczając klientowi końcowemu błyskawiczny czas ładowania, płynne animacje i doświadczenie zakupowe klasy premium.
+> Modern, high-performance Headless E-Commerce Single Page Application built for an artisanal migratory apiary (**Pasieka Usza**), decoupling a responsive React 19 + TypeScript + Vite frontend from a WordPress & WooCommerce REST API v3 production backend.
+
+## 🎯 Architecture & Project Overview
+
+This project was engineered to replace an outdated monolithic WordPress theme with an enterprise-grade headless architecture. By decoupling the presentation layer from the content management system, the store achieves sub-second page transitions, hardware-accelerated animations, and an elevated user experience—while preserving the familiar WordPress / WooCommerce dashboard for store managers.
 
 ```
 ┌────────────────────────────────────────────────────────┐
@@ -29,6 +33,141 @@ Projekt powstał jako komercyjne wdrożenie headless e-commerce, którego celem 
 │     Custom Post Types • ACF Meta • Mailer Endpoints    │
 └────────────────────────────────────────────────────────┘
 ```
+
+---
+
+## ✨ Key Features & Engineering Highlights
+
+### 1. Headless WooCommerce Engine
+- **Two-way REST API Integration (`/wp-json/wc/v3`):** real-time product catalogs, category filtering, live stock levels, and automated order creation (`POST /orders`).
+- **Resilient Fallback & Stale-While-Revalidate Caching:** in case of API timeouts or backend maintenance, the application seamlessly serves verified product snapshots from `localStorage`, ensuring a **Zero Downtime UX**.
+- **Dynamic Weight & Unit Pricing:** automatic parsing of multi-weight product variations (400g / 1200g) with live price recalculation.
+
+### 2. High-Conversion Checkout & Logistics
+- **InPost Parcel Locker Integration (14,000+ Lockers):**
+  - Searchable offline-first database indexed by locker code, street, and municipality.
+  - Interactive geolocated map powered by **Leaflet** and OpenStreetMap featuring custom SVG pins and dynamic viewport auto-centering.
+- **Volumetric Tare Weight & Parcel Dimension Algorithm:** computes net honey mass plus protective glass tare and corrugated honeycomb buffer to select locker capacity tiers automatically (InPost Size A / B / C).
+- **Free Shipping Threshold Optimizer:** dynamic hybrid recommendation engine suggesting impulse add-ons tailored to bridge the remaining spend required for free delivery (180 PLN).
+- **B2B Tax Compliance:** client-side validation of Polish tax identification numbers (NIP) adhering to Article 106e VAT requirements with invoice metadata dispatch.
+- **1-Click Reorder Subscriptions:** cyclical automated email reminders (30, 60, or 90 days) for honey replenishment.
+
+### 3. Interactive Product Experience
+- **Interactive 360° Jar Inspection (`FramelessJar360Viewer`):**
+  - Ultra-smooth frame-sequence player with WebP preloading and GPU rasterization.
+  - Interactive sensory hotspots displaying honey harvest data (diastase number, HMF content, moisture percentage, botanical origin).
+  - Turntable behavior: subtle auto-spin on idle, instant pause on drag/touch, and automatic resumption after 2.5s.
+- **Multi-Criteria Honey Finder Quiz (`HoneyFinderQuiz`):** interactive recommendation engine mapping taste preferences and health benefits to the apiary's harvest varieties.
+- **Sensory Honey Comparator (`ComparisonModal`):** side-by-side analytical radar comparison of sweetness, acidity, aroma intensity, and crystallization speed.
+
+---
+
+## 🛠️ Tech Stack
+
+| Domain | Technology / Library | Role & Implementation |
+|---|---|---|
+| **Core** | React 19, TypeScript 5.8 | Component architecture, strict domain modeling |
+| **Build & Tooling** | Vite 6.2, PostCSS | Fast HMR, code splitting, asset optimization |
+| **Styling & UI** | Tailwind CSS v4, Lucide React | Utility-first design, custom design tokens, SVG icon system |
+| **Motion & UX** | GSAP 3, Lenis | Hardware-accelerated transitions, inertia smooth scrolling |
+| **GIS & Mapping** | Leaflet 1.9, OpenStreetMap | Parcel locker picking via interactive vector maps |
+| **Backend & CMS** | WooCommerce REST API v3, WordPress | Headless inventory, order processing, ACF schema |
+| **Deployment** | Apache / Nginx, GitHub Actions | CI/CD automation, `.htaccess` SPA fallback routing |
+
+---
+
+## 📁 Repository Structure
+
+```text
+├── public/
+│   ├── .htaccess               # Apache mod_rewrite rules for SPA routing
+│   ├── assets/                 # Optimized WebP assets, photography & caustics
+│   ├── data/                   # Static InPost parcel locker points
+│   └── frames/                 # 360-degree prerendered animation frames
+├── scripts/                    # Automation utilities
+│   └── sync_all_products_to_woocommerce.js  # Node.js batch sync with WooCommerce REST API
+├── src/
+│   ├── components/             # Reusable UI modules (CartDrawer, InPostModal, 360Viewer)
+│   ├── context/                # Global state stores (AuthContext, ProductContext)
+│   ├── data/                   # Fallback datasets, sensory scales, harvest records
+│   ├── hooks/                  # Custom React hooks (useDisplayResolution)
+│   ├── pages/                  # Route views (ShopPage, ProductPage, CheckoutPage)
+│   ├── services/               # REST API gateways (wooCommerceService, contactService)
+│   ├── types.ts                # TypeScript strict interface contracts
+│   └── utils/                  # Domain algorithms (tare calculator, frame preloader)
+├── .env.example                # Environment configuration template
+└── vite.config.ts              # Vite bundler configuration
+```
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- **Node.js:** `>= 20.x`
+- **npm:** `>= 10.x`
+
+### 1. Clone the repository
+```bash
+git clone https://github.com/kicpir99/pasieka-wedrowna-usza.git
+cd pasieka-wedrowna-usza
+```
+
+### 2. Install dependencies
+```bash
+npm install
+```
+
+### 3. Environment setup
+Copy `.env.example` to `.env`:
+```bash
+cp .env.example .env
+```
+Provide your WooCommerce REST API credentials or leave them unset to run the app in offline fallback / mock mode:
+```env
+VITE_WOOCOMMERCE_URL="https://your-domain.com"
+VITE_WOOCOMMERCE_KEY="ck_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+VITE_WOOCOMMERCE_SECRET="cs_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+```
+
+### 4. Run development server
+```bash
+npm run dev
+```
+Open `http://localhost:3000` in your browser.
+
+### 5. Production build & verification
+```bash
+# Type check without emitting files
+npm run lint
+
+# Compile optimized production bundle
+npm run build
+```
+
+---
+
+## 👤 Author
+
+**Kacper Łamasz**  
+- GitHub: [@kicpir99](https://github.com/kicpir99)  
+- LinkedIn: [kacper-lamasz](https://www.linkedin.com/in/kacper-lamasz/)  
+- Role: Junior Python / Fullstack Developer
+
+<br />
+
+---
+---
+
+<br />
+
+# 🇵🇱 Wersja Polska
+
+> Nowoczesna, bezgłowa (Headless) platforma e-commerce zrealizowana dla dolnośląskiej rzemieślniczej pasieki wędrownej **Pasieka Usza**, łącząca zoptymalizowany frontend SPA (React 19 + TypeScript + Vite) z produkcyjnym backendem WordPress & WooCommerce REST API v3.
+
+## 🎯 Architektura i Założenia Projektu
+
+Projekt powstał jako komercyjne wdrożenie headless e-commerce, którego celem było zastąpienie tradycyjnego, ociężałego motywu WordPress nowoczesną aplikacją Single Page Application (SPA). Rozwiązanie zachowuje pełną elastyczność panelu administracyjnego WordPress / WooCommerce dla właścicieli pasieki, dostarczając klientowi końcowemu błyskawiczny czas ładowania, płynne animacje i doświadczenie zakupowe klasy premium.
 
 ---
 
@@ -72,94 +211,23 @@ Projekt powstał jako komercyjne wdrożenie headless e-commerce, którego celem 
 
 ---
 
-## 📁 Struktura Projektu
-
-```text
-├── public/
-│   ├── .htaccess               # Konfiguracja mod_rewrite dla routingu SPA na Apache
-│   ├── assets/                 # Zoptymalizowane grafiki WebP / PNG
-│   ├── data/                   # Statyczna baza punktów logistycznych (InPost)
-│   ├── frames/                 # Wyrenderowane klatki animacji 360°
-│   └── sprites/                # Arkusze sprajtów dla elementów dynamicznych
-├── scripts/                    # Skrypty narzędziowe i synchronizacyjne
-│   └── sync_all_products_to_woocommerce.js  # Node.js batch sync z WooCommerce REST API
-├── src/
-│   ├── components/             # Reużywalne komponenty UI (CartDrawer, InPostModal, 360Viewer itp.)
-│   ├── context/                # Zarządzanie stanem globalnym (AuthContext, ProductContext)
-│   ├── data/                   # Bazy fallback, typy sensoryczne, dane odmian
-│   ├── hooks/                  # Własne hooki React (useDisplayResolution itp.)
-│   ├── pages/                  # Widoki aplikacji (ShopPage, ProductPage, CheckoutPage itp.)
-│   ├── services/               # Warstwa integracji API (wooCommerceService, contactService itp.)
-│   ├── types.ts                # Główne definicje typów TypeScript
-│   └── utils/                  # Funkcje pomocnicze (preloader klatek, kalkulatory miodu)
-├── .env.example                # Szablon zmiennych środowiskowych
-└── vite.config.ts              # Konfiguracja bundlera Vite
-```
-
----
-
 ## 🚀 Uruchomienie Lokalne
 
-### Wymagania wstępne
-- **Node.js:** `>= 20.x`
-- **npm:** `>= 10.x`
-
-### 1. Klonowanie repozytorium
 ```bash
+# Klonowanie repozytorium
 git clone https://github.com/kicpir99/pasieka-wedrowna-usza.git
 cd pasieka-wedrowna-usza
-```
 
-### 2. Instalacja zależności
-```bash
+# Instalacja zależności
 npm install
-```
 
-### 3. Konfiguracja środowiska
-Skopiuj plik `.env.example` do `.env`:
-```bash
-cp .env.example .env
-```
-Uzupełnij dane dostępowe do instancji WooCommerce (jeśli pracujesz w trybie Live API) lub pozostaw puste, aby korzystać z wbudowanego trybu demonstracyjnego/fallback:
-```env
-VITE_WOOCOMMERCE_URL="https://twojadomena.pl"
-VITE_WOOCOMMERCE_KEY="ck_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-VITE_WOOCOMMERCE_SECRET="cs_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-```
-
-### 4. Uruchomienie serwera deweloperskiego
-```bash
+# Uruchomienie serwera deweloperskiego
 npm run dev
-```
-Aplikacja będzie dostępna pod adresem: `http://localhost:3000`
 
-### 5. Budowanie paczki produkcyjnej
-```bash
-npm run build
-```
-Zoptymalizowane pliki produkcyjne zostaną wygenerowane w katalogu `dist/`.
-
----
-
-## 🧪 Weryfikacja Jakości Kodu
-
-Projekt podlega ścisłej kontroli typów TypeScript oraz walidacji poprawności bundlingu:
-
-```bash
-# Weryfikacja typów TypeScript (bez emisji plików)
+# Weryfikacja typów i build produkcyjny
 npm run lint
-
-# Kompilacja produkcyjna z optymalizacją wielkości chunków
 npm run build
 ```
-
----
-
-## 🔒 Bezpieczeństwo i Dobre Praktyki
-
-- **Brak sekretów w repozytorium:** klucze API oraz dane uwierzytelniające są zarządzane wyłącznie poprzez zmienne środowiskowe (`.env`), a pliki wrażliwe są wykluczone przez `.gitignore`.
-- **Walidacja danych wejściowych:** rygorystyczna sanityzacja danych adresowych, formatów e-mail, numerów telefonów i NIP przed wysyłką do backendu.
-- **Bezpieczny routing SPA:** dedykowany zestaw reguł `.htaccess` chroniący przed błędami 404 przy bezpośrednich wejściach na podstrony (`/sklep`, `/koszyk`, `/zamowienie`).
 
 ---
 
