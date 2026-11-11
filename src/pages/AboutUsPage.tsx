@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { HoneyCraftingJourney } from '../components/HoneyCraftingJourney';
 import { ShieldCheck, Heart, Sparkles, MapPin, Award, CheckCircle2, ArrowRight } from 'lucide-react';
+import { ScrollReveal } from '../components/ScrollReveal';
 import { fetchWordPressPage, PageContent } from '../services/pageService';
 
 interface AboutUsPageProps {
@@ -73,7 +74,8 @@ export const AboutUsPage: React.FC<AboutUsPageProps> = ({ displayResolution }) =
 
       {/* Main Story Content */}
       <section id="historia-pasieki" className={`adaptive-container ${displayResolution.containerClass} px-4 sm:px-6 lg:px-8 -mt-8 relative z-20 scroll-mt-24`}>
-        <div className="bg-white rounded-3xl p-6 sm:p-12 border border-[#E7DCCE] shadow-xl space-y-10">
+        <ScrollReveal direction="up" delay={0.05}>
+          <div className="bg-white rounded-3xl p-6 sm:p-12 border border-[#E7DCCE] shadow-xl space-y-10">
           
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             <div className="lg:col-span-7 space-y-5 text-sm sm:text-base text-[#524638] leading-relaxed">
@@ -160,22 +162,25 @@ export const AboutUsPage: React.FC<AboutUsPageProps> = ({ displayResolution }) =
           </div>
 
         </div>
+        </ScrollReveal>
       </section>
 
       {/* 3D Scrollytelling Section: HoneyCraftingJourney */}
       <section id="wizualna-droga-miodu" className="mt-16 scroll-mt-24">
-        <div className={`adaptive-container ${displayResolution.containerClass} px-4 sm:px-6 lg:px-8 mb-6 text-center space-y-2`}>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EFE4D2] text-[#713F0C] text-xs font-semibold">
-            <Sparkles className="w-3.5 h-3.5 text-[#A05C12]" />
-            <span>Wizualna Droga Miodu</span>
+        <ScrollReveal direction="up" delay={0.05}>
+          <div className={`adaptive-container ${displayResolution.containerClass} px-4 sm:px-6 lg:px-8 mb-6 text-center space-y-2`}>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EFE4D2] text-[#713F0C] text-xs font-semibold">
+              <Sparkles className="w-3.5 h-3.5 text-[#A05C12]" />
+              <span>Wizualna Droga Miodu</span>
+            </div>
+            <h2 className="font-serif text-3xl sm:text-4xl font-extrabold text-[#23201C] tracking-tight">
+              Od wędrówki pasieki do Twojego słoika
+            </h2>
+            <p className="text-xs sm:text-sm text-[#6B5E4F] max-w-xl mx-auto">
+              Przewijaj stronę, aby zobaczyć, jak z surowego nektaru dolnośląskich łąk powstaje czysty, niefiltrowany miód.
+            </p>
           </div>
-          <h2 className="font-serif text-3xl sm:text-4xl font-extrabold text-[#23201C] tracking-tight">
-            Od wędrówki pasieki do Twojego słoika
-          </h2>
-          <p className="text-xs sm:text-sm text-[#6B5E4F] max-w-xl mx-auto">
-            Przewijaj stronę, aby zobaczyć, jak z surowego nektaru dolnośląskich łąk powstaje czysty, niefiltrowany miód.
-          </p>
-        </div>
+        </ScrollReveal>
 
         <HoneyCraftingJourney containerClass={displayResolution.containerClass} />
       </section>

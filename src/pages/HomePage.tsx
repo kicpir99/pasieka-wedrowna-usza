@@ -9,6 +9,7 @@ import { HoneyProduct } from '../types';
 import { HONEY_PRODUCTS, HONEY_VARIETIES } from '../data/honeyProducts';
 import { isProductBestseller } from '../utils/honeyHelpers';
 import { getAssetUrl } from '../utils/assets';
+import { ScrollReveal } from '../components/ScrollReveal';
 import { Sparkles, ArrowRight, ShieldCheck, Heart, Droplets, Star, Quote, MapPin, CheckCircle2 } from 'lucide-react';
 
 const ProductDetailModal = React.lazy(() => import('../components/ProductDetailModal').then(m => ({ default: m.ProductDetailModal })));
@@ -111,11 +112,11 @@ export const HomePage: React.FC<HomePageProps> = ({
         />
 
         {/* Sekcja: Nasza Filozofia – Pasieka Usza */}
-        <section className="py-20 bg-white border-b border-[#E8DECFA0] content-visibility-auto">
+        <section className="py-20 bg-white border-b border-[#E8DECFA0]">
           <div className={`adaptive-container ${displayResolution.containerClass} px-4 sm:px-6 lg:px-8`}>
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
               
-              <div className="lg:col-span-6 space-y-5">
+              <ScrollReveal direction="up" delay={0.05} className="lg:col-span-6 space-y-5">
                 <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#FAF0E1] text-[#8B5337] text-xs font-semibold">
                   <MapPin className="w-3.5 h-3.5" />
                   <span>Ciechów • Dolny Śląsk</span>
@@ -158,9 +159,9 @@ export const HomePage: React.FC<HomePageProps> = ({
                     <ArrowRight className="w-4 h-4" />
                   </Link>
                 </div>
-              </div>
+              </ScrollReveal>
 
-              <div className="lg:col-span-6 grid grid-cols-2 gap-3 sm:gap-4">
+              <ScrollReveal direction="up" delay={0.2} className="lg:col-span-6 grid grid-cols-2 gap-3 sm:gap-4">
                 <div className="rounded-2xl overflow-hidden border border-[#E7DCCE] shadow-md bg-[#EDE4D5]">
                   <img
                     src={getAssetUrl('assets/about-apiary-1.webp')}
@@ -183,16 +184,16 @@ export const HomePage: React.FC<HomePageProps> = ({
                     decoding="async"
                   />
                 </div>
-              </div>
+              </ScrollReveal>
 
             </div>
           </div>
         </section>
 
         {/* Wybrane Odmiany Miodów – Bestsellery ze Sklepu */}
-        <section className="py-20 bg-[#FAF7F2] border-b border-[#E8DECFA0] content-visibility-auto">
+        <section className="py-20 bg-[#FAF7F2] border-b border-[#E8DECFA0]">
           <div className={`adaptive-container ${displayResolution.containerClass} px-4 sm:px-6 lg:px-8 space-y-12`}>
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <ScrollReveal direction="up" className="flex flex-col md:flex-row md:items-end justify-between gap-6">
               <div className="space-y-2">
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EFE4D2] text-[#713F0C] text-xs font-semibold">
                   <Sparkles className="w-3.5 h-3.5 text-[#A05C12]" />
@@ -215,54 +216,57 @@ export const HomePage: React.FC<HomePageProps> = ({
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
-            </div>
+            </ScrollReveal>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-              {featuredProducts.map(product => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  onAddToCart={onAddToCart}
-                  onOpenDetails={setDetailProduct}
-                  onOpenDetail={setDetailProduct}
-                  onToggleCompare={toggleCompare}
-                  isCompared={compareList.some(p => p.id === product.id)}
-                />
+              {featuredProducts.map((product, idx) => (
+                <ScrollReveal key={product.id} direction="up" delay={idx * 0.12}>
+                  <ProductCard
+                    product={product}
+                    onAddToCart={onAddToCart}
+                    onOpenDetails={setDetailProduct}
+                    onOpenDetail={setDetailProduct}
+                    onToggleCompare={toggleCompare}
+                    isCompared={compareList.some(p => p.id === product.id)}
+                  />
+                </ScrollReveal>
               ))}
             </div>
 
             {/* Skarby Ula Teaser */}
-            <div className="bg-[#2D2821] text-[#FAF5ED] rounded-3xl p-8 sm:p-12 relative overflow-hidden shadow-xl">
-              <div className="max-w-2xl space-y-4 relative z-10">
-                <span className="px-3 py-1 rounded-full bg-[#3F372C] text-[#E5983A] text-xs font-bold">
-                  Apiterapia & Dary Ula
-                </span>
-                <h3 className="font-serif text-2xl sm:text-3xl font-bold text-[#FAF5ED]">
-                  Pierzga, Propolis, Pyłek kwiatowy i Wosk
-                </h3>
-                <p className="text-xs sm:text-sm text-[#C7BDB0] leading-relaxed">
-                  Miód to dopiero początek. Odkryj najcenniejsze dary ula prosto z naszej wędrownej pasieki: pierzgę, propolis, pyłek pszczeli, czysty wosk oraz zdrowe odkłady pszczele.
-                </p>
-                <div className="pt-2">
-                  <Link
-                    to="/oferta"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#E5983A] hover:bg-[#D4892A] text-[#24211D] text-xs font-bold transition-all shadow-md"
-                  >
-                    <span>Zobacz wszystkie Skarby Ula</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
+            <ScrollReveal direction="up" delay={0.15}>
+              <div className="bg-[#2D2821] text-[#FAF5ED] rounded-3xl p-8 sm:p-12 relative overflow-hidden shadow-xl">
+                <div className="max-w-2xl space-y-4 relative z-10">
+                  <span className="px-3 py-1 rounded-full bg-[#3F372C] text-[#E5983A] text-xs font-bold">
+                    Apiterapia & Dary Ula
+                  </span>
+                  <h3 className="font-serif text-2xl sm:text-3xl font-bold text-[#FAF5ED]">
+                    Pierzga, Propolis, Pyłek kwiatowy i Wosk
+                  </h3>
+                  <p className="text-xs sm:text-sm text-[#C7BDB0] leading-relaxed">
+                    Miód to dopiero początek. Odkryj najcenniejsze dary ula prosto z naszej wędrownej pasieki: pierzgę, propolis, pyłek pszczeli, czysty wosk oraz zdrowe odkłady pszczele.
+                  </p>
+                  <div className="pt-2">
+                    <Link
+                      to="/oferta"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#E5983A] hover:bg-[#D4892A] text-[#24211D] text-xs font-bold transition-all shadow-md"
+                    >
+                      <span>Zobacz wszystkie Skarby Ula</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </Link>
+                  </div>
                 </div>
               </div>
-            </div>
+            </ScrollReveal>
 
           </div>
         </section>
 
         {/* Opinie Klientów */}
-        <section className="py-20 bg-white border-b border-[#E8DECFA0] content-visibility-auto">
+        <section className="py-20 bg-white border-b border-[#E8DECFA0]">
           <div className={`adaptive-container ${displayResolution.containerClass} px-4 sm:px-6 lg:px-8 space-y-12`}>
             {/* Header Sekcji Ocen */}
-            <div className="text-center space-y-4 max-w-2xl mx-auto">
+            <ScrollReveal direction="up" className="text-center space-y-4 max-w-2xl mx-auto">
               <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#FAF0E1] text-[#8B5337] text-xs font-semibold">
                 <Heart className="w-3.5 h-3.5 fill-[#8B5337]" />
                 <span>Głosy Naszych Odbiorców</span>
@@ -294,16 +298,16 @@ export const HomePage: React.FC<HomePageProps> = ({
                   Pancerne tuby & wysyłka 24h
                 </span>
               </div>
-            </div>
+            </ScrollReveal>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {reviews.map((rev, idx) => {
                 const product = HONEY_PRODUCTS.find(p => p.id === rev.productId);
                 return (
-                  <div 
-                    key={idx} 
-                    className="bg-[#FAF8F5] rounded-3xl p-6 sm:p-7 border border-[#E7DCCE] shadow-xs hover:shadow-md transition-shadow flex flex-col justify-between space-y-5"
-                  >
+                  <ScrollReveal key={idx} direction="up" delay={idx * 0.12} className="h-full">
+                    <div 
+                      className="bg-[#FAF8F5] rounded-3xl p-6 sm:p-7 border border-[#E7DCCE] shadow-xs hover:shadow-md transition-shadow flex flex-col justify-between space-y-5 h-full"
+                    >
                     <div className="space-y-3.5">
                       {/* Top Meta: Stars, Date, Verified badge */}
                       <div className="flex items-center justify-between gap-2">
@@ -380,19 +384,20 @@ export const HomePage: React.FC<HomePageProps> = ({
                       )}
                     </div>
                   </div>
-                );
-              })}
+                </ScrollReveal>
+              );
+            })}
             </div>
           </div>
         </section>
 
         {/* Standard Quality & FAQ */}
-        <div className="content-visibility-auto">
+        <ScrollReveal direction="up" delay={0.05}>
           <HoneyQualitySection containerClass={displayResolution.containerClass} />
-        </div>
-        <div className="content-visibility-auto">
+        </ScrollReveal>
+        <ScrollReveal direction="up" delay={0.05}>
           <HoneyFAQSection containerClass={displayResolution.containerClass} />
-        </div>
+        </ScrollReveal>
       </main>
 
       <React.Suspense fallback={null}>
