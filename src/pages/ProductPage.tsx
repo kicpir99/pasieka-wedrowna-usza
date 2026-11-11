@@ -6,24 +6,24 @@ import { HoneyProduct } from '../types';
 import { getEnrichedProduct, CATEGORY_METADATA } from '../utils/honeyHelpers';
 import { ProductReviews } from '../components/ProductReviews';
 import { ScrollReveal } from '../components/ScrollReveal';
-import { 
-  ArrowLeft, 
-  ArrowRight, 
-  Share2, 
-  Check, 
-  ShoppingBag, 
-  Sparkles, 
-  ShieldCheck, 
-  Award, 
-  Leaf, 
-  Star, 
-  FileText, 
-  Heart, 
-  Clock, 
-  Truck, 
-  ChevronRight, 
+import {
+  ArrowLeft,
+  ArrowRight,
+  Share2,
+  Check,
+  ShoppingBag,
+  Sparkles,
+  ShieldCheck,
+  Award,
+  Leaf,
+  Star,
+  FileText,
+  Heart,
+  Clock,
+  Truck,
+  ChevronRight,
   ChevronLeft,
-  CheckCircle2, 
+  CheckCircle2,
   Droplet,
   Beaker,
   MessageSquare,
@@ -140,7 +140,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
     observer.observe(target);
     return () => observer.disconnect();
   }, []);
-  
+
   // Knowledge card tabs horizontal scroll state & affordance
   const tabsContainerRef = useRef<HTMLDivElement>(null);
   const [canScrollTabsLeft, setCanScrollTabsLeft] = useState(false);
@@ -180,8 +180,8 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
   const effectivePrice = basePrice;
 
   // Related products - strictly isolate honey varieties vs. hive treasures
-  const candidatePool = isTreasure 
-    ? (hiveTreasures.length > 0 ? hiveTreasures : HIVE_TREASURES) 
+  const candidatePool = isTreasure
+    ? (hiveTreasures.length > 0 ? hiveTreasures : HIVE_TREASURES)
     : (honeyVarieties.length > 0 ? honeyVarieties : HONEY_VARIETIES);
   const relatedProducts = [...candidatePool]
     .filter(p => p.id !== rawProduct.id)
@@ -202,8 +202,8 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
   const handleAddToCart = () => {
     if (!currentSize) return;
     onAddToCart(
-      rawProduct, 
-      currentSize.weightGrams, 
+      rawProduct,
+      currentSize.weightGrams,
       effectivePrice,
       purchaseMode === 'subscription' ? subscriptionInterval : undefined
     );
@@ -233,15 +233,15 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
   const pricePerKg = currentSize && currentSize.weightGrams > 10 ? Math.round((effectivePrice / currentSize.weightGrams) * 1000) : 0;
   const catInfo = isTreasure
     ? {
-        label: 'Skarby Ula',
-        shortLabel: 'Skarby Ula',
-        icon: prodType === 'bee-colony' ? '🐝' : prodType === 'candle' ? '🕯️' : '🌿',
-      }
+      label: 'Skarby Ula',
+      shortLabel: 'Skarby Ula',
+      icon: prodType === 'bee-colony' ? '🐝' : prodType === 'candle' ? '🕯️' : '🌿',
+    }
     : (CATEGORY_METADATA[product.category] || {
-        label: product.category,
-        shortLabel: product.category,
-        icon: '🍯',
-      });
+      label: product.category,
+      shortLabel: product.category,
+      icon: '🍯',
+    });
 
   // Reusable Product Header (Category badge, Region, Title, Botanical source, Rating stars)
   const renderProductHeader = () => (
@@ -285,13 +285,13 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
       </h1>
 
       <p className="text-xs sm:text-sm italic text-[#7A6A5A] mb-2.5 sm:mb-3">
-        {prodType === 'bee-colony' 
-          ? 'Rasa i linia pszczół: ' 
-          : prodType === 'candle' 
-          ? 'Surowiec manufaktury: ' 
-          : prodType === 'apitherapy' 
-          ? 'Pochodzenie i surowiec: ' 
-          : 'Nektar botaniczny: '}
+        {prodType === 'bee-colony'
+          ? 'Rasa i linia pszczół: '
+          : prodType === 'candle'
+            ? 'Surowiec manufaktury: '
+            : prodType === 'apitherapy'
+              ? 'Pochodzenie i surowiec: '
+              : 'Nektar botaniczny: '}
         <span className="font-serif font-semibold text-[#594D42] not-italic">{product.botanicalSource}</span>
       </p>
 
@@ -299,9 +299,9 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
       <div className="flex items-center gap-2 mb-3 sm:mb-4">
         <div className="flex items-center text-amber-500">
           {[...Array(5)].map((_, i) => (
-            <Star 
-              key={i} 
-              className={`w-4 h-4 ${i < Math.floor(product.rating) ? 'fill-amber-400 text-amber-400' : 'text-amber-200'}`} 
+            <Star
+              key={i}
+              className={`w-4 h-4 ${i < Math.floor(product.rating) ? 'fill-amber-400 text-amber-400' : 'text-amber-200'}`}
             />
           ))}
         </div>
@@ -399,8 +399,8 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
       const apitherapyHighlights = product.id === 'propolis-kit'
         ? ['Ponad 300 bioflawonoidów', 'Naturalny antybiotyk ula', 'Estry kwasu kawowego (CAPE)', 'Działanie przeciwbakteryjne', 'Regeneracja tkanek']
         : product.id === 'pierzga-pszczela'
-        ? ['Kwas mlekowy z plastra', '3x wyższa przyswajalność', 'Bomba witamin i enzymów', 'Komplet aminokwasów', 'Wzmocnienie krwi i hemoglobiny']
-        : ['Bomba witaminowa i białkowa', 'Ponad 250 biopierwiastków', 'Wsparcie serca i naczyń', 'Likwidacja chronicznego zmęczenia', '100% obnóża pyłkowe'];
+          ? ['Kwas mlekowy z plastra', '3x wyższa przyswajalność', 'Bomba witamin i enzymów', 'Komplet aminokwasów', 'Wzmocnienie krwi i hemoglobiny']
+          : ['Bomba witaminowa i białkowa', 'Ponad 250 biopierwiastków', 'Wsparcie serca i naczyń', 'Likwidacja chronicznego zmęczenia', '100% obnóża pyłkowe'];
 
       return (
         <div className="bg-[#FAF3E5]/70 p-4 rounded-2xl border border-[#D9821E]/20 space-y-2">
@@ -438,7 +438,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
         </div>
         <div className="flex flex-wrap gap-2">
           {product.flavorNotes.map((note, idx) => (
-            <button 
+            <button
               key={idx}
               type="button"
               onClick={() => navigate(`/sklep?nuta=${encodeURIComponent(note)}`)}
@@ -498,7 +498,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
 
           {/* 3 Prominent Metric Badges when collapsed */}
           {!isSensoryExpandedMobile && (
-            <div 
+            <div
               onClick={() => setIsSensoryExpandedMobile(true)}
               className="pt-1.5 pb-1 cursor-pointer select-none animate-in fade-in duration-200"
             >
@@ -645,7 +645,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
 
           {/* 3 Prominent Metric Badges when collapsed */}
           {!isSensoryExpandedMobile && (
-            <div 
+            <div
               onClick={() => setIsSensoryExpandedMobile(true)}
               className="pt-1.5 pb-1 cursor-pointer select-none animate-in fade-in duration-200"
             >
@@ -751,20 +751,20 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
       const cardTitle = isPropolis
         ? 'Karta Czystości & Mocy Propolisu'
         : isPierzga
-        ? 'Karta Biologiczna Pierzgi Pszczelej'
-        : 'Karta Witaminowa Obnóży Pyłkowych';
+          ? 'Karta Biologiczna Pierzgi Pszczelej'
+          : 'Karta Witaminowa Obnóży Pyłkowych';
 
       const cardSubtitle = isPropolis
         ? 'Surowy kit pszczeli z żywic drzew leśnych'
         : isPierzga
-        ? 'Chleb pszczeli – fermentowany pyłek z komórek plastra'
-        : 'Wielobarwne ziarna pyłkowe z kwitnących łąk Dolnego Śląska';
+          ? 'Chleb pszczeli – fermentowany pyłek z komórek plastra'
+          : 'Wielobarwne ziarna pyłkowe z kwitnących łąk Dolnego Śląska';
 
       const cardBadge = isPropolis
         ? '100% Kit Pszczeli'
         : isPierzga
-        ? 'Najwyższa Biodostępność'
-        : 'Bogactwo Biopierwiastków';
+          ? 'Najwyższa Biodostępność'
+          : 'Bogactwo Biopierwiastków';
 
       const pill1Title = isPropolis ? 'Flawonoidy' : isPierzga ? 'Fermentacja' : '22% Białka';
       const pill1Value = isPropolis ? '300+ związków' : isPierzga ? 'Kwas mlekowy' : 'Aminokwasy';
@@ -782,29 +782,29 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
       const box1Text = isPropolis
         ? 'Ponad 300 związków fenolowych i estrów kwasu kawowego o silnym działaniu antybakteryjnym.'
         : isPierzga
-        ? 'Naturalnie zakiszona w cieple ula. Kwas mlekowy rozpuszcza twarde otoczki pyłku.'
-        : 'Komplet aminokwasów egzogennych i biopierwiastków niezbędnych do odbudowy tkanek.';
+          ? 'Naturalnie zakiszona w cieple ula. Kwas mlekowy rozpuszcza twarde otoczki pyłku.'
+          : 'Komplet aminokwasów egzogennych i biopierwiastków niezbędnych do odbudowy tkanek.';
 
       const box2Title = isPropolis ? 'Baza do nalewki 20%' : isPierzga ? 'Przyswajalność > 85%' : 'Reżim suszenia < 38°C';
       const box2Text = isPropolis
         ? 'Idealny surowiec do sporządzenia domowej nalewki spirytusowej (maceracja 2-3 tygodnie).'
         : isPierzga
-        ? '3-krotnie szybsze i pełniejsze wchłanianie witamin i mikroelementów niż ze zwykłego pyłku.'
-        : 'Powolne suszenie mikronawiewem – żywe enzymy ulowe zachowują 100% aktywności.';
+          ? '3-krotnie szybsze i pełniejsze wchłanianie witamin i mikroelementów niż ze zwykłego pyłku.'
+          : 'Powolne suszenie mikronawiewem – żywe enzymy ulowe zachowują 100% aktywności.';
 
       const box3Title = isPropolis ? 'Naturalny antybiotyk' : isPierzga ? 'Odbudowa hemoglobiny' : 'Zasada namaczania';
       const box3Text = isPropolis
         ? 'Skuteczna ochrona jamy ustnej i gardła bez wywoływania zjawiska lekooporności bakterii.'
         : isPierzga
-        ? 'Potężna dawka łatwo przyswajalnego żelaza przy anemii, rekonwalescencji i wyczerpaniu.'
-        : 'Namoczenie w letniej wodzie na noc (min. 6h) powoduje pęknięcie ziaren i uwolnienie witamin.';
+          ? 'Potężna dawka łatwo przyswajalnego żelaza przy anemii, rekonwalescencji i wyczerpaniu.'
+          : 'Namoczenie w letniej wodzie na noc (min. 6h) powoduje pęknięcie ziaren i uwolnienie witamin.';
 
       const box4Title = isPropolis ? 'Przechowywanie kitu' : isPierzga ? 'Rytuał przyjmowania' : 'Zalecany cykl kuracji';
       const box4Text = isPropolis
         ? 'Szczelny słój, suche i ciemne miejsce poniżej 20°C. Kit nie traci właściwości przez lata.'
         : isPierzga
-        ? '1 łyżeczka rano na czczo – powoli rozgryzać, by enzymy wchłaniały się już pod językiem.'
-        : '1-2 łyżeczki dziennie w cyklach 30-dniowych, szczególnie w okresach przesilenia.';
+          ? '1 łyżeczka rano na czczo – powoli rozgryzać, by enzymy wchłaniały się już pod językiem.'
+          : '1-2 łyżeczki dziennie w cyklach 30-dniowych, szczególnie w okresach przesilenia.';
 
       return (
         <div className="bg-white rounded-3xl p-4 sm:p-6 border border-[#D9821E]/25 shadow-sm overflow-hidden space-y-2">
@@ -844,7 +844,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
 
           {/* 3 Prominent Metric Badges when collapsed */}
           {!isSensoryExpandedMobile && (
-            <div 
+            <div
               onClick={() => setIsSensoryExpandedMobile(true)}
               className="pt-1.5 pb-1 cursor-pointer select-none animate-in fade-in duration-200"
             >
@@ -985,7 +985,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
 
         {/* 3 Prominent Sensory Metric Badges: visible ONLY when collapsed to prevent duplicate scales */}
         {!isSensoryExpandedMobile && (
-          <div 
+          <div
             onClick={() => setIsSensoryExpandedMobile(true)}
             className="pt-1.5 pb-1 cursor-pointer select-none animate-in fade-in duration-200"
           >
@@ -1001,7 +1001,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                   </span>
                   <div className="flex gap-0.5" title={`${product.tasteProfile.sweetness} na 5`}>
                     {[1, 2, 3, 4, 5].map((dot) => (
-                      <span 
+                      <span
                         key={dot}
                         className={`w-1.5 h-1.5 rounded-full ${dot <= product.tasteProfile.sweetness ? 'bg-[#D9821E]' : 'bg-[#EADDC7]'}`}
                       />
@@ -1021,7 +1021,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                   </span>
                   <div className="flex gap-0.5" title={`${product.tasteProfile.acidity} na 5`}>
                     {[1, 2, 3, 4, 5].map((dot) => (
-                      <span 
+                      <span
                         key={dot}
                         className={`w-1.5 h-1.5 rounded-full ${dot <= product.tasteProfile.acidity ? 'bg-[#1B4332]' : 'bg-[#D0E2D2]'}`}
                       />
@@ -1041,7 +1041,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                   </span>
                   <div className="flex gap-0.5" title={`${product.tasteProfile.aroma} na 5`}>
                     {[1, 2, 3, 4, 5].map((dot) => (
-                      <span 
+                      <span
                         key={dot}
                         className={`w-1.5 h-1.5 rounded-full ${dot <= product.tasteProfile.aroma ? 'bg-[#D9821E]' : 'bg-[#EADDC7]'}`}
                       />
@@ -1068,9 +1068,8 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                   {[1, 2, 3, 4, 5].map((lvl) => (
                     <div
                       key={lvl}
-                      className={`h-2 flex-1 rounded-full transition-all ${
-                        lvl <= product.tasteProfile.sweetness ? 'bg-[#D9821E]' : 'bg-[#EADDC7]'
-                      }`}
+                      className={`h-2 flex-1 rounded-full transition-all ${lvl <= product.tasteProfile.sweetness ? 'bg-[#D9821E]' : 'bg-[#EADDC7]'
+                        }`}
                     />
                   ))}
                 </div>
@@ -1089,9 +1088,8 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                   {[1, 2, 3, 4, 5].map((lvl) => (
                     <div
                       key={lvl}
-                      className={`h-2 flex-1 rounded-full transition-all ${
-                        lvl <= product.tasteProfile.acidity ? 'bg-[#1B4332]' : 'bg-[#D0E2D2]'
-                      }`}
+                      className={`h-2 flex-1 rounded-full transition-all ${lvl <= product.tasteProfile.acidity ? 'bg-[#1B4332]' : 'bg-[#D0E2D2]'
+                        }`}
                     />
                   ))}
                 </div>
@@ -1110,9 +1108,8 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                   {[1, 2, 3, 4, 5].map((lvl) => (
                     <div
                       key={lvl}
-                      className={`h-2 flex-1 rounded-full transition-all ${
-                        lvl <= product.tasteProfile.aroma ? 'bg-[#D9821E]' : 'bg-[#EADDC7]'
-                      }`}
+                      className={`h-2 flex-1 rounded-full transition-all ${lvl <= product.tasteProfile.aroma ? 'bg-[#D9821E]' : 'bg-[#EADDC7]'
+                        }`}
                     />
                   ))}
                 </div>
@@ -1166,10 +1163,10 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
 
   return (
     <div className="w-full bg-[#FAF6EE] min-h-screen pt-4 pb-28 lg:pb-28 animate-in fade-in duration-300">
-      
+
       {/* Top Breadcrumb & Quick Navigation Bar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-3 sm:mb-6">
-        
+
         {/* MOBILE ONLY (< sm): Single sleek row with Back button on left + Quick Actions on right */}
         <div className="flex sm:hidden items-center justify-between gap-2 py-2 border-b border-[#D9821E]/15">
           <Link
@@ -1226,7 +1223,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
               <span>{isTreasure ? 'Skarby Ula' : 'Katalog miodów'}</span>
             </Link>
             <ChevronRight className="w-3.5 h-3.5 text-[#D9821E]/60" />
-            
+
             <Link
               to={isTreasure ? '/skarby-ula' : `/sklep?kategoria=${product.category}`}
               className="inline-flex items-center gap-1.5 font-semibold text-[#594D42] hover:text-[#1B4332] hover:bg-white bg-white/70 px-3 py-1.5 rounded-xl border border-[#D9821E]/20 hover:border-[#1B4332]/30 shadow-2xs transition-all cursor-pointer group"
@@ -1247,11 +1244,10 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
               <button
                 type="button"
                 onClick={() => toggleFavorite(rawProduct.id)}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl border transition-all cursor-pointer shadow-xs ${
-                  isFav
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl border transition-all cursor-pointer shadow-xs ${isFav
                     ? 'bg-rose-50 border-rose-300 text-rose-600'
                     : 'bg-white border-[#D9821E]/20 text-[#594D42] hover:text-rose-600 hover:border-rose-300'
-                }`}
+                  }`}
                 title={isFav ? "Usuń z ulubionych miodów" : "Dodaj ten miód do ulubionych"}
                 id="btn-ulubione-naglowek"
               >
@@ -1297,11 +1293,11 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
       {/* Main Product Showcase: Left Gallery + Right Buy Box */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-          
+
           {/* LEFT COLUMN: Interactive Photo & Texture Gallery (6 Cols on desktop) */}
           <div className="lg:col-span-6 space-y-4">
             <div className="relative w-full aspect-[4/3] sm:aspect-square bg-white rounded-3xl border border-[#D9821E]/25 shadow-md overflow-hidden group">
-              
+
               {/* Badges on main photo */}
               <div className="absolute top-4 left-4 z-10 flex flex-col gap-2 items-start">
                 {product.badge && (
@@ -1313,10 +1309,10 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                   {prodType === 'bee-colony'
                     ? 'Nadzór Weterynaryjny PLW'
                     : prodType === 'candle'
-                    ? '100% Czysty Wosk Pszczeli'
-                    : prodType === 'apitherapy'
-                    ? '100% Czysta Apiterapia'
-                    : '100% Surowy i Nieprażony'}
+                      ? '100% Czysty Wosk Pszczeli'
+                      : prodType === 'apitherapy'
+                        ? '100% Czysta Apiterapia'
+                        : '100% Surowy i Nieprażony'}
                 </span>
               </div>
 
@@ -1327,7 +1323,14 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 ease-out"
                 onError={(e) => {
-                  (e.target as HTMLImageElement).src = product.imageUrl;
+                  const target = e.currentTarget;
+                  const currentSrc = target.src;
+                  if (currentSrc.includes('sklep.pasiekausza.pl') && !currentSrc.includes('www.sklep.pasiekausza.pl')) {
+                    target.src = currentSrc.replace('sklep.pasiekausza.pl', 'www.sklep.pasiekausza.pl');
+                  } else if (!target.dataset.fallbackApplied) {
+                    target.dataset.fallbackApplied = 'true';
+                    target.src = 'https://pasiekausza.pl/wp-content/uploads/2022/02/miod-wielokwaitowy-650x650.jpg';
+                  }
                 }}
               />
 
@@ -1344,11 +1347,10 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                   <button
                     key={idx}
                     onClick={() => setActiveImageIndex(idx)}
-                    className={`relative aspect-square rounded-2xl overflow-hidden border-2 transition-all cursor-pointer bg-white shadow-xs ${
-                      activeImageIndex === idx 
-                        ? 'border-[#D9821E] ring-2 ring-[#D9821E]/30 scale-[1.02]' 
+                    className={`relative aspect-square rounded-2xl overflow-hidden border-2 transition-all cursor-pointer bg-white shadow-xs ${activeImageIndex === idx
+                        ? 'border-[#D9821E] ring-2 ring-[#D9821E]/30 scale-[1.02]'
                         : 'border-[#D9821E]/20 hover:border-[#D9821E]/60 opacity-75 hover:opacity-100'
-                    }`}
+                      }`}
                   >
                     <img
                       src={img}
@@ -1356,17 +1358,24 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                       referrerPolicy="no-referrer"
                       className="w-full h-full object-cover"
                       onError={(e) => {
-                        (e.target as HTMLImageElement).src = product.imageUrl;
+                        const target = e.currentTarget;
+                        const currentSrc = target.src;
+                        if (currentSrc.includes('sklep.pasiekausza.pl') && !currentSrc.includes('www.sklep.pasiekausza.pl')) {
+                          target.src = currentSrc.replace('sklep.pasiekausza.pl', 'www.sklep.pasiekausza.pl');
+                        } else if (!target.dataset.fallbackApplied) {
+                          target.dataset.fallbackApplied = 'true';
+                          target.src = 'https://pasiekausza.pl/wp-content/uploads/2022/02/miod-wielokwaitowy-650x650.jpg';
+                        }
                       }}
                     />
                     <div className="absolute bottom-1 right-1 text-[9px] font-bold bg-black/65 text-white px-1.5 py-0.5 rounded">
                       {prodType === 'bee-colony'
                         ? (idx === 0 ? 'Rodzina' : 'Ramki')
                         : prodType === 'candle'
-                        ? (idx === 0 ? 'Świeca' : 'Wosk')
-                        : prodType === 'apitherapy'
-                        ? (idx === 0 ? 'Produkt' : 'Struktura')
-                        : (idx === 0 ? 'Słoik' : idx === 1 ? 'Patoka' : idx === 2 ? 'Pasieka' : 'Struktura')}
+                          ? (idx === 0 ? 'Świeca' : 'Wosk')
+                          : prodType === 'apitherapy'
+                            ? (idx === 0 ? 'Produkt' : 'Struktura')
+                            : (idx === 0 ? 'Słoik' : idx === 1 ? 'Patoka' : idx === 2 ? 'Pasieka' : 'Struktura')}
                     </div>
                   </button>
                 ))}
@@ -1381,7 +1390,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
 
           {/* RIGHT COLUMN: Product Header, Purchase Controls & Key Specs (6 Cols) */}
           <div className="lg:col-span-6 space-y-6">
-            
+
             {/* DESKTOP ONLY: Header info */}
             <div className="hidden lg:block">
               {renderProductHeader()}
@@ -1399,7 +1408,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
 
             {/* Purchase Card: Gramature Selector, Price, Add to Cart */}
             <div className="bg-white rounded-3xl p-5 sm:p-6 border border-[#D9821E]/30 shadow-md space-y-5">
-              
+
               {/* Kompaktowa Metryka Partii & Żywych Enzymów / Specyfikacja produktu */}
               {prodType === 'bee-colony' ? (
                 <div className="bg-[#FAF8F5] rounded-2xl p-3.5 border border-emerald-200 space-y-2.5">
@@ -1584,7 +1593,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                       <div className="p-3 bg-[#FAF3E5] rounded-xl border border-[#D9821E]/25 text-[11px] space-y-1 shadow-2xs">
                         <strong className="text-[#1B4332] block font-bold">Żelazna zasada 40°C (Ochrona enzymów ula):</strong>
                         <p className="leading-relaxed">
-                          Miód zachowuje pełną moc biologiczną (diastazę, lizozym i inhibinę) wyłącznie do temperatury 40°C. 
+                          Miód zachowuje pełną moc biologiczną (diastazę, lizozym i inhibinę) wyłącznie do temperatury 40°C.
                           Dodawaj go do lekko przestudzonej herbaty lub letniej wody.
                         </p>
                       </div>
@@ -1600,10 +1609,10 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                     {prodType === 'bee-colony'
                       ? 'Wybierz pakiet odkładu:'
                       : prodType === 'candle'
-                      ? 'Wybierz rodzaj świecy:'
-                      : prodType === 'apitherapy'
-                      ? 'Wybierz gramaturę opakowania:'
-                      : 'Wybierz gramaturę słoika:'}
+                        ? 'Wybierz rodzaj świecy:'
+                        : prodType === 'apitherapy'
+                          ? 'Wybierz gramaturę opakowania:'
+                          : 'Wybierz gramaturę słoika:'}
                   </label>
                   <span className="text-xs text-[#7A6A5A]">
                     {prodType === 'bee-colony' ? (
@@ -1628,16 +1637,14 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                         key={size.gram + idx}
                         type="button"
                         onClick={() => setSelectedSizeIdx(idx)}
-                        className={`relative flex flex-col items-center justify-between p-3 pt-3.5 pb-2.5 rounded-2xl border text-center transition-all cursor-pointer ${
-                          isSelected
+                        className={`relative flex flex-col items-center justify-between p-3 pt-3.5 pb-2.5 rounded-2xl border text-center transition-all cursor-pointer ${isSelected
                             ? 'bg-[#1B4332] text-white border-[#1B4332] shadow-sm ring-2 ring-[#1B4332]/25 scale-[1.01]'
                             : 'bg-[#FAF6EE] text-[#594D42] border-[#D9821E]/25 hover:border-[#D9821E] hover:bg-white'
-                        }`}
+                          }`}
                       >
                         {isLargest && (
-                          <span className={`absolute -top-2.5 left-1/2 -translate-x-1/2 z-10 text-[9px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full whitespace-nowrap shadow-xs ${
-                            isSelected ? 'bg-[#E5983A] text-[#14100C] ring-1 ring-white/40' : 'bg-[#1B4332] text-white'
-                          }`}>
+                          <span className={`absolute -top-2.5 left-1/2 -translate-x-1/2 z-10 text-[9px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full whitespace-nowrap shadow-xs ${isSelected ? 'bg-[#E5983A] text-[#14100C] ring-1 ring-white/40' : 'bg-[#1B4332] text-white'
+                            }`}>
                             {prodType === 'apitherapy' || prodType === 'honey' ? 'Najtaniej' : 'Wybór'}
                           </span>
                         )}
@@ -1651,10 +1658,10 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                           {prodType === 'bee-colony'
                             ? '5 ramek + szkolenie'
                             : prodType === 'candle'
-                            ? '100% wosk pszczeli'
-                            : prodType === 'apitherapy'
-                            ? `${Math.round((size.price / size.weightGrams) * 100)} zł / 100g`
-                            : `${Math.round((size.price / size.weightGrams) * 1000)} zł/kg`}
+                              ? '100% wosk pszczeli'
+                              : prodType === 'apitherapy'
+                                ? `${Math.round((size.price / size.weightGrams) * 100)} zł / 100g`
+                                : `${Math.round((size.price / size.weightGrams) * 1000)} zł/kg`}
                         </div>
                       </button>
                     );
@@ -1680,17 +1687,15 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                     <button
                       type="button"
                       onClick={() => setPurchaseMode('one-time')}
-                      className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
-                        purchaseMode === 'one-time'
+                      className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${purchaseMode === 'one-time'
                           ? 'bg-[#1B4332]/5 border-[#1B4332] text-[#1B4332] ring-1 ring-[#1B4332]'
                           : 'bg-[#FAF8F5] border-[#DFCBB5] text-[#594D42] hover:bg-white'
-                      }`}
+                        }`}
                     >
                       <div className="flex items-center justify-between font-bold">
                         <span>Zakup standardowy</span>
-                        <span className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${
-                          purchaseMode === 'one-time' ? 'border-[#1B4332] bg-[#1B4332]' : 'border-[#A69784]'
-                        }`}>
+                        <span className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${purchaseMode === 'one-time' ? 'border-[#1B4332] bg-[#1B4332]' : 'border-[#A69784]'
+                          }`}>
                           {purchaseMode === 'one-time' && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
                         </span>
                       </div>
@@ -1702,20 +1707,18 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                     <button
                       type="button"
                       onClick={() => setPurchaseMode('subscription')}
-                      className={`p-3 rounded-2xl border text-left transition-all cursor-pointer relative overflow-hidden ${
-                        purchaseMode === 'subscription'
+                      className={`p-3 rounded-2xl border text-left transition-all cursor-pointer relative overflow-hidden ${purchaseMode === 'subscription'
                           ? 'bg-[#E5983A]/10 border-[#D9821E] text-[#8C4609] ring-1 ring-[#D9821E]'
                           : 'bg-[#FAF8F5] border-[#DFCBB5] text-[#594D42] hover:bg-white'
-                      }`}
+                        }`}
                     >
                       <span className="absolute top-0 right-0 bg-[#1B4332] text-white text-[9px] font-bold uppercase px-2 py-0.5 rounded-bl-lg">
                         1-Click Reorder
                       </span>
                       <div className="flex items-center justify-between font-bold">
                         <span>Z Przypomnieniem E-mail</span>
-                        <span className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${
-                          purchaseMode === 'subscription' ? 'border-[#D9821E] bg-[#D9821E]' : 'border-[#A69784]'
-                        }`}>
+                        <span className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${purchaseMode === 'subscription' ? 'border-[#D9821E] bg-[#D9821E]' : 'border-[#A69784]'
+                          }`}>
                           {purchaseMode === 'subscription' && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
                         </span>
                       </div>
@@ -1750,25 +1753,22 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                               key={opt.days}
                               type="button"
                               onClick={() => setSubscriptionInterval(opt.days as 30 | 60 | 90)}
-                              className={`py-2 px-1.5 rounded-xl text-center border transition-all cursor-pointer relative ${
-                                isActive
+                              className={`py-2 px-1.5 rounded-xl text-center border transition-all cursor-pointer relative ${isActive
                                   ? 'bg-[#1B4332] text-white border-[#1B4332] shadow-xs'
                                   : 'bg-white text-[#524637] border-[#DFD3C2] hover:bg-[#FAF6EE] hover:border-[#D9821E]/50'
-                              }`}
+                                }`}
                             >
                               {opt.badge && (
-                                <span className={`absolute -top-1.5 right-1.5 text-[8px] font-black uppercase px-1 rounded-full ${
-                                  isActive ? 'bg-[#E5983A] text-[#1B4332]' : 'bg-[#1B4332] text-white'
-                                }`}>
+                                <span className={`absolute -top-1.5 right-1.5 text-[8px] font-black uppercase px-1 rounded-full ${isActive ? 'bg-[#E5983A] text-[#1B4332]' : 'bg-[#1B4332] text-white'
+                                  }`}>
                                   {opt.badge}
                                 </span>
                               )}
                               <span className="block font-bold text-xs sm:text-[13px] leading-tight">
                                 {opt.label}
                               </span>
-                              <span className={`block text-[9px] mt-0.5 leading-tight ${
-                                isActive ? 'text-[#E0D8CB]' : 'text-[#8C7A6B]'
-                              }`}>
+                              <span className={`block text-[9px] mt-0.5 leading-tight ${isActive ? 'text-[#E0D8CB]' : 'text-[#8C7A6B]'
+                                }`}>
                                 {opt.sub}
                               </span>
                             </button>
@@ -1817,10 +1817,10 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                       {prodType === 'bee-colony'
                         ? '✓ Odbiór w wentylowanym transporterze w pasiece Ciechów'
                         : prodType === 'candle'
-                        ? '✓ Rękodzieło ze 100% czystego wosku z bawełnianym knotem'
-                        : prodType === 'apitherapy'
-                        ? '✓ Szczelne opakowanie chroniące przed wilgocią i światłem'
-                        : '✓ Świeży rozlew z pasieki w szklanym słoiku'}
+                          ? '✓ Rękodzieło ze 100% czystego wosku z bawełnianym knotem'
+                          : prodType === 'apitherapy'
+                            ? '✓ Szczelne opakowanie chroniące przed wilgocią i światłem'
+                            : '✓ Świeży rozlew z pasieki w szklanym słoiku'}
                     </span>
                   </div>
 
@@ -1830,10 +1830,10 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                       {prodType === 'bee-colony'
                         ? 'Liczba rodzin (odkładów):'
                         : prodType === 'candle'
-                        ? 'Liczba świec:'
-                        : prodType === 'apitherapy'
-                        ? 'Liczba opakowań:'
-                        : 'Liczba słoików:'}
+                          ? 'Liczba świec:'
+                          : prodType === 'apitherapy'
+                            ? 'Liczba opakowań:'
+                            : 'Liczba słoików:'}
                     </span>
                     <div className="flex items-center border border-[#D9821E]/30 rounded-xl bg-white overflow-hidden shadow-2xs">
                       <button
@@ -1885,11 +1885,10 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                       <button
                         type="button"
                         onClick={() => toggleFavorite(rawProduct.id)}
-                        className={`px-4 sm:px-5 rounded-2xl border transition-all cursor-pointer flex items-center justify-center shrink-0 ${
-                          isFav
+                        className={`px-4 sm:px-5 rounded-2xl border transition-all cursor-pointer flex items-center justify-center shrink-0 ${isFav
                             ? 'bg-rose-50 border-rose-300 text-rose-600 shadow-xs'
                             : 'bg-[#FAF6EE] border-[#D9821E]/30 text-[#594D42] hover:text-rose-600 hover:border-rose-300 hover:bg-rose-50/50'
-                        }`}
+                          }`}
                         title={isFav ? "Usuń z ulubionych miodów" : "Dodaj ten miód do ulubionych"}
                         aria-label="Ulubione"
                         id="btn-ulubione-obok-koszyka"
@@ -1955,7 +1954,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
       {/* DETAILED TABS SECTION: Opis, Zdrowie, Kulinaria, Badania, Opinie */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12" id="tabs-section">
         <div className="bg-white rounded-3xl border border-[#D9821E]/25 shadow-sm overflow-hidden">
-          
+
           {/* Card Header & Tabs Navigation */}
           <div className="p-4 sm:p-6 lg:p-7 border-b border-[#D9821E]/15 bg-white space-y-4">
             {/* Header branding & context matching Sensory Card aesthetic */}
@@ -1967,11 +1966,11 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
                     <h2 className="font-serif font-bold text-lg sm:text-xl text-[#241D17]">
-                      {isTreasure 
-                        ? (prodType === 'bee-colony' 
-                            ? 'Kompendium Wiedzy o Rodzinie Pszczelej' 
-                            : prodType === 'candle' 
-                            ? 'Przewodnik po Manufakturze i Pielęgnacji' 
+                      {isTreasure
+                        ? (prodType === 'bee-colony'
+                          ? 'Kompendium Wiedzy o Rodzinie Pszczelej'
+                          : prodType === 'candle'
+                            ? 'Przewodnik po Manufakturze i Pielęgnacji'
                             : 'Karta Wiedzy i Działanie Apiterapii')
                         : 'Karta Wiedzy o Miodzie'}
                     </h2>
@@ -2020,7 +2019,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                 <div className="pointer-events-none absolute left-1 top-1.5 bottom-1.5 w-8 bg-gradient-to-r from-[#FAF7F2] to-transparent rounded-l-xl sm:hidden z-5" />
               )}
 
-              <div 
+              <div
                 ref={tabsContainerRef}
                 onScroll={checkTabsScroll}
                 className="bg-[#FAF7F2] p-1.5 rounded-2xl border border-[#EADBCC] flex items-center gap-1.5 overflow-x-auto scrollbar-none scroll-smooth pr-8 sm:pr-1.5"
@@ -2057,11 +2056,10 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                     <button
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id as any)}
-                      className={`flex items-center gap-2 py-2.5 px-3.5 sm:px-4 rounded-xl font-bold text-xs sm:text-sm whitespace-nowrap transition-all duration-200 cursor-pointer shrink-0 ${
-                        isActive
+                      className={`flex items-center gap-2 py-2.5 px-3.5 sm:px-4 rounded-xl font-bold text-xs sm:text-sm whitespace-nowrap transition-all duration-200 cursor-pointer shrink-0 ${isActive
                           ? 'bg-white text-[#1B4332] shadow-xs border border-[#D9821E]/30 scale-[1.01]'
                           : 'text-[#6E6053] hover:text-[#241D17] hover:bg-white/60 border border-transparent'
-                      }`}
+                        }`}
                     >
                       <Icon className={`w-4 h-4 transition-colors ${isActive ? 'text-[#D9821E]' : 'text-[#8C7A6B]'}`} />
                       <span>{tab.label}</span>
@@ -2091,7 +2089,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
 
           {/* Tab Content Panels */}
           <div className="p-5 sm:p-8 lg:p-10 bg-white">
-            
+
             {/* TAB 1: OPIS I SPECYFIKACJA */}
             {activeTab === 'opis' && (
               <div className="space-y-6 max-w-4xl animate-in fade-in duration-200">
@@ -2100,10 +2098,10 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                     {prodType === 'bee-colony'
                       ? 'Specyfikacja odkładu i program szkolenia'
                       : prodType === 'candle'
-                      ? 'Rękodzieło ze 100% czystego wosku pszczelego'
-                      : prodType === 'apitherapy'
-                      ? 'Pozyskiwanie i czystość biologiczna superfood ula'
-                      : 'Historia zbioru i specyfika odmiany'}
+                        ? 'Rękodzieło ze 100% czystego wosku pszczelego'
+                        : prodType === 'apitherapy'
+                          ? 'Pozyskiwanie i czystość biologiczna superfood ula'
+                          : 'Historia zbioru i specyfika odmiany'}
                   </h3>
                   <p className="text-[#594D42] text-sm sm:text-base leading-relaxed mb-4">
                     {product.description}
@@ -2128,122 +2126,122 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                       {prodType === 'bee-colony'
                         ? 'Termin & Miejsce Odbioru'
                         : prodType === 'candle'
-                        ? 'Czystość Surowca'
-                        : product.id === 'propolis-kit'
-                        ? 'Pochodzenie Żywic'
-                        : product.id === 'pierzga-pszczela'
-                        ? 'Forma Biologiczna'
-                        : product.id === 'pylek-pszczeli'
-                        ? 'Pochodzenie Obnóży'
-                        : 'Położenie Pasieki'}
+                          ? 'Czystość Surowca'
+                          : product.id === 'propolis-kit'
+                            ? 'Pochodzenie Żywic'
+                            : product.id === 'pierzga-pszczela'
+                              ? 'Forma Biologiczna'
+                              : product.id === 'pylek-pszczeli'
+                                ? 'Pochodzenie Obnóży'
+                                : 'Położenie Pasieki'}
                     </p>
                     <p className="font-bold text-[#1B4332] text-base">
                       {prodType === 'bee-colony'
                         ? 'Pasieka Ciechów • Czerwiec / Lipiec 2026'
                         : prodType === 'candle'
-                        ? '100% Cera Flava'
-                        : product.id === 'propolis-kit'
-                        ? 'Lasy i Bory Dolnośląskie'
-                        : product.id === 'pierzga-pszczela'
-                        ? 'Pszczeli Chleb Ulowy'
-                        : product.id === 'pylek-pszczeli'
-                        ? 'Kwitnące łąki Dolnego Śląska'
-                        : product.region}
+                          ? '100% Cera Flava'
+                          : product.id === 'propolis-kit'
+                            ? 'Lasy i Bory Dolnośląskie'
+                            : product.id === 'pierzga-pszczela'
+                              ? 'Pszczeli Chleb Ulowy'
+                              : product.id === 'pylek-pszczeli'
+                                ? 'Kwitnące łąki Dolnego Śląska'
+                                : product.region}
                     </p>
                     <p className="text-xs sm:text-sm text-[#594D42] mt-1 leading-relaxed">
                       {prodType === 'bee-colony'
                         ? 'Odbiór osobisty w wentylowanym pudle transportowym. Możliwy przyjazd z własnym ulem.'
-                        : prodType === 'candle' 
-                        ? 'Wytopiony z odsklepin i dziewiczej węzy pasiecznej, bez dodatku parafiny i stearyny.'
-                        : product.id === 'propolis-kit'
-                        ? 'Żywice pąków drzew liściastych i iglastych (topola, olcha, sosna, brzoza).'
-                        : product.id === 'pierzga-pszczela'
-                        ? 'Pyłek kwiatowy naturalnie zakiszony kwasem mlekowym w komórkach plastra pszczelego.'
-                        : product.id === 'pylek-pszczeli'
-                        ? 'Wielobarwny pyłek z czystych, dzikich łąk, facelii, mniszka i dolnośląskich zagajników.'
-                        : 'Dziewicze tereny leśne i łąkowe wolne od intensywnego przemysłu.'}
+                        : prodType === 'candle'
+                          ? 'Wytopiony z odsklepin i dziewiczej węzy pasiecznej, bez dodatku parafiny i stearyny.'
+                          : product.id === 'propolis-kit'
+                            ? 'Żywice pąków drzew liściastych i iglastych (topola, olcha, sosna, brzoza).'
+                            : product.id === 'pierzga-pszczela'
+                              ? 'Pyłek kwiatowy naturalnie zakiszony kwasem mlekowym w komórkach plastra pszczelego.'
+                              : product.id === 'pylek-pszczeli'
+                                ? 'Wielobarwny pyłek z czystych, dzikich łąk, facelii, mniszka i dolnośląskich zagajników.'
+                                : 'Dziewicze tereny leśne i łąkowe wolne od intensywnego przemysłu.'}
                     </p>
                   </div>
                   <div className="bg-white p-5 rounded-2xl border border-[#D9821E]/20 shadow-2xs space-y-1.5">
                     <p className="text-[11px] text-[#D9821E] uppercase font-bold tracking-wider mb-1">
-                      {prodType === 'bee-colony' 
-                        ? 'Skład Biologiczny Rodziny' 
-                        : prodType === 'candle' 
-                        ? 'Knot Bawełniany' 
-                        : product.id === 'propolis-kit'
-                        ? 'Baza do Ekstrakcji'
-                        : product.id === 'pierzga-pszczela'
-                        ? 'Przyswajalność'
-                        : product.id === 'pylek-pszczeli'
-                        ? 'Reżim Termiczny'
-                        : 'Metoda Pozyskiwania'}
+                      {prodType === 'bee-colony'
+                        ? 'Skład Biologiczny Rodziny'
+                        : prodType === 'candle'
+                          ? 'Knot Bawełniany'
+                          : product.id === 'propolis-kit'
+                            ? 'Baza do Ekstrakcji'
+                            : product.id === 'pierzga-pszczela'
+                              ? 'Przyswajalność'
+                              : product.id === 'pylek-pszczeli'
+                                ? 'Reżim Termiczny'
+                                : 'Metoda Pozyskiwania'}
                     </p>
                     <p className="font-bold text-[#1B4332] text-base">
-                      {prodType === 'bee-colony' 
-                        ? '3 ramki czerwiu + 2 z pokarmem' 
-                        : prodType === 'candle' 
-                        ? 'Niebielona bawełna' 
-                        : product.id === 'propolis-kit'
-                        ? 'Nalewka 20% lub maść'
-                        : product.id === 'pierzga-pszczela'
-                        ? 'Ponad 3x wyższa niż pyłku'
-                        : product.id === 'pylek-pszczeli'
-                        ? 'Maksymalnie 38°C'
-                        : 'Wirowanie na zimno'}
+                      {prodType === 'bee-colony'
+                        ? '3 ramki czerwiu + 2 z pokarmem'
+                        : prodType === 'candle'
+                          ? 'Niebielona bawełna'
+                          : product.id === 'propolis-kit'
+                            ? 'Nalewka 20% lub maść'
+                            : product.id === 'pierzga-pszczela'
+                              ? 'Ponad 3x wyższa niż pyłku'
+                              : product.id === 'pylek-pszczeli'
+                                ? 'Maksymalnie 38°C'
+                                : 'Wirowanie na zimno'}
                     </p>
                     <p className="text-xs sm:text-sm text-[#594D42] mt-1 leading-relaxed">
-                      {prodType === 'bee-colony' 
-                        ? 'Czerw w każdym stadium (jaja, larwy, kryty) gwarantujący ciągłość pokoleniową rodziny.' 
-                        : prodType === 'candle' 
-                        ? 'Knot z surowej, niebielonej bawełny bez rdzenia ołowianego – stabilny płomień bez dymu.' 
-                        : product.id === 'propolis-kit'
-                        ? 'Czysty surowiec idealny do sporządzenia domowej nalewki spirytusowej (macerat 20%).'
-                        : product.id === 'pierzga-pszczela'
-                        ? 'Enzymatycznie rozpuszczone otoczki komórkowe ułatwiają natychmiastowe wchłanianie.'
-                        : product.id === 'pylek-pszczeli'
-                        ? 'Powolne suszenie mikronawiewem – żywe enzymy ulowe zachowują 100% aktywności.'
-                        : 'Tradycyjna miodarka radialna, temperatura poniżej 25°C.'}
+                      {prodType === 'bee-colony'
+                        ? 'Czerw w każdym stadium (jaja, larwy, kryty) gwarantujący ciągłość pokoleniową rodziny.'
+                        : prodType === 'candle'
+                          ? 'Knot z surowej, niebielonej bawełny bez rdzenia ołowianego – stabilny płomień bez dymu.'
+                          : product.id === 'propolis-kit'
+                            ? 'Czysty surowiec idealny do sporządzenia domowej nalewki spirytusowej (macerat 20%).'
+                            : product.id === 'pierzga-pszczela'
+                              ? 'Enzymatycznie rozpuszczone otoczki komórkowe ułatwiają natychmiastowe wchłanianie.'
+                              : product.id === 'pylek-pszczeli'
+                                ? 'Powolne suszenie mikronawiewem – żywe enzymy ulowe zachowują 100% aktywności.'
+                                : 'Tradycyjna miodarka radialna, temperatura poniżej 25°C.'}
                     </p>
                   </div>
                   <div className="bg-white p-5 rounded-2xl border border-[#D9821E]/20 shadow-2xs space-y-1.5">
                     <p className="text-[11px] text-[#D9821E] uppercase font-bold tracking-wider mb-1">
-                      {prodType === 'bee-colony' 
-                        ? 'Program Szkolenia w Cenie' 
-                        : prodType === 'candle' 
-                        ? 'Czas Palenia' 
-                        : product.id === 'propolis-kit'
-                        ? 'Selekcja Partii'
-                        : product.id === 'pierzga-pszczela'
-                        ? 'Metoda Pozyskania'
-                        : product.id === 'pylek-pszczeli'
-                        ? 'Zasada Spożywania'
-                        : 'Sezon Pozyskania'}
+                      {prodType === 'bee-colony'
+                        ? 'Program Szkolenia w Cenie'
+                        : prodType === 'candle'
+                          ? 'Czas Palenia'
+                          : product.id === 'propolis-kit'
+                            ? 'Selekcja Partii'
+                            : product.id === 'pierzga-pszczela'
+                              ? 'Metoda Pozyskania'
+                              : product.id === 'pylek-pszczeli'
+                                ? 'Zasada Spożywania'
+                                : 'Sezon Pozyskania'}
                     </p>
                     <p className="font-bold text-[#1B4332] text-base">
-                      {prodType === 'bee-colony' 
-                        ? 'Przegląd gniazda i profilaktyka' 
-                        : prodType === 'candle' 
-                        ? 'Do 3x dłużej niż parafina' 
-                        : product.id === 'propolis-kit'
-                        ? '100% czysty kit ulowy'
-                        : product.id === 'pierzga-pszczela'
-                        ? 'Wydobycie z plastrów'
-                        : product.id === 'pylek-pszczeli'
-                        ? 'Wymaga namoczenia'
-                        : `Zbiór ${product.harvestYear}`}
+                      {prodType === 'bee-colony'
+                        ? 'Przegląd gniazda i profilaktyka'
+                        : prodType === 'candle'
+                          ? 'Do 3x dłużej niż parafina'
+                          : product.id === 'propolis-kit'
+                            ? '100% czysty kit ulowy'
+                            : product.id === 'pierzga-pszczela'
+                              ? 'Wydobycie z plastrów'
+                              : product.id === 'pylek-pszczeli'
+                                ? 'Wymaga namoczenia'
+                                : `Zbiór ${product.harvestYear}`}
                     </p>
                     <p className="text-xs sm:text-sm text-[#594D42] mt-1 leading-relaxed">
-                      {prodType === 'bee-colony' 
-                        ? '1-godzinny instruktaż z mistrzem pszczelarskim: ocena matki, praca podkurzaczem, karmienie i leczenie.' 
-                        : prodType === 'candle' 
-                        ? 'Gęsty wosk pszczeli (temperatura topnienia 62–64°C) spala się czysto i bardzo powoli.' 
-                        : product.id === 'propolis-kit'
-                        ? 'Pozyskiwany za pomocą specjalnych poławiaczy kratowych bez mechanicznych zanieczyszczeń.'
-                        : product.id === 'pierzga-pszczela'
-                        ? 'Ręczne wyjmowanie poszczególnych komórek pierzgi z dojrzałych plastrów woskowych.'
-                        : product.id === 'pylek-pszczeli'
-                        ? 'Zalanie letnią wodą na min. 6-8h przed wypiciem powoduje pęknięcie ziaren i uwolnienie witamin.'
-                        : `Świeży surowiec z bieżącego sezonu (${product.harvestMonth}).`}
+                      {prodType === 'bee-colony'
+                        ? '1-godzinny instruktaż z mistrzem pszczelarskim: ocena matki, praca podkurzaczem, karmienie i leczenie.'
+                        : prodType === 'candle'
+                          ? 'Gęsty wosk pszczeli (temperatura topnienia 62–64°C) spala się czysto i bardzo powoli.'
+                          : product.id === 'propolis-kit'
+                            ? 'Pozyskiwany za pomocą specjalnych poławiaczy kratowych bez mechanicznych zanieczyszczeń.'
+                            : product.id === 'pierzga-pszczela'
+                              ? 'Ręczne wyjmowanie poszczególnych komórek pierzgi z dojrzałych plastrów woskowych.'
+                              : product.id === 'pylek-pszczeli'
+                                ? 'Zalanie letnią wodą na min. 6-8h przed wypiciem powoduje pęknięcie ziaren i uwolnienie witamin.'
+                                : `Świeży surowiec z bieżącego sezonu (${product.harvestMonth}).`}
                     </p>
                   </div>
                 </div>
@@ -2258,15 +2256,15 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                     {prodType === 'bee-colony'
                       ? 'Zdrowotność rodziny i genetyka pszczół'
                       : prodType === 'candle'
-                      ? 'Aromaterapia i ujemna jonizacja powietrza'
-                      : 'Właściwości prozdrowotne i apiterapia'}
+                        ? 'Aromaterapia i ujemna jonizacja powietrza'
+                        : 'Właściwości prozdrowotne i apiterapia'}
                   </h3>
                   <p className="text-sm sm:text-base text-[#594D42] leading-relaxed">
                     {prodType === 'bee-colony'
                       ? 'Gwarancja zdrowotności, czystości rasowej i łagodności matki pszczelej pod nadzorem PLW.'
                       : prodType === 'candle'
-                      ? 'Czysty wosk pszczeli tworzy w pomieszczeniu uzdrawiający mikroklimat wolny od smogu i kurzu.'
-                      : 'Prawdziwy surowiec z ula to bioaktywny dar natury o udokumentowanym działaniu prozdrowotnym.'}
+                        ? 'Czysty wosk pszczeli tworzy w pomieszczeniu uzdrawiający mikroklimat wolny od smogu i kurzu.'
+                        : 'Prawdziwy surowiec z ula to bioaktywny dar natury o udokumentowanym działaniu prozdrowotnym.'}
                   </p>
                 </div>
 
@@ -2277,7 +2275,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                       : [benefit, ''];
 
                     return (
-                      <div 
+                      <div
                         key={idx}
                         className="p-5 bg-white rounded-2xl border border-[#D9821E]/20 shadow-2xs flex items-start gap-3.5"
                       >
@@ -2432,19 +2430,19 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                     {prodType === 'bee-colony'
                       ? 'Wytyczne odbioru i zasiedlenia odkładu w ulu'
                       : prodType === 'candle'
-                      ? 'Instrukcja prawidłowego palenia świecy'
-                      : prodType === 'apitherapy'
-                      ? 'Dawkowanie i sprawdzone przepisy kuracji'
-                      : 'Inspiracje kulinarne i zalecenia spożywania'}
+                        ? 'Instrukcja prawidłowego palenia świecy'
+                        : prodType === 'apitherapy'
+                          ? 'Dawkowanie i sprawdzone przepisy kuracji'
+                          : 'Inspiracje kulinarne i zalecenia spożywania'}
                   </h3>
                   <p className="text-sm text-[#594D42]">
                     {prodType === 'bee-colony'
                       ? 'Praktyczne kroki od odbioru w pasiece po udany rozwój rodziny w Twojej pasiece.'
                       : prodType === 'candle'
-                      ? 'Jak cieszyć się optymalnym płomieniem, miodowym zapachem i maksymalnym czasem palenia.'
-                      : prodType === 'apitherapy'
-                      ? 'Jak optymalnie włączyć ten produkt do codziennej diety i profilaktyki zdrowotnej.'
-                      : 'Jak w pełni wykorzystać potencjał smakowy i odżywczy tego miodu w codziennej diecie.'}
+                        ? 'Jak cieszyć się optymalnym płomieniem, miodowym zapachem i maksymalnym czasem palenia.'
+                        : prodType === 'apitherapy'
+                          ? 'Jak optymalnie włączyć ten produkt do codziennej diety i profilaktyki zdrowotnej.'
+                          : 'Jak w pełni wykorzystać potencjał smakowy i odżywczy tego miodu w codziennej diecie.'}
                   </p>
                 </div>
 
@@ -2488,28 +2486,28 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                     </div>
                     <div>
                       <span className="text-[11px] font-bold text-[#D9821E] uppercase tracking-wider block">
-                        {prodType === 'bee-colony' 
-                          ? 'Logistyka & Odbiór' 
-                          : prodType === 'candle' 
-                          ? 'Rytuał palenia' 
-                          : 'Zalecenia dzienne'}
+                        {prodType === 'bee-colony'
+                          ? 'Logistyka & Odbiór'
+                          : prodType === 'candle'
+                            ? 'Rytuał palenia'
+                            : 'Zalecenia dzienne'}
                       </span>
                       <h4 className="text-base sm:text-lg font-bold text-[#1B4332]">
-                        {prodType === 'bee-colony' 
-                          ? 'Rekomendowane warunki transportu odkładu' 
-                          : prodType === 'candle' 
-                          ? 'Zalecany czas sesji palenia' 
-                          : 'Zalecana kuracja codzienna'}
+                        {prodType === 'bee-colony'
+                          ? 'Rekomendowane warunki transportu odkładu'
+                          : prodType === 'candle'
+                            ? 'Zalecany czas sesji palenia'
+                            : 'Zalecana kuracja codzienna'}
                       </h4>
                     </div>
                   </div>
 
                   <p className="text-sm sm:text-base text-[#3A332A] leading-relaxed font-normal sm:pl-12">
-                    {prodType === 'bee-colony' 
-                      ? product.pairing 
-                      : prodType === 'candle' 
-                      ? 'Pal świecę jednorazowo przez minimum 2-3 godziny, by roztopić wosk równomiernie do samych krawędzi słoika (zapobiega to tunelowaniu i gwarantuje najdłuższy czas palenia).' 
-                      : product.detailedUsage.recommendedDose}
+                    {prodType === 'bee-colony'
+                      ? product.pairing
+                      : prodType === 'candle'
+                        ? 'Pal świecę jednorazowo przez minimum 2-3 godziny, by roztopić wosk równomiernie do samych krawędzi słoika (zapobiega to tunelowaniu i gwarantuje najdłuższy czas palenia).'
+                        : product.detailedUsage.recommendedDose}
                   </p>
                 </div>
 
@@ -2547,11 +2545,11 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                         Inspiracje & Wskazówki
                       </span>
                       <h4 className="text-base sm:text-lg font-bold text-[#1B4332]">
-                        {prodType === 'bee-colony' 
-                          ? 'Procedura krok po kroku w pasiece' 
-                          : prodType === 'candle' 
-                          ? 'Wskazówki pasiecznej manufaktury' 
-                          : 'Praktyczne sposoby podania i inspiracje'}
+                        {prodType === 'bee-colony'
+                          ? 'Procedura krok po kroku w pasiece'
+                          : prodType === 'candle'
+                            ? 'Wskazówki pasiecznej manufaktury'
+                            : 'Praktyczne sposoby podania i inspiracje'}
                       </h4>
                     </div>
                   </div>
@@ -2559,8 +2557,8 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                   <div className="sm:pl-12">
                     <ul className="grid grid-cols-1 gap-2.5">
                       {product.detailedUsage.culinaryIdeas.map((idea, i) => (
-                        <li 
-                          key={i} 
+                        <li
+                          key={i}
                           className="flex items-start gap-3 text-sm text-[#3A332A] bg-[#FAF8F5] p-3.5 rounded-xl border border-[#D9821E]/15 leading-relaxed"
                         >
                           <span className="w-5 h-5 rounded-full bg-[#1B4332] text-white text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5">
@@ -2584,23 +2582,23 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                       {prodType === 'bee-colony'
                         ? 'Świadectwo weterynaryjne i rejestr pasieki'
                         : prodType === 'candle'
-                        ? 'Atest czystości wosku pszczelego'
-                        : 'Parametry laboratoryjne i mikrobiologiczne'}
+                          ? 'Atest czystości wosku pszczelego'
+                          : 'Parametry laboratoryjne i mikrobiologiczne'}
                     </h3>
                     <p className="text-sm sm:text-base text-[#594D42] leading-relaxed">
                       {prodType === 'bee-colony'
                         ? 'Legalna pasieka hodowlana pod stałą kontrolą Powiatowego Lekarza Weterynarii.'
                         : prodType === 'candle'
-                        ? '100% czysty wosk pszczeli badany na brak zafałszowań parafiną i stearyną.'
-                        : 'Każda partia surowca ulowego przechodzi rygorystyczne badania czystości.'}
+                          ? '100% czysty wosk pszczeli badany na brak zafałszowań parafiną i stearyną.'
+                          : 'Każda partia surowca ulowego przechodzi rygorystyczne badania czystości.'}
                     </p>
                   </div>
                   <div className="px-3.5 py-1.5 rounded-xl bg-[#1B4332]/10 border border-[#1B4332]/20 text-xs font-bold text-[#1B4332] self-start sm:self-center shrink-0">
-                    {prodType === 'bee-colony' 
-                      ? 'Nadzór Weterynaryjny PIW' 
-                      : prodType === 'candle' 
-                      ? 'Czystość Cera Flava 100%' 
-                      : 'Certyfikat Weterynaryjny PIW'}
+                    {prodType === 'bee-colony'
+                      ? 'Nadzór Weterynaryjny PIW'
+                      : prodType === 'candle'
+                        ? 'Czystość Cera Flava 100%'
+                        : 'Certyfikat Weterynaryjny PIW'}
                   </div>
                 </div>
 
@@ -2752,7 +2750,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                 <div className="p-4 sm:p-5 bg-white rounded-2xl border border-[#D9821E]/20 text-sm text-[#594D42] flex items-center gap-3.5 shadow-2xs">
                   <ShieldCheck className="w-5 h-5 text-[#1B4332] shrink-0" />
                   <span>
-                    Pasieka znajduje się pod stałym nadzorem Powiatowego Lekarza Weterynarii. 
+                    Pasieka znajduje się pod stałym nadzorem Powiatowego Lekarza Weterynarii.
                     Rejestr RHD: <strong>WNI 28143502</strong>. Czyste produkty pszczele bez sztucznych dodatków.
                   </span>
                 </div>
@@ -2803,72 +2801,78 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                       }}
                       className="bg-white rounded-3xl border border-[#D9821E]/20 overflow-hidden shadow-xs hover:shadow-md transition-all group cursor-pointer flex flex-col justify-between h-full"
                     >
-                    <div>
-                      <div className="relative aspect-[4/3] overflow-hidden bg-[#FAF6EE]">
-                        <img
-                          src={relImage}
-                          alt={relProd.name}
-                          referrerPolicy="no-referrer"
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).src = relProd.imageUrl;
-                          }}
-                        />
-                        {relProd.badge && (
-                          <span className={`absolute top-3 left-3 text-white text-[10px] font-bold uppercase px-2.5 py-1 rounded-full shadow-xs ${relProd.badgeClass || 'bg-[#D9821E]'}`}>
-                            {relProd.badge}
-                          </span>
-                        )}
-                        <span className="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] font-medium px-2 py-0.5 rounded backdrop-blur-xs">
-                          {relProd.harvestYear}
-                        </span>
-                      </div>
-
-                      <div className="p-5">
-                        <p className="text-[11px] font-semibold text-[#D9821E] uppercase tracking-wider mb-1">
-                          {CATEGORY_METADATA[relProd.category]?.label || (relProd.productType === 'apitherapy' ? 'Apiterapia' : 'Skarby Ula')}
-                        </p>
-                        <h4 className="text-base font-bold text-[#241D17] group-hover:text-[#D9821E] transition-colors line-clamp-1 mb-1.5 font-serif">
-                          {relProd.name}
-                        </h4>
-                        <p className="text-xs text-[#7A6A5A] line-clamp-2 mb-3 leading-relaxed">
-                          {relProd.tagline}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="p-5 pt-0 border-t border-[#D9821E]/10 flex items-center justify-between mt-auto">
                       <div>
-                        <span className="text-[10px] text-[#7A6A5A] block">od ({firstSize?.gram || '450g'}):</span>
-                        <span className="text-base font-extrabold text-[#1B4332]">{firstSize?.price || 38} zł</span>
+                        <div className="relative aspect-[4/3] overflow-hidden bg-[#FAF6EE]">
+                          <img
+                            src={relImage}
+                            alt={relProd.name}
+                            referrerPolicy="no-referrer"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            onError={(e) => {
+                              const target = e.currentTarget;
+                              const currentSrc = target.src;
+                              if (currentSrc.includes('sklep.pasiekausza.pl') && !currentSrc.includes('www.sklep.pasiekausza.pl')) {
+                                target.src = currentSrc.replace('sklep.pasiekausza.pl', 'www.sklep.pasiekausza.pl');
+                              } else if (!target.dataset.fallbackApplied) {
+                                target.dataset.fallbackApplied = 'true';
+                                target.src = 'https://pasiekausza.pl/wp-content/uploads/2022/02/miod-wielokwaitowy-650x650.jpg';
+                              }
+                            }}
+                          />
+                          {relProd.badge && (
+                            <span className={`absolute top-3 left-3 text-white text-[10px] font-bold uppercase px-2.5 py-1 rounded-full shadow-xs ${relProd.badgeClass || 'bg-[#D9821E]'}`}>
+                              {relProd.badge}
+                            </span>
+                          )}
+                          <span className="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] font-medium px-2 py-0.5 rounded backdrop-blur-xs">
+                            {relProd.harvestYear}
+                          </span>
+                        </div>
+
+                        <div className="p-5">
+                          <p className="text-[11px] font-semibold text-[#D9821E] uppercase tracking-wider mb-1">
+                            {CATEGORY_METADATA[relProd.category]?.label || (relProd.productType === 'apitherapy' ? 'Apiterapia' : 'Skarby Ula')}
+                          </p>
+                          <h4 className="text-base font-bold text-[#241D17] group-hover:text-[#D9821E] transition-colors line-clamp-1 mb-1.5 font-serif">
+                            {relProd.name}
+                          </h4>
+                          <p className="text-xs text-[#7A6A5A] line-clamp-2 mb-3 leading-relaxed">
+                            {relProd.tagline}
+                          </p>
+                        </div>
                       </div>
 
-                      <button
-                        type="button"
-                        className="px-3.5 py-1.5 rounded-xl text-xs font-bold text-[#1B4332] bg-[#FAF6EE] group-hover:bg-[#1B4332] group-hover:text-white border border-[#1B4332]/20 transition-all flex items-center gap-1 cursor-pointer"
-                      >
-                        <span>Szczegóły</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </button>
+                      <div className="p-5 pt-0 border-t border-[#D9821E]/10 flex items-center justify-between mt-auto">
+                        <div>
+                          <span className="text-[10px] text-[#7A6A5A] block">od ({firstSize?.gram || '450g'}):</span>
+                          <span className="text-base font-extrabold text-[#1B4332]">{firstSize?.price || 38} zł</span>
+                        </div>
+
+                        <button
+                          type="button"
+                          className="px-3.5 py-1.5 rounded-xl text-xs font-bold text-[#1B4332] bg-[#FAF6EE] group-hover:bg-[#1B4332] group-hover:text-white border border-[#1B4332]/20 transition-all flex items-center gap-1 cursor-pointer"
+                        >
+                          <span>Szczegóły</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                </ScrollReveal>
-              );
-            })}
+                  </ScrollReveal>
+                );
+              })}
+            </div>
           </div>
-        </div>
         </ScrollReveal>
       </section>
 
       {/* MODERN RESPONSIVE STICKY BOTTOM BUY BAR */}
-      <aside 
+      <aside
         aria-label="Pasek szybkiego zakupu"
-        className={`fixed bottom-0 left-0 right-0 z-40 bg-[#FAF8F5]/95 backdrop-blur-md border-t border-[#DFCBB5] shadow-2xl transition-all duration-300 transform ${
-          isStickyBarVisible ? 'translate-y-0 opacity-100 pointer-events-auto' : 'translate-y-full opacity-0 pointer-events-none'
-        }`}
+        className={`fixed bottom-0 left-0 right-0 z-40 bg-[#FAF8F5]/95 backdrop-blur-md border-t border-[#DFCBB5] shadow-2xl transition-all duration-300 transform ${isStickyBarVisible ? 'translate-y-0 opacity-100 pointer-events-auto' : 'translate-y-full opacity-0 pointer-events-none'
+          }`}
       >
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between gap-3 sm:gap-6">
-          
+
           {/* LEWA STRONA: Miniatura, Nazwa produktu i Cena */}
           <div className="flex items-center gap-2.5 sm:gap-3.5 min-w-0">
             <img
@@ -2876,7 +2880,14 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
               alt={product.name}
               className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl object-cover border border-[#DFCBB5] bg-white shrink-0 shadow-2xs"
               onError={(e) => {
-                (e.target as HTMLImageElement).src = product.imageUrl;
+                const target = e.currentTarget;
+                const currentSrc = target.src;
+                if (currentSrc.includes('sklep.pasiekausza.pl') && !currentSrc.includes('www.sklep.pasiekausza.pl')) {
+                  target.src = currentSrc.replace('sklep.pasiekausza.pl', 'www.sklep.pasiekausza.pl');
+                } else if (!target.dataset.fallbackApplied) {
+                  target.dataset.fallbackApplied = 'true';
+                  target.src = 'https://pasiekausza.pl/wp-content/uploads/2022/02/miod-wielokwaitowy-650x650.jpg';
+                }
               }}
             />
             <div className="min-w-0">
@@ -2913,11 +2924,10 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
                       key={size.gram + idx}
                       type="button"
                       onClick={() => setSelectedSizeIdx(idx)}
-                      className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                        isSelected
+                      className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${isSelected
                           ? 'bg-[#1B4332] text-white shadow-2xs'
                           : 'text-[#594D42] hover:text-[#1B4332] hover:bg-[#FAF8F5]'
-                      }`}
+                        }`}
                     >
                       {size.gram}
                     </button>
@@ -2972,11 +2982,10 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
               <button
                 type="button"
                 onClick={() => toggleFavorite(rawProduct.id)}
-                className={`p-2.5 rounded-xl border transition-all cursor-pointer flex items-center justify-center shrink-0 ${
-                  isFav
+                className={`p-2.5 rounded-xl border transition-all cursor-pointer flex items-center justify-center shrink-0 ${isFav
                     ? 'bg-rose-50 border-rose-300 text-rose-600 shadow-2xs'
                     : 'bg-white border-[#D9821E]/30 text-[#594D42] hover:text-rose-500 hover:border-rose-300'
-                }`}
+                  }`}
                 title={isFav ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
               >
                 <Heart className={`w-4 h-4 transition-transform active:scale-125 ${isFav ? 'fill-rose-500 text-rose-500' : ''}`} />

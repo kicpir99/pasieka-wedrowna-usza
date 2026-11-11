@@ -327,8 +327,14 @@ export const ShopPage: React.FC<ShopPageProps> = ({
         {filteredProducts.length > 0 ? (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-              {filteredProducts.map(product => (
-                <div key={product.id} className="h-full">
+              {filteredProducts.map((product, idx) => (
+                <ScrollReveal 
+                  key={product.id} 
+                  direction="up" 
+                  delay={(idx % 4) * 0.08}
+                  duration={0.6}
+                  className="h-full"
+                >
                   <ProductCard
                     product={product}
                     onAddToCart={onAddToCart}
@@ -339,7 +345,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({
                     onSelectFlavorNote={handleSelectFlavorNote}
                     activeFlavorNote={filters.flavorNote}
                   />
-                </div>
+                </ScrollReveal>
               ))}
             </div>
           </>

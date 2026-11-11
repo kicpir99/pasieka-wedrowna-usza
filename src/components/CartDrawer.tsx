@@ -208,6 +208,16 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                         src={suggestedCrossSell.product.imageUrl} 
                         alt={suggestedCrossSell.product.name}
                         className="w-8 h-8 rounded-md object-cover border border-[#DFCDB8] shrink-0" 
+                        onError={(e) => {
+                          const target = e.currentTarget;
+                          const currentSrc = target.src;
+                          if (currentSrc.includes('sklep.pasiekausza.pl') && !currentSrc.includes('www.sklep.pasiekausza.pl')) {
+                            target.src = currentSrc.replace('sklep.pasiekausza.pl', 'www.sklep.pasiekausza.pl');
+                          } else if (!target.dataset.fallbackApplied) {
+                            target.dataset.fallbackApplied = 'true';
+                            target.src = 'https://pasiekausza.pl/wp-content/uploads/2022/02/miod-wielokwaitowy-650x650.jpg';
+                          }
+                        }}
                       />
                       <div className="min-w-0">
                         <span className="text-[10px] font-bold text-[#945209] flex items-center gap-1 uppercase tracking-wider">
@@ -314,6 +324,16 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                       alt={item.product.name}
                       referrerPolicy="no-referrer"
                       className="w-16 h-16 rounded-lg object-cover bg-[#E7DAC8] shrink-0"
+                      onError={(e) => {
+                        const target = e.currentTarget;
+                        const currentSrc = target.src;
+                        if (currentSrc.includes('sklep.pasiekausza.pl') && !currentSrc.includes('www.sklep.pasiekausza.pl')) {
+                          target.src = currentSrc.replace('sklep.pasiekausza.pl', 'www.sklep.pasiekausza.pl');
+                        } else if (!target.dataset.fallbackApplied) {
+                          target.dataset.fallbackApplied = 'true';
+                          target.src = 'https://pasiekausza.pl/wp-content/uploads/2022/02/miod-wielokwaitowy-650x650.jpg';
+                        }
+                      }}
                     />
 
                     <div className="flex-1 min-w-0 space-y-1">

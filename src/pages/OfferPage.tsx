@@ -216,6 +216,16 @@ export const OfferPage: React.FC<OfferPageProps> = ({ displayResolution, onAddTo
                     alt={item.title} 
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"
+                    onError={(e) => {
+                      const target = e.currentTarget;
+                      const currentSrc = target.src;
+                      if (currentSrc.includes('sklep.pasiekausza.pl') && !currentSrc.includes('www.sklep.pasiekausza.pl')) {
+                        target.src = currentSrc.replace('sklep.pasiekausza.pl', 'www.sklep.pasiekausza.pl');
+                      } else if (!target.dataset.fallbackApplied) {
+                        target.dataset.fallbackApplied = 'true';
+                        target.src = 'https://pasiekausza.pl/wp-content/uploads/2022/02/miod-wielokwaitowy-650x650.jpg';
+                      }
+                    }}
                   />
                   {/* Card Image Badge with clear descriptive label and icon */}
                   <div className="absolute top-4 left-4">

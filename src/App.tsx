@@ -96,7 +96,21 @@ function FloatingCompareBar({
                 key={p.id} 
                 className="flex items-center gap-1.5 bg-white border border-[#D9821E]/25 rounded-full pl-1 pr-2 py-0.5 text-[11px] font-semibold text-[#4A4033] shadow-xs"
               >
-                <img src={p.imageUrl} alt="" className="w-4 h-4 rounded-full object-cover bg-[#EFE7DA]" />
+                <img 
+                  src={p.imageUrl} 
+                  alt="" 
+                  className="w-4 h-4 rounded-full object-cover bg-[#EFE7DA]" 
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    const currentSrc = target.src;
+                    if (currentSrc.includes('sklep.pasiekausza.pl') && !currentSrc.includes('www.sklep.pasiekausza.pl')) {
+                      target.src = currentSrc.replace('sklep.pasiekausza.pl', 'www.sklep.pasiekausza.pl');
+                    } else if (!target.dataset.fallbackApplied) {
+                      target.dataset.fallbackApplied = 'true';
+                      target.src = 'https://pasiekausza.pl/wp-content/uploads/2022/02/miod-wielokwaitowy-650x650.jpg';
+                    }
+                  }}
+                />
                 <span className="max-w-[90px] sm:max-w-[120px] truncate">{p.name}</span>
                 <button 
                   onClick={() => onRemove(p)} 

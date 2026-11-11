@@ -23,11 +23,11 @@ export interface ScrollRevealProps {
    */
   distance?: number;
   /**
-   * Intersection threshold (0.0 to 1.0). Defaults to 0.15.
+   * Intersection threshold (0.0 to 1.0). Defaults to 0.05.
    */
   threshold?: number;
   /**
-   * Intersection observer rootMargin (e.g. '0px 0px -50px 0px').
+   * Intersection observer rootMargin (e.g. '0px 0px -20px 0px').
    */
   rootMargin?: string;
   /**
@@ -50,8 +50,8 @@ export const ScrollReveal: React.FC<ScrollRevealProps> = ({
   delay = 0,
   duration = 0.7,
   distance = 24,
-  threshold = 0.12,
-  rootMargin = '0px 0px -40px 0px',
+  threshold = 0.05,
+  rootMargin = '0px 0px -20px 0px',
   className = '',
   as: Component = 'div',
   once = true,
@@ -76,16 +76,10 @@ export const ScrollReveal: React.FC<ScrollRevealProps> = ({
       return;
     }
 
-    // Fallback timer: if observer doesn't fire within 900ms (e.g. edge browser quirks), ensure content shows
-    const fallbackTimer = setTimeout(() => {
-      setIsVisible(true);
-    }, 900);
-
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            clearTimeout(fallbackTimer);
             setIsVisible(true);
             if (once) {
               observer.unobserve(entry.target);
@@ -104,7 +98,6 @@ export const ScrollReveal: React.FC<ScrollRevealProps> = ({
     observer.observe(element);
 
     return () => {
-      clearTimeout(fallbackTimer);
       observer.disconnect();
     };
   }, [threshold, rootMargin, once]);
@@ -145,4 +138,3 @@ export const ScrollReveal: React.FC<ScrollRevealProps> = ({
     </ComponentTag>
   );
 };
-

@@ -104,13 +104,33 @@ const mapSizes = (woo: WooProductRaw): HoneySizeOption[] => {
 };
 
 /**
+ * Normalizuje URL obrazów pochodzących z WooCommerce / WordPress.
+ * Rozwiązuje problem braku subdomeny w certyfikacie SSL hostingu (sklep.pasiekausza.pl -> www.sklep.pasiekausza.pl)
+ * oraz wymusza bezpieczny protokół HTTPS.
+ */
+export const normalizeImageUrl = (rawUrl?: string): string => {
+  if (!rawUrl || typeof rawUrl !== 'string') {
+    return 'https://pasiekausza.pl/wp-content/uploads/2022/02/miod-wielokwaitowy-650x650.jpg';
+  }
+  let url = rawUrl.trim();
+  url = url.replace(/^http:\/\//i, 'https://');
+  url = url.replace(/https:\/\/sklep\.pasiekausza\.pl/gi, 'https://www.sklep.pasiekausza.pl');
+  return url;
+};
+
+/**
  * Konwertuje obiekt produktu z WooCommerce REST API na nasz wewnętrzny interfejs HoneyProduct.
  * Dzięki temu cały dotychczasowy frontend działa w 100% bez zmian!
  */
 export const mapWooProductToHoneyProduct = (woo: WooProductRaw): HoneyProduct => {
   const meta = woo.meta_data || [];
-  const primaryImg = woo.images?.[0]?.src || 'https://pasiekausza.pl/wp-content/uploads/2022/02/miod-wielokwaitowy-650x650.jpg';
-  const allImgs = woo.images?.length > 0 ? woo.images.map(img => img.src) : [primaryImg];
+  const fallbackLocal = HONEY_PRODUCTS.find(p => p.id === woo.slug || p.id === String(woo.id));
+  const fallbackImg = fallbackLocal?.imageUrl || 'https://pasiekausza.pl/wp-content/uploads/2022/02/miod-wielokwaitowy-650x650.jpg';
+  const rawPrimary = woo.images?.[0]?.src;
+  const primaryImg = rawPrimary ? normalizeImageUrl(rawPrimary) : fallbackImg;
+  const allImgs = woo.images && woo.images.length > 0
+    ? woo.images.map(img => normalizeImageUrl(img.src))
+    : (fallbackLocal?.images?.length ? fallbackLocal.images : [primaryImg]);
 
   // Pobieranie nut smakowych z ACF lub atrybutów
   const rawFlavorNotes = getMetaValue(meta, 'flavor_notes', null);

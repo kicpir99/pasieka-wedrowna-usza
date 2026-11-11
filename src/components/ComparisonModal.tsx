@@ -283,7 +283,14 @@ export const ComparisonModal: React.FC<ComparisonModalProps> = ({
                   alt={currentA.name}
                   className="w-7 h-7 sm:w-11 sm:h-11 object-cover rounded-lg sm:rounded-xl border border-[#D9821E]/20 shrink-0 bg-white group-hover/link:border-[#D9821E] group-hover/link:scale-105 transition-all shadow-2xs"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = currentA.imageUrl;
+                    const target = e.currentTarget;
+                    const currentSrc = target.src;
+                    if (currentSrc.includes('sklep.pasiekausza.pl') && !currentSrc.includes('www.sklep.pasiekausza.pl')) {
+                      target.src = currentSrc.replace('sklep.pasiekausza.pl', 'www.sklep.pasiekausza.pl');
+                    } else if (!target.dataset.fallbackApplied) {
+                      target.dataset.fallbackApplied = 'true';
+                      target.src = 'https://pasiekausza.pl/wp-content/uploads/2022/02/miod-wielokwaitowy-650x650.jpg';
+                    }
                   }}
                 />
                 <div className="min-w-0 flex-1">
@@ -349,7 +356,14 @@ export const ComparisonModal: React.FC<ComparisonModalProps> = ({
                   alt={currentB.name}
                   className="w-7 h-7 sm:w-11 sm:h-11 object-cover rounded-lg sm:rounded-xl border border-[#D9821E]/20 shrink-0 bg-white group-hover/link:border-[#D9821E] group-hover/link:scale-105 transition-all shadow-2xs"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = currentB.imageUrl;
+                    const target = e.currentTarget;
+                    const currentSrc = target.src;
+                    if (currentSrc.includes('sklep.pasiekausza.pl') && !currentSrc.includes('www.sklep.pasiekausza.pl')) {
+                      target.src = currentSrc.replace('sklep.pasiekausza.pl', 'www.sklep.pasiekausza.pl');
+                    } else if (!target.dataset.fallbackApplied) {
+                      target.dataset.fallbackApplied = 'true';
+                      target.src = 'https://pasiekausza.pl/wp-content/uploads/2022/02/miod-wielokwaitowy-650x650.jpg';
+                    }
                   }}
                 />
                 <div className="min-w-0 flex-1">
@@ -436,7 +450,14 @@ export const ComparisonModal: React.FC<ComparisonModalProps> = ({
                     alt={currentC.name}
                     className="w-7 h-7 sm:w-11 sm:h-11 object-cover rounded-lg sm:rounded-xl border border-[#D9821E]/20 shrink-0 bg-white group-hover/link:border-[#D9821E] group-hover/link:scale-105 transition-all shadow-2xs"
                     onError={(e) => {
-                      (e.target as HTMLImageElement).src = currentC.imageUrl;
+                      const target = e.currentTarget;
+                      const currentSrc = target.src;
+                      if (currentSrc.includes('sklep.pasiekausza.pl') && !currentSrc.includes('www.sklep.pasiekausza.pl')) {
+                        target.src = currentSrc.replace('sklep.pasiekausza.pl', 'www.sklep.pasiekausza.pl');
+                      } else if (!target.dataset.fallbackApplied) {
+                        target.dataset.fallbackApplied = 'true';
+                        target.src = 'https://pasiekausza.pl/wp-content/uploads/2022/02/miod-wielokwaitowy-650x650.jpg';
+                      }
                     }}
                   />
                   <div className="min-w-0 flex-1">

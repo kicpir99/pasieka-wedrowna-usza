@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, useMemo, useCallback } from 'react';
 import { HoneyProduct } from '../types';
 import { HONEY_PRODUCTS, isHiveTreasure } from '../data/honeyProducts';
-import { fetchWooCommerceProducts, WOO_CONFIG } from '../services/wooCommerceService';
+import { fetchWooCommerceProducts, WOO_CONFIG, normalizeImageUrl } from '../services/wooCommerceService';
 
 interface ProductContextType {
   products: HoneyProduct[];
@@ -16,8 +16,16 @@ interface ProductContextType {
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
 
-const CACHE_KEY = 'pasieka_products_cache_v1';
+const CACHE_KEY = 'pasieka_products_cache_v2';
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minut cache
+
+const sanitizeProduct = (p: HoneyProduct): HoneyProduct => ({
+  ...p,
+  imageUrl: normalizeImageUrl(p.imageUrl),
+  images: Array.isArray(p.images) && p.images.length > 0
+    ? p.images.map(img => normalizeImageUrl(img))
+    : [normalizeImageUrl(p.imageUrl)],
+});
 
 export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Początkowy stan inicjalizowany z pamięci podręcznej lub fallbacku
@@ -27,11 +35,11 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
       if (cached) {
         const parsed = JSON.parse(cached);
         if (parsed.timestamp && Date.now() - parsed.timestamp < CACHE_TTL_MS && Array.isArray(parsed.data)) {
-          return parsed.data;
+          return parsed.data.map(sanitizeProduct);
         }
       }
     } catch {}
-    return HONEY_PRODUCTS;
+    return HONEY_PRODUCTS.map(sanitizeProduct);
   });
 
   const [isLoading, setIsLoading] = useState<boolean>(Boolean(WOO_CONFIG.isConfigured));
@@ -50,7 +58,8 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setError(null);
 
     const res = await fetchWooCommerceProducts();
-    setProducts(res.products);
+    const sanitizedProducts = res.products.map(sanitizeProduct);
+    setProducts(sanitizedProducts);
     setIsLiveWooCommerce(res.isLiveWooCommerce);
     if (res.error) setError(res.error);
 
@@ -60,7 +69,7 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
         CACHE_KEY,
         JSON.stringify({
           timestamp: Date.now(),
-          data: res.products,
+          data: sanitizedProducts,
         })
       );
     } catch {}
