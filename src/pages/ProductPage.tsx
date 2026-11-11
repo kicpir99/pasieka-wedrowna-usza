@@ -5,6 +5,7 @@ import { HONEY_PRODUCTS, HONEY_VARIETIES, HIVE_TREASURES } from '../data/honeyPr
 import { HoneyProduct } from '../types';
 import { getEnrichedProduct, CATEGORY_METADATA } from '../utils/honeyHelpers';
 import { ProductReviews } from '../components/ProductReviews';
+import { ScrollReveal } from '../components/ScrollReveal';
 import { 
   ArrowLeft, 
   ArrowRight, 
@@ -2769,91 +2770,94 @@ export const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart, onOpenCom
 
       {/* RELATED PRODUCTS SECTION */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
-        <div className="border-t border-[#D9821E]/20 pt-10">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-8">
-            <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-[#D9821E]">
-                {isTreasure ? 'Tradycja i pasja Pasieki Usza' : 'Poznaj zbiory Pasieki Usza'}
-              </span>
-              <h3 className="text-2xl sm:text-3xl font-serif font-bold text-[#241D17]">
-                {isTreasure ? 'Poznaj pozostałe Skarby Ula' : 'Zobacz także inne odmiany miodów'}
-              </h3>
+        <ScrollReveal direction="up" delay={0.05}>
+          <div className="border-t border-[#D9821E]/20 pt-10">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-8">
+              <div>
+                <span className="text-xs font-bold uppercase tracking-wider text-[#D9821E]">
+                  {isTreasure ? 'Tradycja i pasja Pasieki Usza' : 'Poznaj zbiory Pasieki Usza'}
+                </span>
+                <h3 className="text-2xl sm:text-3xl font-serif font-bold text-[#241D17]">
+                  {isTreasure ? 'Poznaj pozostałe Skarby Ula' : 'Zobacz także inne odmiany miodów'}
+                </h3>
+              </div>
+              <Link
+                to={isTreasure ? '/skarby-ula' : '/sklep'}
+                className="text-xs font-bold text-[#1B4332] hover:text-[#D9821E] transition-colors flex items-center gap-1 cursor-pointer"
+              >
+                <span>{isTreasure ? 'Wszystkie Skarby Ula w ofercie' : 'Wszystkie miody w ofercie'}</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
             </div>
-            <Link
-              to={isTreasure ? '/skarby-ula' : '/sklep'}
-              className="text-xs font-bold text-[#1B4332] hover:text-[#D9821E] transition-colors flex items-center gap-1 cursor-pointer"
-            >
-              <span>{isTreasure ? 'Wszystkie Skarby Ula w ofercie' : 'Wszystkie miody w ofercie'}</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {relatedProducts.map((relProd) => {
-              const relImage = relProd.images?.[0] || relProd.imageUrl;
-              const firstSize = relProd.sizesList[0];
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {relatedProducts.map((relProd, relIdx) => {
+                const relImage = relProd.images?.[0] || relProd.imageUrl;
+                const firstSize = relProd.sizesList[0];
 
-              return (
-                <div
-                  key={relProd.id}
-                  onClick={() => {
-                    navigate(`/produkt/${relProd.id}`);
-                  }}
-                  className="bg-white rounded-3xl border border-[#D9821E]/20 overflow-hidden shadow-xs hover:shadow-md transition-all group cursor-pointer flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="relative aspect-[4/3] overflow-hidden bg-[#FAF6EE]">
-                      <img
-                        src={relImage}
-                        alt={relProd.name}
-                        referrerPolicy="no-referrer"
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = relProd.imageUrl;
-                        }}
-                      />
-                      {relProd.badge && (
-                        <span className={`absolute top-3 left-3 text-white text-[10px] font-bold uppercase px-2.5 py-1 rounded-full shadow-xs ${relProd.badgeClass || 'bg-[#D9821E]'}`}>
-                          {relProd.badge}
-                        </span>
-                      )}
-                      <span className="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] font-medium px-2 py-0.5 rounded backdrop-blur-xs">
-                        {relProd.harvestYear}
-                      </span>
-                    </div>
-
-                    <div className="p-5">
-                      <p className="text-[11px] font-semibold text-[#D9821E] uppercase tracking-wider mb-1">
-                        {CATEGORY_METADATA[relProd.category]?.label || (relProd.productType === 'apitherapy' ? 'Apiterapia' : 'Skarby Ula')}
-                      </p>
-                      <h4 className="text-base font-bold text-[#241D17] group-hover:text-[#D9821E] transition-colors line-clamp-1 mb-1.5 font-serif">
-                        {relProd.name}
-                      </h4>
-                      <p className="text-xs text-[#7A6A5A] line-clamp-2 mb-3 leading-relaxed">
-                        {relProd.tagline}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="p-5 pt-0 border-t border-[#D9821E]/10 flex items-center justify-between mt-auto">
-                    <div>
-                      <span className="text-[10px] text-[#7A6A5A] block">od ({firstSize?.gram || '450g'}):</span>
-                      <span className="text-base font-extrabold text-[#1B4332]">{firstSize?.price || 38} zł</span>
-                    </div>
-
-                    <button
-                      type="button"
-                      className="px-3.5 py-1.5 rounded-xl text-xs font-bold text-[#1B4332] bg-[#FAF6EE] group-hover:bg-[#1B4332] group-hover:text-white border border-[#1B4332]/20 transition-all flex items-center gap-1 cursor-pointer"
+                return (
+                  <ScrollReveal key={relProd.id} direction="up" delay={relIdx * 0.1} className="h-full">
+                    <div
+                      onClick={() => {
+                        navigate(`/produkt/${relProd.id}`);
+                      }}
+                      className="bg-white rounded-3xl border border-[#D9821E]/20 overflow-hidden shadow-xs hover:shadow-md transition-all group cursor-pointer flex flex-col justify-between h-full"
                     >
-                      <span>Szczegóły</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </button>
+                    <div>
+                      <div className="relative aspect-[4/3] overflow-hidden bg-[#FAF6EE]">
+                        <img
+                          src={relImage}
+                          alt={relProd.name}
+                          referrerPolicy="no-referrer"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = relProd.imageUrl;
+                          }}
+                        />
+                        {relProd.badge && (
+                          <span className={`absolute top-3 left-3 text-white text-[10px] font-bold uppercase px-2.5 py-1 rounded-full shadow-xs ${relProd.badgeClass || 'bg-[#D9821E]'}`}>
+                            {relProd.badge}
+                          </span>
+                        )}
+                        <span className="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] font-medium px-2 py-0.5 rounded backdrop-blur-xs">
+                          {relProd.harvestYear}
+                        </span>
+                      </div>
+
+                      <div className="p-5">
+                        <p className="text-[11px] font-semibold text-[#D9821E] uppercase tracking-wider mb-1">
+                          {CATEGORY_METADATA[relProd.category]?.label || (relProd.productType === 'apitherapy' ? 'Apiterapia' : 'Skarby Ula')}
+                        </p>
+                        <h4 className="text-base font-bold text-[#241D17] group-hover:text-[#D9821E] transition-colors line-clamp-1 mb-1.5 font-serif">
+                          {relProd.name}
+                        </h4>
+                        <p className="text-xs text-[#7A6A5A] line-clamp-2 mb-3 leading-relaxed">
+                          {relProd.tagline}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="p-5 pt-0 border-t border-[#D9821E]/10 flex items-center justify-between mt-auto">
+                      <div>
+                        <span className="text-[10px] text-[#7A6A5A] block">od ({firstSize?.gram || '450g'}):</span>
+                        <span className="text-base font-extrabold text-[#1B4332]">{firstSize?.price || 38} zł</span>
+                      </div>
+
+                      <button
+                        type="button"
+                        className="px-3.5 py-1.5 rounded-xl text-xs font-bold text-[#1B4332] bg-[#FAF6EE] group-hover:bg-[#1B4332] group-hover:text-white border border-[#1B4332]/20 transition-all flex items-center gap-1 cursor-pointer"
+                      >
+                        <span>Szczegóły</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </div>
-                </div>
+                </ScrollReveal>
               );
             })}
           </div>
         </div>
+        </ScrollReveal>
       </section>
 
       {/* MODERN RESPONSIVE STICKY BOTTOM BUY BAR */}

@@ -74,11 +74,10 @@ export const AboutUsPage: React.FC<AboutUsPageProps> = ({ displayResolution }) =
 
       {/* Main Story Content */}
       <section id="historia-pasieki" className={`adaptive-container ${displayResolution.containerClass} px-4 sm:px-6 lg:px-8 -mt-8 relative z-20 scroll-mt-24`}>
-        <ScrollReveal direction="up" delay={0.05}>
-          <div className="bg-white rounded-3xl p-6 sm:p-12 border border-[#E7DCCE] shadow-xl space-y-10">
+        <div className="bg-white rounded-3xl p-6 sm:p-12 border border-[#E7DCCE] shadow-xl space-y-10">
           
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-            <div className="lg:col-span-7 space-y-5 text-sm sm:text-base text-[#524638] leading-relaxed">
+            <ScrollReveal direction="up" delay={0.05} className="lg:col-span-7 space-y-5 text-sm sm:text-base text-[#524638] leading-relaxed">
               <h2 className="font-serif text-2xl sm:text-3xl font-extrabold text-[#23201C] tracking-tight">
                 {wpPage?.quote || '„Pierwsze, co musisz zrobić, by odnieść sukces w pracy z pszczołami – zakochać się w ciężkiej pracy.”'}
               </h2>
@@ -113,9 +112,9 @@ export const AboutUsPage: React.FC<AboutUsPageProps> = ({ displayResolution }) =
                 Zapraszamy do naszego świata,<br />
                 <span className="text-[#945209]">Magdalena i Piotr Szymkowicz</span>
               </p>
-            </div>
+            </ScrollReveal>
 
-            <div className="lg:col-span-5 space-y-4">
+            <ScrollReveal direction="up" delay={0.15} className="lg:col-span-5 space-y-4">
               <div className="rounded-2xl overflow-hidden border border-[#E7DCCE] shadow-md relative group">
                 <img 
                   src="https://pasiekausza.pl/wp-content/uploads/2022/02/DSC02154-683x1024.jpg" 
@@ -147,22 +146,23 @@ export const AboutUsPage: React.FC<AboutUsPageProps> = ({ displayResolution }) =
                   />
                 </div>
               </div>
-            </div>
+            </ScrollReveal>
           </div>
 
           {/* Golden Quote */}
-          <div className="bg-[#2D2821] text-[#FAF5ED] rounded-2xl p-6 sm:p-8 text-center space-y-3 relative overflow-hidden">
-            <div className="text-3xl text-[#E5983A]">❝</div>
-            <p className="font-serif text-base sm:text-xl font-medium italic max-w-2xl mx-auto leading-relaxed text-[#F0E6D8]">
-              „Kiedy pszczoła zniknie z powierzchni Ziemi, człowiekowi pozostaną już tylko cztery lata życia. Skoro nie będzie pszczół, nie będzie też zapylania. Zabraknie roślin, potem zwierząt, wreszcie przyjdzie kolej na człowieka…”
-            </p>
-            <p className="text-xs uppercase tracking-widest text-[#B5A593] font-semibold">
-              Motto Przewodnie Pasieki Wędrownej Usza
-            </p>
-          </div>
+          <ScrollReveal direction="up" delay={0.1}>
+            <div className="bg-[#2D2821] text-[#FAF5ED] rounded-2xl p-6 sm:p-8 text-center space-y-3 relative overflow-hidden">
+              <div className="text-3xl text-[#E5983A]">❝</div>
+              <p className="font-serif text-base sm:text-xl font-medium italic max-w-2xl mx-auto leading-relaxed text-[#F0E6D8]">
+                „Kiedy pszczoła zniknie z powierzchni Ziemi, człowiekowi pozostaną już tylko cztery lata życia. Skoro nie będzie pszczół, nie będzie też zapylania. Zabraknie roślin, potem zwierząt, wreszcie przyjdzie kolej na człowieka…”
+              </p>
+              <p className="text-xs uppercase tracking-widest text-[#B5A593] font-semibold">
+                Motto Przewodnie Pasieki Wędrownej Usza
+              </p>
+            </div>
+          </ScrollReveal>
 
         </div>
-        </ScrollReveal>
       </section>
 
       {/* 3D Scrollytelling Section: HoneyCraftingJourney */}
@@ -187,65 +187,69 @@ export const AboutUsPage: React.FC<AboutUsPageProps> = ({ displayResolution }) =
 
       {/* Video & Wintering Section */}
       <section className={`adaptive-container ${displayResolution.containerClass} px-4 sm:px-6 lg:px-8 mt-20 space-y-8`}>
-        <div className="bg-white rounded-3xl p-6 sm:p-10 border border-[#E7DCCE] shadow-md grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          <div className="lg:col-span-6 space-y-4">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF0E1] text-[#945209] text-xs font-bold">
-              <span>Wideo z Pasieki</span>
+        <ScrollReveal direction="up" delay={0.08}>
+          <div className="bg-white rounded-3xl p-6 sm:p-10 border border-[#E7DCCE] shadow-md grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div className="lg:col-span-6 space-y-4">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF0E1] text-[#945209] text-xs font-bold">
+                <span>Wideo z Pasieki</span>
+              </div>
+              <h3 className="font-serif text-2xl sm:text-3xl font-extrabold text-[#23201C]">
+                Nasza Pasieka Zimą – Przygotowanie pszczół do zimowania
+              </h3>
+              <p className="text-xs sm:text-sm text-[#5C5042] leading-relaxed">
+                Zimowanie to jedna z najważniejszych i najtrudniejszych czynności w pasiece. Odpowiednio przeprowadzone prace gwarantują, że wiosną rodziny pszczele wyjdą z uli silne i gotowe do pierwszych oblotów mniszka i rzepaku.
+              </p>
+              <div className="pt-2">
+                <Link 
+                  to="/sklep" 
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#1B4332] hover:bg-[#143326] text-white text-xs font-bold transition-all shadow-sm cursor-pointer"
+                >
+                  <span>Przejdź do sklepu z miodami</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
             </div>
-            <h3 className="font-serif text-2xl sm:text-3xl font-extrabold text-[#23201C]">
-              Nasza Pasieka Zimą – Przygotowanie pszczół do zimowania
-            </h3>
-            <p className="text-xs sm:text-sm text-[#5C5042] leading-relaxed">
-              Zimowanie to jedna z najważniejszych i najtrudniejszych czynności w pasiece. Odpowiednio przeprowadzone prace gwarantują, że wiosną rodziny pszczele wyjdą z uli silne i gotowe do pierwszych oblotów mniszka i rzepaku.
-            </p>
-            <div className="pt-2">
-              <Link 
-                to="/sklep" 
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#1B4332] hover:bg-[#143326] text-white text-xs font-bold transition-all shadow-sm cursor-pointer"
-              >
-                <span>Przejdź do sklepu z miodami</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-          </div>
 
-          <div className="lg:col-span-6 rounded-2xl overflow-hidden shadow-lg border border-[#E0D4C3] aspect-video bg-black">
-            <iframe 
-              className="w-full h-full"
-              src="https://www.youtube.com/embed/af2qEqCfBTY" 
-              title="Pasieka Usza zimą" 
-              frameBorder="0" 
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-              allowFullScreen
-            />
+            <div className="lg:col-span-6 rounded-2xl overflow-hidden shadow-lg border border-[#E0D4C3] aspect-video bg-black">
+              <iframe 
+                className="w-full h-full"
+                src="https://www.youtube.com/embed/af2qEqCfBTY" 
+                title="Pasieka Usza zimą" 
+                frameBorder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowFullScreen
+              />
+            </div>
           </div>
-        </div>
+        </ScrollReveal>
       </section>
 
       {/* Direct Contact & Visit Invitation */}
       <section className={`adaptive-container ${displayResolution.containerClass} px-4 sm:px-6 lg:px-8 mt-16 text-center`}>
-        <div className="p-8 rounded-3xl bg-[#FAF6EE] border border-[#E0D0BB] space-y-4 max-w-3xl mx-auto">
-          <h3 className="font-serif text-2xl font-bold text-[#23201C]">
-            Chcesz porozmawiać o pszczołach lub odebrać miód osobiście?
-          </h3>
-          <p className="text-xs sm:text-sm text-[#665848]">
-            Zawsze chętnie dzielimy się wiedzą. Odwiedź nas w Ciechowie po wcześniejszym kontakcie telefonicznym.
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-            <a 
-              href="tel:697512103" 
-              className="px-6 py-3 rounded-xl bg-[#8B5337] hover:bg-[#6D3F28] text-white text-xs font-bold transition-all shadow-sm flex items-center gap-2"
-            >
-              <span>Zadzwoń: +48 697 512 103</span>
-            </a>
-            <Link 
-              to="/kontakt" 
-              className="px-6 py-3 rounded-xl bg-white border border-[#D5C2AB] hover:bg-[#F3E9DA] text-[#332B22] text-xs font-bold transition-all shadow-2xs"
-            >
-              <span>Formularz i dane dojazdu →</span>
-            </Link>
+        <ScrollReveal direction="up" delay={0.08}>
+          <div className="p-8 rounded-3xl bg-[#FAF6EE] border border-[#E0D0BB] space-y-4 max-w-3xl mx-auto">
+            <h3 className="font-serif text-2xl font-bold text-[#23201C]">
+              Chcesz porozmawiać o pszczołach lub odebrać miód osobiście?
+            </h3>
+            <p className="text-xs sm:text-sm text-[#665848]">
+              Zawsze chętnie dzielimy się wiedzą. Odwiedź nas w Ciechowie po wcześniejszym kontakcie telefonicznym.
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+              <a 
+                href="tel:697512103" 
+                className="px-6 py-3 rounded-xl bg-[#8B5337] hover:bg-[#6D3F28] text-white text-xs font-bold transition-all shadow-sm flex items-center gap-2"
+              >
+                <span>Zadzwoń: +48 697 512 103</span>
+              </a>
+              <Link 
+                to="/kontakt" 
+                className="px-6 py-3 rounded-xl bg-white border border-[#D5C2AB] hover:bg-[#F3E9DA] text-[#332B22] text-xs font-bold transition-all shadow-2xs"
+              >
+                <span>Formularz i dane dojazdu →</span>
+              </Link>
+            </div>
           </div>
-        </div>
+        </ScrollReveal>
       </section>
     </main>
   );

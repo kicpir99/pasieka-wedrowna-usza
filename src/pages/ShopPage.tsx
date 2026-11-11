@@ -6,6 +6,7 @@ import { ProductCard } from '../components/ProductCard';
 import { HONEY_PRODUCTS, HONEY_VARIETIES } from '../data/honeyProducts';
 import { useProducts } from '../context/ProductContext';
 import { getEnrichedProduct, isProductBestseller, isProductRecommended } from '../utils/honeyHelpers';
+import { ScrollReveal } from '../components/ScrollReveal';
 import { Sparkles, ArrowUp, ShoppingBag, ShieldCheck, Truck, RotateCcw, ArrowRight } from 'lucide-react';
 
 const ProductDetailModal = React.lazy(() => import('../components/ProductDetailModal').then(m => ({ default: m.ProductDetailModal })));
@@ -255,62 +256,64 @@ export const ShopPage: React.FC<ShopPageProps> = ({
         </div>
 
         {/* Desktop Helper Banners: Quiz & Skarby Ula */}
-        <div className="hidden sm:grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Card 1: Wirtualny Doradca / Quiz */}
-          <div className="bg-gradient-to-br from-[#FDFBF7] to-[#FAF3EA] border border-[#E7DCCE] rounded-2xl p-4 sm:p-5 flex flex-col justify-between gap-3 shadow-xs">
-            <div className="flex items-start gap-3.5">
-              <div className="w-10 h-10 rounded-xl bg-[#1B4332] flex items-center justify-center shrink-0 shadow-2xs text-white">
-                <Sparkles className="w-5 h-5 text-[#E0A94F]" />
+        <ScrollReveal direction="up" delay={0.05}>
+          <div className="hidden sm:grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Card 1: Wirtualny Doradca / Quiz */}
+            <div className="bg-gradient-to-br from-[#FDFBF7] to-[#FAF3EA] border border-[#E7DCCE] rounded-2xl p-4 sm:p-5 flex flex-col justify-between gap-3 shadow-xs">
+              <div className="flex items-start gap-3.5">
+                <div className="w-10 h-10 rounded-xl bg-[#1B4332] flex items-center justify-center shrink-0 shadow-2xs text-white">
+                  <Sparkles className="w-5 h-5 text-[#E0A94F]" />
+                </div>
+                <div>
+                  <h3 className="font-serif text-sm sm:text-base font-bold text-[#23201C]">
+                    Wirtualny Doradca Miodowy
+                  </h3>
+                  <p className="text-xs text-[#6B5E4F] mt-0.5 leading-relaxed">
+                    Odpowiedz na 3 proste pytania o Twoje potrzeby i smak – wskażemy idealny słoik dla Ciebie lub na prezent.
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-serif text-sm sm:text-base font-bold text-[#23201C]">
-                  Wirtualny Doradca Miodowy
-                </h3>
-                <p className="text-xs text-[#6B5E4F] mt-0.5 leading-relaxed">
-                  Odpowiedz na 3 proste pytania o Twoje potrzeby i smak – wskażemy idealny słoik dla Ciebie lub na prezent.
-                </p>
+              <div className="pt-1 flex justify-end">
+                {onOpenQuiz && (
+                  <button
+                    type="button"
+                    onClick={onOpenQuiz}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1B4332] hover:bg-[#143326] text-white text-xs font-bold transition-all shadow-2xs hover:shadow-xs cursor-pointer"
+                  >
+                    <span>Rozwiąż Quiz (60 sek.)</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                )}
               </div>
             </div>
-            <div className="pt-1 flex justify-end">
-              {onOpenQuiz && (
-                <button
-                  type="button"
-                  onClick={onOpenQuiz}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1B4332] hover:bg-[#143326] text-white text-xs font-bold transition-all shadow-2xs hover:shadow-xs cursor-pointer"
-                >
-                  <span>Rozwiąż Quiz (60 sek.)</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              )}
-            </div>
-          </div>
 
-          {/* Card 2: Skarby Ula */}
-          <div className="bg-gradient-to-br from-[#FDFBF7] to-[#FAF3EA] border border-[#E7DCCE] rounded-2xl p-4 sm:p-5 flex flex-col justify-between gap-3 shadow-xs">
-            <div className="flex items-start gap-3.5">
-              <div className="w-10 h-10 rounded-xl bg-[#2D2821] flex items-center justify-center shrink-0 shadow-2xs text-[#E5983A]">
-                <ShieldCheck className="w-5 h-5" />
+            {/* Card 2: Skarby Ula */}
+            <div className="bg-gradient-to-br from-[#FDFBF7] to-[#FAF3EA] border border-[#E7DCCE] rounded-2xl p-4 sm:p-5 flex flex-col justify-between gap-3 shadow-xs">
+              <div className="flex items-start gap-3.5">
+                <div className="w-10 h-10 rounded-xl bg-[#2D2821] flex items-center justify-center shrink-0 shadow-2xs text-[#E5983A]">
+                  <ShieldCheck className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-serif text-sm sm:text-base font-bold text-[#23201C]">
+                    Szukasz propolisu, pierzgi lub świec?
+                  </h3>
+                  <p className="text-xs text-[#6B5E4F] mt-0.5 leading-relaxed">
+                    Poznaj naturalne dary ula o wybitnych właściwościach regenerujących, probiotycznych i prozdrowotnych.
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-serif text-sm sm:text-base font-bold text-[#23201C]">
-                  Szukasz propolisu, pierzgi lub świec?
-                </h3>
-                <p className="text-xs text-[#6B5E4F] mt-0.5 leading-relaxed">
-                  Poznaj naturalne dary ula o wybitnych właściwościach regenerujących, probiotycznych i prozdrowotnych.
-                </p>
+              <div className="pt-1 flex justify-end">
+                <Link
+                  to="/oferta"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#8B5337] hover:bg-[#6D3F28] text-white text-xs font-bold transition-all shadow-2xs hover:shadow-xs cursor-pointer"
+                >
+                  <span>Poznaj Skarby Ula</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
               </div>
-            </div>
-            <div className="pt-1 flex justify-end">
-              <Link
-                to="/oferta"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#8B5337] hover:bg-[#6D3F28] text-white text-xs font-bold transition-all shadow-2xs hover:shadow-xs cursor-pointer"
-              >
-                <span>Poznaj Skarby Ula</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
             </div>
           </div>
-        </div>
+        </ScrollReveal>
 
         <ProductFilter
           filters={filters}

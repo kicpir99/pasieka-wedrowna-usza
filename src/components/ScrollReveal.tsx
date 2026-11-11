@@ -76,10 +76,16 @@ export const ScrollReveal: React.FC<ScrollRevealProps> = ({
       return;
     }
 
+    // Fallback timer: if observer doesn't fire within 900ms (e.g. edge browser quirks), ensure content shows
+    const fallbackTimer = setTimeout(() => {
+      setIsVisible(true);
+    }, 900);
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
+            clearTimeout(fallbackTimer);
             setIsVisible(true);
             if (once) {
               observer.unobserve(entry.target);
@@ -98,6 +104,7 @@ export const ScrollReveal: React.FC<ScrollRevealProps> = ({
     observer.observe(element);
 
     return () => {
+      clearTimeout(fallbackTimer);
       observer.disconnect();
     };
   }, [threshold, rootMargin, once]);

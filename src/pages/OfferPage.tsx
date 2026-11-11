@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Sparkles, ShieldCheck, Heart, Droplets, Flame, BookOpen, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { ScrollReveal } from '../components/ScrollReveal';
 import { HONEY_PRODUCTS, HONEY_VARIETIES } from '../data/honeyProducts';
 import { useProducts } from '../context/ProductContext';
 import { HoneyProduct } from '../types';
@@ -197,13 +198,13 @@ export const OfferPage: React.FC<OfferPageProps> = ({ displayResolution, onAddTo
       {/* Offer Grid */}
       <section className={`adaptive-container ${displayResolution.containerClass} px-4 sm:px-6 lg:px-8 -mt-8 relative z-20 space-y-12`}>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {offerItems.map(item => {
+          {offerItems.map((item, idx) => {
             const Icon = item.icon;
             return (
-              <div 
-                key={item.id}
-                className="bg-white rounded-3xl overflow-hidden border border-[#E7DCCE] shadow-md hover:shadow-xl transition-all duration-300 flex flex-col group"
-              >
+              <ScrollReveal key={item.id} direction="up" delay={Math.min(idx % 3, 2) * 0.1} className="h-full">
+                <div 
+                  className="bg-white rounded-3xl overflow-hidden border border-[#E7DCCE] shadow-md hover:shadow-xl transition-all duration-300 flex flex-col group h-full"
+                >
                 {/* Card Image */}
                 <Link
                   to={item.ctaLink}
@@ -241,8 +242,8 @@ export const OfferPage: React.FC<OfferPageProps> = ({ displayResolution, onAddTo
                     </p>
 
                     <div className="pt-2 border-t border-[#EFE5D8] space-y-2">
-                      {item.bullets.map((bullet, idx) => (
-                        <div key={idx} className="flex items-start gap-2 text-[11px] text-[#524536]">
+                      {item.bullets.map((bullet, bIdx) => (
+                        <div key={bIdx} className="flex items-start gap-2 text-[11px] text-[#524536]">
                           <CheckCircle2 className="w-3.5 h-3.5 text-[#52B788] shrink-0 mt-0.5" />
                           <span>{bullet}</span>
                         </div>
@@ -283,6 +284,7 @@ export const OfferPage: React.FC<OfferPageProps> = ({ displayResolution, onAddTo
                   </div>
                 </div>
               </div>
+            </ScrollReveal>
             );
           })}
         </div>
@@ -290,7 +292,8 @@ export const OfferPage: React.FC<OfferPageProps> = ({ displayResolution, onAddTo
 
       {/* Vet Care & Quality Banner */}
       <section className={`adaptive-container ${displayResolution.containerClass} px-4 sm:px-6 lg:px-8 mt-20`}>
-        <div className="rounded-3xl bg-[#2D2821] text-[#FAF5ED] p-8 sm:p-12 text-center max-w-3xl mx-auto space-y-4 shadow-xl">
+        <ScrollReveal direction="up" delay={0.08}>
+          <div className="rounded-3xl bg-[#2D2821] text-[#FAF5ED] p-8 sm:p-12 text-center max-w-3xl mx-auto space-y-4 shadow-xl">
           <ShieldCheck className="w-10 h-10 text-[#52B788] mx-auto" />
           <h3 className="font-serif text-2xl font-bold text-[#FAF5ED]">
             Bezpieczeństwo i Pewność Pochodzenia
@@ -311,6 +314,7 @@ export const OfferPage: React.FC<OfferPageProps> = ({ displayResolution, onAddTo
             </Link>
           </div>
         </div>
+        </ScrollReveal>
       </section>
 
       {/* Modal szczegółów produktu */}

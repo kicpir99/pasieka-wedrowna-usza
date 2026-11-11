@@ -115,7 +115,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         <section className="py-20 bg-white border-b border-[#E8DECFA0]">
           <div className={`adaptive-container ${displayResolution.containerClass} px-4 sm:px-6 lg:px-8`}>
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-              
+
               <ScrollReveal direction="up" delay={0.05} className="lg:col-span-6 space-y-5">
                 <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#FAF0E1] text-[#8B5337] text-xs font-semibold">
                   <MapPin className="w-3.5 h-3.5" />
@@ -305,88 +305,88 @@ export const HomePage: React.FC<HomePageProps> = ({
                 const product = HONEY_PRODUCTS.find(p => p.id === rev.productId);
                 return (
                   <ScrollReveal key={idx} direction="up" delay={idx * 0.12} className="h-full">
-                    <div 
+                    <div
                       className="bg-[#FAF8F5] rounded-3xl p-6 sm:p-7 border border-[#E7DCCE] shadow-xs hover:shadow-md transition-shadow flex flex-col justify-between space-y-5 h-full"
                     >
-                    <div className="space-y-3.5">
-                      {/* Top Meta: Stars, Date, Verified badge */}
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-1 text-[#E5983A]">
-                          {[...Array(rev.rating)].map((_, i) => (
-                            <Star key={i} className="w-4 h-4 fill-current" />
-                          ))}
-                        </div>
-                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#2D6A4F] bg-[#E8F5E9] px-2.5 py-0.5 rounded-full">
-                          <CheckCircle2 className="w-3 h-3 text-[#2D6A4F]" />
-                          <span>Zweryfikowany</span>
-                        </span>
-                      </div>
-
-                      {/* Etykieta kategorii recenzji */}
-                      {rev.categoryLabel && (
-                        <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#8C4609] bg-[#FAF3E5] px-2.5 py-0.5 rounded-md border border-[#D9821E]/20">
-                          <span>{rev.categoryLabel}</span>
-                        </div>
-                      )}
-
-                      {/* Content */}
-                      <p className="text-xs sm:text-sm text-[#4A3F33] italic leading-relaxed">
-                        „{rev.text}”
-                      </p>
-                    </div>
-
-                    <div className="space-y-3 pt-2">
-                      {/* Author */}
-                      <div className="border-t border-[#EFE5D8] pt-3 flex items-center justify-between text-xs">
-                        <div>
-                          <span className="font-serif font-bold text-[#23201C] block">
-                            {rev.author}
-                          </span>
-                          <span className="text-[11px] text-[#8A7966]">
-                            {rev.location ? `${rev.location} • ` : ''}{rev.role}
+                      <div className="space-y-3.5">
+                        {/* Top Meta: Stars, Date, Verified badge */}
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-1 text-[#E5983A]">
+                            {[...Array(rev.rating)].map((_, i) => (
+                              <Star key={i} className="w-4 h-4 fill-current" />
+                            ))}
+                          </div>
+                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#2D6A4F] bg-[#E8F5E9] px-2.5 py-0.5 rounded-full">
+                            <CheckCircle2 className="w-3 h-3 text-[#2D6A4F]" />
+                            <span>Zweryfikowany</span>
                           </span>
                         </div>
-                        <span className="text-[10px] text-[#A69784] font-medium">
-                          {rev.date}
-                        </span>
+
+                        {/* Etykieta kategorii recenzji */}
+                        {rev.categoryLabel && (
+                          <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#8C4609] bg-[#FAF3E5] px-2.5 py-0.5 rounded-md border border-[#D9821E]/20">
+                            <span>{rev.categoryLabel}</span>
+                          </div>
+                        )}
+
+                        {/* Content */}
+                        <p className="text-xs sm:text-sm text-[#4A3F33] italic leading-relaxed">
+                          „{rev.text}”
+                        </p>
                       </div>
 
-                      {/* Connected Product Link */}
-                      {product && (
-                        <Link
-                          to={`/produkt/${product.id}`}
-                          className="pt-2 border-t border-[#EFE5D8] flex items-center justify-between gap-2.5 group/prod hover:bg-[#F2E8DC]/60 -mx-2 -mb-2 p-2 rounded-xl transition-all"
-                          title={`Zobacz produkt: ${product.name}`}
-                        >
-                          <div className="flex items-center gap-2.5 min-w-0">
-                            <div className="w-10 h-10 rounded-lg bg-white border border-[#E7DCCE] overflow-hidden shrink-0 shadow-2xs">
-                              <img
-                                src={product.imageUrl}
-                                alt={product.name}
-                                className="w-full h-full object-cover group-hover/prod:scale-105 transition-transform"
-                                loading="lazy"
-                              />
-                            </div>
-                            <div className="min-w-0">
-                              <span className="text-[9.5px] uppercase font-bold text-[#8B5337] tracking-wider block">
-                                Kupiony produkt:
-                              </span>
-                              <span className="text-xs font-serif font-bold text-[#23201C] group-hover/prod:text-[#8B5337] transition-colors truncate block">
-                                {product.name}
-                              </span>
-                            </div>
+                      <div className="space-y-3 pt-2">
+                        {/* Author */}
+                        <div className="border-t border-[#EFE5D8] pt-3 flex items-center justify-between text-xs">
+                          <div>
+                            <span className="font-serif font-bold text-[#23201C] block">
+                              {rev.author}
+                            </span>
+                            <span className="text-[11px] text-[#8A7966]">
+                              {rev.location ? `${rev.location} • ` : ''}{rev.role}
+                            </span>
                           </div>
-                          <div className="flex items-center gap-1 text-[11px] font-bold text-[#8B5337] shrink-0">
-                            <span>od {product.sizes[0]?.pricePln} zł</span>
-                            <ArrowRight className="w-3 h-3 group-hover/prod:translate-x-0.5 transition-transform" />
-                          </div>
-                        </Link>
-                      )}
+                          <span className="text-[10px] text-[#A69784] font-medium">
+                            {rev.date}
+                          </span>
+                        </div>
+
+                        {/* Connected Product Link */}
+                        {product && (
+                          <Link
+                            to={`/produkt/${product.id}`}
+                            className="pt-2 border-t border-[#EFE5D8] flex items-center justify-between gap-2.5 group/prod hover:bg-[#F2E8DC]/60 -mx-2 -mb-2 p-2 rounded-xl transition-all"
+                            title={`Zobacz produkt: ${product.name}`}
+                          >
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <div className="w-10 h-10 rounded-lg bg-white border border-[#E7DCCE] overflow-hidden shrink-0 shadow-2xs">
+                                <img
+                                  src={product.imageUrl}
+                                  alt={product.name}
+                                  className="w-full h-full object-cover group-hover/prod:scale-105 transition-transform"
+                                  loading="lazy"
+                                />
+                              </div>
+                              <div className="min-w-0">
+                                <span className="text-[9.5px] uppercase font-bold text-[#8B5337] tracking-wider block">
+                                  Kupiony produkt:
+                                </span>
+                                <span className="text-xs font-serif font-bold text-[#23201C] group-hover/prod:text-[#8B5337] transition-colors truncate block">
+                                  {product.name}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-1 text-[11px] font-bold text-[#8B5337] shrink-0">
+                              <span>od {product.sizes[0]?.pricePln} zł</span>
+                              <ArrowRight className="w-3 h-3 group-hover/prod:translate-x-0.5 transition-transform" />
+                            </div>
+                          </Link>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </ScrollReveal>
-              );
-            })}
+                  </ScrollReveal>
+                );
+              })}
             </div>
           </div>
         </section>
