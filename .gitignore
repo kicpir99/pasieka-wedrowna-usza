@@ -7,6 +7,14 @@ coverage/
 .env*
 !.env.example
 
+# Client internal onboarding & operational docs (kept locally, excluded from public repo)
+DOKUMENTACJA_WDROZENIA_DLA_PASIEKI.html
+DOKUMENTACJA_WDROZENIA_DLA_PASIEKI.md
+INSTRUKCJA_OBSLUGI_PANELU_WORDPRESS.html
+INSTRUKCJA_OBSLUGI_PANELU_WORDPRESS.md
+WOOCOMMERCE_SETUP.md
+metadata.json
+
 # Local processing backups & comparison artifacts
 **/backup/
 **/backup_originals/

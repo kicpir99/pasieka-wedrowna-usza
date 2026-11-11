@@ -70,7 +70,7 @@ export const InPostLockerMapModal: React.FC<Props> = ({ isOpen, onClose, selecte
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
-  const markersRef = useRef<{ [code: string]: L.Marker }>({});
+  const markersRef = useRef<Record<string, L.Marker>>({});
 
   // Dynamiczne załadowanie pełnej oficjalnej bazy paczkomatów InPost
   useEffect(() => {
@@ -132,7 +132,7 @@ export const InPostLockerMapModal: React.FC<Props> = ({ isOpen, onClose, selecte
     }, 250);
 
     // Czyść poprzednie markery
-    Object.values(markersRef.current).forEach(m => m.remove());
+    Object.values(markersRef.current).forEach((m: L.Marker) => m.remove());
     markersRef.current = {};
 
     // Twórz customowe pinezki InPost

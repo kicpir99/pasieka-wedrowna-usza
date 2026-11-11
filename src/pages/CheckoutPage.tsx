@@ -87,7 +87,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ items, onClearCart }
   }, [accountPassword]);
 
   // Stan formularza z automatycznym uzupełnieniem z profilu użytkownika
-  const [firstName, setFirstName] = useState(() => user?.address?.firstName || user?.name || '');
+  const [firstName, setFirstName] = useState(() => user?.address?.firstName || user?.firstName || '');
   const [lastName, setLastName] = useState(() => user?.address?.lastName || '');
   const [email, setEmail] = useState(() => user?.email || '');
   const [phone, setPhone] = useState(() => user?.address?.phone || '');

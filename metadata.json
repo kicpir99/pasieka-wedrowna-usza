@@ -1,6 +1,0 @@
-{
-  "name": "Pasieka Warmia - Rzemieślniczy Sklep z Miodem",
-  "description": "Sklep internetowy rzemieślniczej pasieki z Warmii. Surowe miody odmianowe, produkty pszczele z certyfikatem pochodzenia i transparentnym miodobraniem.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
